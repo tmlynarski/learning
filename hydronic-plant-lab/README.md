@@ -24,6 +24,7 @@ The equipment data comes from an existing-equipment schedule built from nameplat
 
 - **Scenarios (keys 1–9).** Standby, Heating call, Hot-water call (priority), Hot-water draw, Cooling call, Make-up / fill, Warm-up & expansion, Purging air, and a Relief fault demonstration. Each one animates the flows that move, sets every valve to its state, and starts or stops the burner, circulator, blower, compressor and sump pump.
 - **Valve states.** White = open, no flow. Black = closed. Pipe colour = open and flowing. Red = relief lifted. Hatched = unknown.
+- **Hover anything** (mouse or trackpad). A tooltip shows the part's name and schedule mark, its valve type and current state, a one-line description of what it's for, and where the information comes from. Pipes show what they carry, whether they're flowing in this scenario, and where they run from and to. On touch screens, tap instead.
 - **Click anything.** Pipes, valves, devices and equipment open in the Inspector, which shows the valve type and how it works, the schedule data, the proposed disposition, the schedule notes, and the runs it connects to.
 - **Side tabs.**
   - Sequence: step-by-step sequence of operation, highlighting the parts involved.

@@ -201,6 +201,19 @@ label.chk input{accent-color:var(--ink)}
 .fc li{list-style:none;margin-left:-18px;padding-left:20px;position:relative}
 .fc li::before{content:"□";position:absolute;left:2px;color:var(--amber)}
 
+/* hover tooltip */
+#tip{position:fixed;left:0;top:0;z-index:40;max-width:300px;background:var(--sheet);border:1px solid var(--ink-3);border-left:3px solid var(--tipc,var(--ink-3));padding:7px 10px 8px;box-shadow:0 3px 14px rgba(31,29,26,.18);pointer-events:none;opacity:0;transform:translateY(3px);transition:opacity .12s,transform .12s;font-size:12px;line-height:1.4;color:var(--ink-2)}
+#tip.on{opacity:1;transform:none}
+#tip .tt-h{display:flex;gap:7px;align-items:baseline;flex-wrap:wrap}
+#tip .tt-mark{font-family:var(--mono);font-size:11px;color:var(--ink);background:var(--paper-2);border:1px solid var(--rule);padding:0 4px;border-radius:2px}
+#tip .tt-name{font-family:var(--serif);font-size:14.5px;color:var(--ink);line-height:1.2}
+#tip .tt-sub{font-family:var(--cond);text-transform:uppercase;letter-spacing:.09em;font-size:9.5px;color:var(--ink-3);margin:3px 0 4px}
+#tip .tt-sub b{color:var(--ink);font-weight:600}
+#tip .tt-brief{margin:0}
+#tip .tt-route{margin-top:5px;font-size:11px;color:var(--ink-3)}
+#tip .tt-foot{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:6px;font-size:10px;color:var(--ink-4)}
+@media (hover:none){#tip{display:none}}
+@media print{#tip{display:none}}
 @media (max-width:1180px){
   .layout{grid-template-columns:1fr}
   .side{position:relative;height:auto;border-left:0;border-top:1px solid var(--rule)}
@@ -557,6 +570,62 @@ const COMPS = [
 ];
 const CM = Object.fromEntries(COMPS.map(c=>[c.id,c]));
 
+/* one-line, purpose-first descriptions for the hover tooltip */
+const VT_BRIEF = {
+  ball:'Manual shutoff: a quarter turn opens or closes it, to isolate equipment for service.',
+  curb:'The utility’s buried shutoff at the property line. It cuts water to the whole house from the street side.',
+  meterv:'Shutoff on the street side of the meter, so the meter can be changed without going to the curb stop.',
+  zone:'Motorized valve that opens when its zone calls for heat, then tells the boiler control to run.',
+  flowcheck:'Weighted check that only the pump can lift, so hot water can’t drift into a zone by gravity when the pump is off.',
+  check:'One-way valve that stops pumped water from falling back into the sump pit.',
+  bfp:'Keeps boiler water from ever flowing back into the drinking water.',
+  prv:'Drops street pressure to about 12 psi and tops up the heating loop automatically when it runs low.',
+  relief:'Safety valve that dumps water if boiler pressure reaches 30 psi.',
+  tp:'Safety valve that opens if the tank reaches 150 psi or 210°F.',
+  tmv:'Blends tank hot water with cold, so fixtures get a steady, scald-safe temperature.',
+  aav:'Lets air out of the heating loop automatically while keeping the water in.',
+  drain:'Hose-thread valve for draining equipment or purging air.',
+  flange:'Shutoff built into the pump flange, so the circulator can be changed without draining the system.',
+  svc:'Refrigerant shutoff and gauge port on the condensing unit. Open in normal operation.',
+  txv:'Meters liquid refrigerant into the cooling coil, where it boils and absorbs the room’s heat.',
+  osv:'Keeps oil from siphoning out of the raised tank unless the burner’s pump is pulling.',
+  fire:'Snaps shut and cuts off the oil if there’s a fire at the burner.',
+  tankv:'Manual shutoff at the oil-tank outlet, for servicing the line, filter and burner.',
+  baro:'Weighted gate that lets room air into the flue to keep the chimney’s draft steady.',
+  capv:'Tankless-coil connection. Whether it is still piped up or capped off is unknown.',
+};
+const BRIEF = {
+  blr1a:'A copper coil inside the boiler that can heat domestic water on demand. Probably unused now.',
+  bnr1:'Sprays and ignites the fuel oil that fires the boiler.',
+  ahu1:'Blows house air across a hot-water coil (heat) and a refrigerant coil (cooling), then up the ducts.',
+  wh1:'A tank heated by boiler water flowing through a coil inside it. It has no burner and no flue of its own.',
+  cu1:'The outdoor half of the air conditioner. It rejects the house’s heat to the outdoors.',
+  fot1:'Outdoor tank that stores the boiler’s No. 2 fuel oil.',
+  chim:'Carries the boiler’s flue gases up and out of the house by natural draft.',
+  wm1:'The town’s meter, which measures the water the house uses.',
+  sov1:'The main house shutoff at the meter. Close it to cut water to the whole house.',
+  vwh:'Shuts off cold water to the water heater for service.',
+  vz1s:'Isolates the AHU-1 heating coil for service (supply side).', vz1r:'Isolates the AHU-1 heating coil for service (return side).',
+  vz2s:'Isolates the water-heater coil for service (supply side).', vz2r:'Isolates the water-heater coil for service (return side).',
+  vmu:'Shuts off the boiler’s fill water for service.',
+  pdr:'Hose outlet on the return, used with the purge valve to push trapped air out of a zone.',
+  vpur:'Closed while purging, so water leaves through the purge drain instead of going back into the boiler.',
+  bdr:'Drains the boiler for service.', whd:'Drains the water-heater tank.',
+  et2:'Absorbs the domestic water’s expansion as the tank heats, so house pressure doesn’t spike.',
+  aqs:'Thermostat in the tank. When the stored water cools, it calls the boiler by opening ZV-2.',
+  p1:'The pump that moves boiler water through whichever zone valve is open.',
+  et1:'An air cushion that absorbs the heating water’s expansion and keeps loop pressure steady.',
+  tpg1:'Shows the boiler water’s temperature and pressure on one dial.',
+  ctl1:'The boiler’s control. It answers zone calls, runs the pump, fires the burner and holds the 180°F high limit.',
+  ctl2:'Runs the burner’s ignition sequence, and shuts it down if no flame is proven.',
+  esw:'A switch outside the boiler room that kills the burner in an emergency (NFPA 31). Location TBD.',
+  trap:'A water seal in the condensate line that lets the drain pan empty despite the cabinet’s air pressure.',
+  zv1:'Opens when T-1 calls for heat, sending boiler water to the AHU-1 coil.',
+  zv2:'Opens when the water heater calls, sending boiler water to the WH-1 coil (the priority zone).',
+  fcv1:VT_BRIEF.flowcheck, aav1:'Lets air out at the high point of the boiler supply, automatically.',
+  prv1:VT_BRIEF.prv, rv1:'The boiler’s safety valve. It dumps water if pressure reaches 30 psi.',
+};
+
 /* =====================================================================
    4. SCENARIOS — sequence of operation
    ===================================================================== */
@@ -859,7 +928,7 @@ const PIPE_ORDER = ['gas','air1','air2','flue','oil','cond','sumpd','refs','refl
 for(const id of PIPE_ORDER){
   const p=P[id], s=SYS[p.sys], dd=d(p.pts), w=s.w;
   const dash = s.dash?` stroke-dasharray="${s.dash}"`:'';
-  let g = `<g class="pipe${s.gas?' gasp':''}" data-pipe="${id}"><title>${esc(p.name)}</title>`;
+  let g = `<g class="pipe${s.gas?' gasp':''}" data-pipe="${id}" role="img" aria-label="${esc(p.name)}">`;
   if(s.gas){
     g += `<path class="body" d="${dd}" stroke="#e2dcd2" stroke-width="${w}" opacity=".0"/>`;
   } else if(s.flue){
@@ -906,7 +975,7 @@ function compSVG(c){
   else if(c.sym==='tstat') inner = `<rect x="${c.x-14}" y="${c.y-14}" width="28" height="28" rx="4" fill="#fff" stroke="var(--ink-2)" stroke-width="1.3"/><circle cx="${c.x}" cy="${c.y}" r="8" fill="none" stroke="var(--ink-3)"/><text x="${c.x}" y="${c.y+3}" text-anchor="middle" style="font-size:7px;fill:var(--ink)">68°</text>`;
   if(!inner) return '';
   const r = c.sym==='et1'? [c.x-24,c.y-50,48,102] : c.sym==='bfp'? [c.x-12,c.y-21,24,42] : c.sym==='zone'? (rot? [c.x-24,c.y-12,32,24]:[c.x-12,c.y-24,24,32]) : [c.x-14,c.y-16,28,32];
-  return `<g class="comp ${c.cat==='valve'?'valve':''} ${c.prov==='typ'||c.prov==='req'?'typonly':''}" data-id="${c.id}" style="color:${col}"><title>${esc((c.mark?c.mark+' · ':'')+c.name)}</title>${inner}<rect class="hit" x="${r[0]}" y="${r[1]}" width="${r[2]}" height="${r[3]}"/><rect class="hovring" x="${r[0]-2}" y="${r[1]-2}" width="${r[2]+4}" height="${r[3]+4}" rx="3"/><rect class="selring" x="${r[0]-5}" y="${r[1]-5}" width="${r[2]+10}" height="${r[3]+10}" rx="4"/></g>`;
+  return `<g class="comp ${c.cat==='valve'?'valve':''} ${c.prov==='typ'||c.prov==='req'?'typonly':''}" data-id="${c.id}" style="color:${col}" role="img" aria-label="${esc((c.mark?c.mark+' · ':'')+c.name)}">${inner}<rect class="hit" x="${r[0]}" y="${r[1]}" width="${r[2]}" height="${r[3]}"/><rect class="hovring" x="${r[0]-2}" y="${r[1]-2}" width="${r[2]+4}" height="${r[3]+4}" rx="3"/><rect class="selring" x="${r[0]-5}" y="${r[1]-5}" width="${r[2]+10}" height="${r[3]+10}" rx="4"/></g>`;
 }
 for(const c of COMPS) H += compSVG(c);
 /* the flue connector & line-set are pipes; give them clickable tags only */
@@ -915,7 +984,7 @@ for(const c of COMPS) H += compSVG(c);
 H += `<g class="ctl-layer">`;
 for(const w of CTL){
   const [ax,ay]=w.a,[bx,by]=w.b, dx=bx-ax, dy=by-ay, k=.14, mx=(ax+bx)/2-dy*k, my=(ay+by)/2+dx*k;
-  H += `<g class="pipe ctlp" data-ctl="${w.id}"><title>${esc(w.name)}</title><path class="body" d="M${ax},${ay}Q${mx},${my} ${bx},${by}" stroke="var(--ctl)" stroke-width="1.4" stroke-dasharray="5 3" fill="none"/><path class="flow" d="M${ax},${ay}Q${mx},${my} ${bx},${by}" stroke-width="1.4"/><path class="phit" d="M${ax},${ay}Q${mx},${my} ${bx},${by}" style="stroke-width:8"/></g>`;
+  H += `<g class="pipe ctlp" data-ctl="${w.id}" role="img" aria-label="${esc(w.name)}"><path class="body" d="M${ax},${ay}Q${mx},${my} ${bx},${by}" stroke="var(--ctl)" stroke-width="1.4" stroke-dasharray="5 3" fill="none"/><path class="flow" d="M${ax},${ay}Q${mx},${my} ${bx},${by}" stroke-width="1.4"/><path class="phit" d="M${ax},${ay}Q${mx},${my} ${bx},${by}" style="stroke-width:8"/></g>`;
 }
 H += `</g>`;
 
@@ -948,6 +1017,7 @@ const STATE_CLS = {open:'v-open',closed:'v-closed',flow:'v-flow',held:'v-closed'
 
 function applyScenario(){
   const sc = SM[ST.scen];
+  hideTip();
   for(const id in pipeEls){
     const on = sc.pipes[id];
     pipeEls[id].classList.toggle('on', !!on);
@@ -1013,6 +1083,70 @@ svg.addEventListener('click', e=>{
   else if(t.dataset.ctl){ const w=CTL.find(x=>x.id===t.dataset.ctl); focusIds(w.comps); showTab('inspect');
     $('#p-inspect').innerHTML = `<div class="cap">Control wiring</div><h2>${esc(w.name)}</h2><p>Low-voltage (24 V) and line-voltage (120 V) signals tie the plant together. None of the wiring is traced in the schedule. T-1 may land on a zone relay or on the AHU-1 board, and how DHW priority is done is unknown. Treat this layer as the typical logic, not the as-built wiring.</p>${chips(w.comps)}`; bindChips($('#p-inspect')); }
 });
+
+/* ---------- hover tooltip: name + one-line description */
+const tip = document.createElement('div'); tip.id='tip'; tip.setAttribute('role','tooltip'); document.body.appendChild(tip);
+function firstSentence(html){
+  const t = String(html||'').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+  // end at the first ". " / "? " / "! " that is not an abbreviation such as "No." or "in."
+  const re = /[.!?](?=\s+["(A-Z0-9])/g; let m;
+  while((m = re.exec(t))){
+    const before = t.slice(Math.max(0,m.index-4), m.index+1);
+    if(/(\bNo|\bin|\be\.g|\bi\.e|\bvs|\bapprox|\bft|\bgal)\.$/i.test(before)) continue;
+    return t.slice(0, m.index+1);
+  }
+  return t;
+}
+function briefOf(c){
+  if(BRIEF[c.id]) return BRIEF[c.id];
+  if(c.cat==='valve' && VT_BRIEF[c.vt]) return VT_BRIEF[c.vt];
+  if(c.does) return firstSentence(c.does);
+  if(c.cat==='valve' && VT[c.vt]) return firstSentence(VT[c.vt].how);
+  if(c.notes && c.notes.length) return firstSentence(c.notes[0]);
+  return PROV[c.prov].long;
+}
+function tipCompHTML(c){
+  const sc = SM[ST.scen];
+  let sub = c.cat==='valve' ? esc(VT[c.vt].name) : (c.cat==='equip' ? 'Equipment' : 'Device');
+  if(c.cat==='valve'){ const s = valveState(c, sc); sub += ` · <b>${esc(STATE_TXT[s]||s)}</b>`; }
+  return `<div class="tt-h">${c.mark?`<span class="tt-mark">${esc(c.mark)}</span>`:''}<span class="tt-name">${esc(c.name)}</span></div>
+   <div class="tt-sub">${sub}</div><p class="tt-brief">${esc(briefOf(c))}</p>
+   <div class="tt-foot"><span class="pill p-${c.prov}">${PROV[c.prov].name}</span><span>Click for details</span></div>`;
+}
+function tipPipeHTML(p){
+  const s = SYS[p.sys], on = SM[ST.scen].pipes[p.id];
+  return `<div class="tt-h"><span class="tt-name">${esc(p.name)}</span></div>
+   <div class="tt-sub">${esc(s.name)}${on?' · <b>Flowing now</b>':''}</div><p class="tt-brief">${esc(firstSentence(p.carries||''))}</p>
+   <div class="tt-route">${esc(epName(p.from))} → ${esc(epName(p.to))}</div>
+   <div class="tt-foot"><span></span><span>Click for details</span></div>`;
+}
+let tipKey = null;
+function tipTarget(el){
+  const t = el && el.closest && el.closest('[data-id],[data-tag],[data-pipe],[data-ctl]');
+  if(!t || !svg.contains(t)) return null;
+  if(t.dataset.id || t.dataset.tag){ const c = CM[t.dataset.id||t.dataset.tag]; return c? {key:'c:'+c.id, html:tipCompHTML(c), color: c.pipe? SYS[P[c.pipe].sys].color : 'var(--ink-3)'} : null; }
+  if(t.dataset.pipe){ const p = P[t.dataset.pipe]; return {key:'p:'+p.id, html:tipPipeHTML(p), color:SYS[p.sys].color}; }
+  const w = CTL.find(x=>x.id===t.dataset.ctl);
+  return {key:'w:'+w.id, color:'var(--ctl)', html:`<div class="tt-h"><span class="tt-name">${esc(w.name)}</span></div><div class="tt-sub">Control wiring · typical, not traced</div><p class="tt-brief">The signal that links ${w.comps.map(id=>esc(CM[id].mark||CM[id].name)).join(' and ')}.</p>`};
+}
+function placeTip(x, y){
+  const pad = 14, r = tip.getBoundingClientRect(), vw = innerWidth, vh = innerHeight;
+  let left = x + pad, top = y + pad;
+  if(left + r.width > vw - 8) left = x - pad - r.width;
+  if(top + r.height > vh - 8) top = y - pad - r.height;
+  tip.style.left = Math.max(8,left)+'px'; tip.style.top = Math.max(8,top)+'px';
+}
+function hideTip(){ tip.classList.remove('on'); tipKey = null; }
+svg.addEventListener('pointermove', e=>{
+  if(e.pointerType && e.pointerType!=='mouse' && e.pointerType!=='pen') return;
+  const t = tipTarget(e.target);
+  if(!t){ hideTip(); return; }
+  if(t.key!==tipKey){ tipKey=t.key; tip.innerHTML=t.html; tip.style.setProperty('--tipc', t.color); }
+  tip.classList.add('on'); placeTip(e.clientX, e.clientY);
+});
+svg.addEventListener('pointerleave', hideTip);
+svg.addEventListener('pointerdown', hideTip);
+addEventListener('scroll', hideTip, {passive:true});
 
 /* =====================================================================
    8. PANELS
@@ -1275,6 +1409,8 @@ applyScenario();
   for(const c of COMPS){ if(c.pipe && !P[c.pipe]) errs.push('comp '+c.id+' on unknown pipe '+c.pipe); if(c.cat==='valve' && !VT[c.vt]) errs.push('valve '+c.id+' has unknown type'); }
   for(const s of SCEN){ for(const k in s.pipes) if(!P[k]) errs.push('scenario '+s.id+' unknown pipe '+k); for(const k in s.valves) if(!CM[k]) errs.push('scenario '+s.id+' unknown valve '+k); s.steps.forEach(st=>st.ids.forEach(i=>{ if(!CM[i]) errs.push('scenario '+s.id+' step id '+i); })); }
   for(const w of CTL) w.comps.forEach(i=>{ if(!CM[i]) errs.push('ctl '+w.id+' '+i); });
+  for(const c of COMPS) if(!briefOf(c)) errs.push('no hover description for '+c.id);
+  for(const k in BRIEF) if(!CM[k]) errs.push('BRIEF for unknown comp '+k);
   if(errs.length) console.warn('Self-test problems:\n'+errs.join('\n')); else console.info('Self-test: all references resolve ('+PIPES.length+' runs, '+COMPS.length+' components, '+SCEN.length+' scenarios).');
 })();
 </script>
