@@ -1,0 +1,1536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sun &amp; Current — Florida Home Solar &amp; Battery Wiring</title>
+<meta name="description" content="An interactive wiring plate of a Florida rooftop solar system with optional battery backup: every conductor from the modules to the inverter, gateway, meter, panel and loads, with live power flow through a day, a hurricane outage and a rapid shutdown.">
+<style>
+/* =====================================================================
+   VISUAL SYSTEM — a plate from an engineering reference book
+   (shares its palette with ../hydronic-plant-lab)
+   ===================================================================== */
+:root{
+  --paper:#f7f3ea; --paper-2:#f1ebdf; --paper-3:#e9e1d1; --sheet:#fbf9f4;
+  --ink:#1f1d1a; --ink-2:#47433c; --ink-3:#7d776c; --ink-4:#a69f92; --rule:#d3cab8; --rule-2:#e2dbcc;
+  --blue:#4c6f93; --blue-2:#7f9dbb; --blue-4:#e4ebf1;
+  --terra:#ad543a; --terra-2:#cf8a71; --terra-4:#f6e7df;
+  --olive:#5f7444; --amber:#a7792b;
+  /* energy series (validated categorical set, light surface) */
+  --s-sun:#b77b00; --s-grid:#2563a8; --s-home:#b8431c; --s-bat:#13866f;
+  /* conductors */
+  --c-blk:#22201c; --c-red:#c23b22; --c-grn:#3d8b45; --c-cu:#b8743d; --c-com:#7a4f9c;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",Georgia,serif;
+  --sans:"Avenir Next","Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --cond:"Avenir Next Condensed","Arial Narrow","Helvetica Neue","Segoe UI",sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:13px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:normal;margin:0;color:var(--ink)}
+.cap{font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:10px;color:var(--ink-3)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* masthead */
+.masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:14px 18px;padding:14px 22px 10px;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.title-block h1{font-size:26px;line-height:1.08}
+.title-block h1 em{color:var(--ink-2)}
+.title-block .kicker{margin-bottom:5px}
+.title-block .kicker a{color:inherit}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
+.tgroup{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.tbtn{border:1px solid var(--rule);background:var(--sheet);padding:3px 9px;border-radius:2px;cursor:pointer;font-size:12px;line-height:18px;color:var(--ink-2);white-space:nowrap}
+.tbtn:hover{border-color:var(--ink-3);color:var(--ink)}
+.tbtn.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.tbtn.alarm.on{background:#8b1d1d;border-color:#8b1d1d}
+.tbtn.rsd.on{background:#c23b22;border-color:#c23b22}
+.tbtn:focus-visible,.tab:focus-visible,select:focus-visible,input:focus-visible,.row:focus-visible{outline:2px solid var(--blue-2);outline-offset:1px}
+select.tsel{border:1px solid var(--rule);background:var(--sheet);padding:3px 6px;border-radius:2px;font-size:12px}
+label.chk{display:inline-flex;gap:4px;align-items:center;font-size:12px;color:var(--ink-2);cursor:pointer}
+label.chk input{accent-color:var(--ink)}
+
+/* condition strip */
+.cond{display:flex;gap:8px 18px;flex-wrap:wrap;padding:8px 22px;border-bottom:1px solid var(--rule-2);align-items:center}
+.timebox{display:flex;align-items:center;gap:8px;flex:1 1 320px;min-width:240px}
+.timebox input[type=range]{flex:1;accent-color:var(--s-sun)}
+.timebox .clock{font-family:var(--serif);font-size:16px;min-width:74px;color:var(--ink)}
+.scen{display:flex;gap:5px;flex-wrap:wrap;padding:8px 22px;border-bottom:1px solid var(--rule-2);align-items:center}
+.scen .tbtn{font-size:11.5px}
+.scen .tbtn .k{font-family:var(--mono);font-size:10px;color:var(--ink-4);margin-right:4px}
+.scen .tbtn.on .k{color:var(--paper-3)}
+.scen .tbtn.out{border-style:dashed}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,28vw);align-items:start}
+.stage{padding:10px 16px 26px 22px;min-width:0}
+.side{border-left:1px solid var(--rule);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;min-width:0;background:var(--paper)}
+.plate-wrap{position:relative;background:var(--sheet);border:1px solid var(--rule);box-shadow:inset 0 0 0 6px var(--sheet),inset 0 0 0 7px var(--rule-2)}
+#plate{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none}
+.plate-cap{display:flex;justify-content:space-between;gap:12px;padding:6px 2px 0;flex-wrap:wrap;font-size:11px;color:var(--ink-3)}
+.status{font-family:var(--serif);font-size:15px;color:var(--ink);padding:2px 2px 8px;min-height:28px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.status .badge{font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:10px;padding:2px 7px;border:1px solid currentColor;border-radius:2px;color:var(--terra)}
+.status .badge.fault{color:#8b1d1d;background:#f4dede}
+.status .badge.ok{color:var(--s-bat)}
+.status small{font-family:var(--sans);font-size:11.5px;color:var(--ink-3)}
+
+/* legend */
+.legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+.lg{background:var(--sheet);border:1px solid var(--rule-2);padding:8px 10px}
+.lg h4{font-size:14px;margin-bottom:4px}
+.lg .it{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink-2);padding:1.5px 0}
+.lg .it svg{flex:none}
+
+/* ---------- SVG plate */
+.plate text{font-family:var(--cond);fill:var(--ink-2)}
+.plate .t-zone{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;fill:var(--ink-4)}
+.plate .t-sm{font-size:9.5px;fill:var(--ink-3)}
+.plate .t-xs{font-size:8px;fill:var(--ink-3)}
+.plate .t-eq{font-family:var(--serif);font-size:14px;fill:var(--ink)}
+.plate .t-mk{font-family:var(--mono);font-size:9px;fill:var(--ink)}
+.plate .t-mid{text-anchor:middle}
+.plate .t-end{text-anchor:end}
+.comp,.run{cursor:pointer;transition:opacity .3s}
+.plate.focus .comp:not(.hl),.plate.focus .run:not(.hl),.plate.focus .rlab:not(.hl){opacity:.18}
+.plate.focus .comp.hl .comp:not(.hl){opacity:.35}
+.selring{fill:none;stroke:var(--terra);stroke-width:2;stroke-dasharray:4 3;opacity:0;pointer-events:none}
+.comp.sel>.selring{opacity:1}
+.hovring{fill:none;stroke:var(--blue-2);stroke-width:1.5;opacity:0;pointer-events:none}
+.comp:hover>.hovring{opacity:.9}
+.hit{fill:transparent;stroke:none}
+/* conductors */
+.run .halo{fill:none;stroke:var(--sheet);stroke-linejoin:round;stroke-linecap:butt}
+.run .rhit{fill:none;stroke:transparent;stroke-linecap:round;stroke-linejoin:round}
+.cd{fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;transition:opacity .3s}
+.cd-p,.cd-l2,.cd-bp{stroke:var(--c-red)}
+.cd-m,.cd-l1,.cd-bm,.cd-x,.cd-h{stroke:var(--c-blk)}
+.cd-no{stroke:var(--ink-3);stroke-width:3.3}
+.cd-n{stroke:#fff;stroke-width:1.5}
+.cd-g{stroke:var(--c-grn)}
+.cd-gec{stroke:var(--c-cu);stroke-width:2.6}
+.cd-c{stroke:var(--c-com);stroke-width:1.4;stroke-dasharray:4 3}
+.fl{fill:none;stroke:#fff;stroke-width:1.25;stroke-dasharray:3 7;stroke-linecap:round;opacity:0;pointer-events:none}
+.run.on .fl{opacity:.95;animation:flow var(--dur,1s) linear infinite}
+.run.on.rev .fl{animation-direction:reverse}
+.run.k-com.on .cd-c{animation:sig 1.2s linear infinite}
+.run.dead .cd{opacity:.28}
+.run.sel .halo{stroke:#f1d6c9}
+.run:hover .halo{stroke:#e2e9f0}
+@keyframes flow{from{stroke-dashoffset:10}to{stroke-dashoffset:0}}
+@keyframes sig{from{stroke-dashoffset:14}to{stroke-dashoffset:0}}
+.paused .fl,.paused .cd-c,.paused .spin{animation-play-state:paused!important}
+.spin{animation:spin 1.4s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* run value labels */
+.rlab{pointer-events:none;transition:opacity .3s}
+.rlab rect{fill:var(--sheet);stroke:var(--rule);stroke-width:.8}
+.rlab text{font-family:var(--mono);font-size:9.5px;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.plate.novals .rlab{display:none}
+/* equipment states */
+.mlpe-off .mlpe rect.mb{fill:#e9d3cf}
+.load .bar{transition:width .25s}
+.load.shed .lbg{fill:url(#hatch)}
+.load.nopower .lbg{fill:#e7e3db}
+.plate .dark-ov{opacity:0;transition:opacity .4s;pointer-events:none}
+.plate.dark .dark-ov{opacity:1}
+.sunmod{transition:fill .4s}
+@media (prefers-reduced-motion:reduce){
+  .run.on .fl{animation:none;stroke-dasharray:2 5}
+  .run.k-com.on .cd-c,.spin{animation:none}
+}
+
+/* ---------- side panel */
+.tabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding:6px 10px 0}
+.tab{border:0;background:none;padding:6px 7px 5px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.09em;font-size:10.5px;color:var(--ink-3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--terra)}
+.panels{overflow-y:auto;flex:1;padding:12px 16px 40px}
+.panel{display:none}
+.panel.on{display:block}
+.panel h2{font-size:21px;line-height:1.15;margin:0 0 4px}
+.panel h3{font-size:15px;margin:16px 0 5px;padding-top:9px;border-top:1px solid var(--rule-2)}
+.panel h3:first-child{border-top:0;padding-top:0;margin-top:0}
+.panel p{margin:0 0 8px;color:var(--ink-2)}
+.panel ul,.panel ol{margin:0 0 8px;padding-left:18px;color:var(--ink-2)}
+.panel li{margin-bottom:4px}
+.lede{font-family:var(--serif);font-size:14px;color:var(--ink-2);font-style:italic}
+.pill{display:inline-block;font-family:var(--cond);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;border:1px solid currentColor;padding:0 5px;border-radius:2px;color:var(--ink-3);vertical-align:1px;white-space:nowrap}
+.pill.live{color:var(--s-bat)}.pill.dead{color:var(--ink-4)}.pill.fl{color:var(--terra)}
+.kv{width:100%;border-collapse:collapse;font-size:11.5px;margin:4px 0 8px}
+.kv td{border-bottom:1px dotted var(--rule);padding:3px 0;vertical-align:baseline}
+.kv td:first-child{color:var(--ink-3);padding-right:10px;width:38%}
+.kv td.v{font-family:var(--mono);font-size:11px;color:var(--ink)}
+.box{background:var(--sheet);border:1px solid var(--rule-2);padding:8px 10px;margin:6px 0 10px}
+.box.fl{border-left:3px solid var(--s-sun)}
+.box.code{border-left:3px solid var(--blue-2)}
+.box.warn{border-left:3px solid var(--amber);background:#f8f0de}
+.box.live{border-left:3px solid var(--s-bat)}
+.box h4{font-size:14px;margin-bottom:3px}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{font-family:var(--cond);font-weight:normal;text-transform:uppercase;letter-spacing:.09em;font-size:9.5px;color:var(--ink-3);text-align:left;padding:3px 4px;border-bottom:1px solid var(--rule)}
+.tbl td{padding:4px;border-bottom:1px dotted var(--rule);vertical-align:top;color:var(--ink-2)}
+.tbl td.num{font-family:var(--mono);text-align:right;white-space:nowrap;color:var(--ink)}
+.tbl tr.row{cursor:pointer}
+.tbl tr.row:hover td{background:var(--paper-2)}
+.tbl tr.grp td{font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:10px;color:var(--terra);padding-top:10px;border-bottom:1px solid var(--rule)}
+.sw{display:inline-block;width:18px;height:6px;border-radius:1px;vertical-align:1px;margin-right:5px}
+.sw.n{background:#fff;box-shadow:inset 0 0 0 1px var(--ink-3)}
+.sw.c{background:repeating-linear-gradient(90deg,var(--c-com) 0 4px,transparent 4px 7px);height:3px}
+.steps{list-style:none;padding:0!important;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:6px 6px 6px 30px;border-bottom:1px solid var(--rule-2);cursor:pointer;margin:0}
+.steps li::before{content:counter(s);position:absolute;left:4px;top:5px;font-family:var(--serif);font-size:17px;color:var(--ink-4)}
+.steps li:hover{background:var(--paper-2)}
+.steps li.on{background:var(--terra-4)}
+.steps li.on::before{color:var(--terra)}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 8px}
+.chip{font-family:var(--mono);font-size:10.5px;border:1px solid var(--rule);background:var(--sheet);padding:1px 6px;border-radius:2px;cursor:pointer}
+.chip:hover{border-color:var(--ink-3)}
+.note{font-size:11px;color:var(--ink-3);border-top:1px solid var(--rule-2);padding-top:6px;margin-top:10px}
+.fig{display:block;width:100%;height:auto;background:var(--paper);border:1px solid var(--rule-2);margin:4px 0 8px}
+.fig text{font-family:var(--cond);fill:var(--ink-2)}
+.fig .ft{font-size:10.5px;text-anchor:middle;fill:var(--ink)}
+.fig .fs{font-size:8.5px;text-anchor:middle;fill:var(--ink-3)}
+.fig .fl{font-size:9px;fill:var(--ink-3);opacity:1;stroke:none;animation:none}
+.calc{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;font-size:12px;margin:6px 0}
+.calc input{width:76px;border:1px solid var(--rule);background:var(--sheet);padding:2px 5px;border-radius:2px;font-family:var(--mono);font-size:12px}
+.verdict{font-family:var(--serif);font-size:14px;padding:6px 8px;border:1px solid var(--rule-2);margin-top:6px}
+.verdict.ok{border-left:3px solid var(--s-bat)}.verdict.bad{border-left:3px solid #8b1d1d;background:#f8e9e6}
+/* day chart */
+.chart{position:relative;max-width:560px}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-family:var(--cond);font-size:10px;fill:var(--ink-3)}
+.chart .lbl{font-size:10.5px;fill:var(--ink-2)}
+.ctip{position:absolute;pointer-events:none;background:var(--sheet);border:1px solid var(--ink-3);padding:5px 8px;font-size:11px;line-height:1.35;box-shadow:0 3px 10px rgba(31,29,26,.15);opacity:0;transition:opacity .1s;min-width:120px;z-index:3}
+.ctip.on{opacity:1}
+.ctip b{font-family:var(--serif);font-weight:normal;font-size:13px;color:var(--ink)}
+.ctip .r{display:flex;justify-content:space-between;gap:10px}
+.ctip .r span:last-child{font-family:var(--mono);color:var(--ink)}
+.clegend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11px;color:var(--ink-2);margin:4px 0 6px}
+.clegend i{display:inline-block;width:14px;height:2px;vertical-align:3px;margin-right:4px}
+.loadrow select{border:1px solid var(--rule);background:var(--sheet);font-size:11px;padding:1px 3px}
+
+/* tooltip */
+#tip{position:fixed;left:0;top:0;z-index:40;max-width:300px;background:var(--sheet);border:1px solid var(--ink-3);border-left:3px solid var(--tipc,var(--ink-3));padding:7px 10px 8px;box-shadow:0 3px 14px rgba(31,29,26,.18);pointer-events:none;opacity:0;transform:translateY(3px);transition:opacity .12s,transform .12s;font-size:12px;line-height:1.4;color:var(--ink-2)}
+#tip.on{opacity:1;transform:none}
+#tip .tt-h{display:flex;gap:7px;align-items:baseline;flex-wrap:wrap}
+#tip .tt-mark{font-family:var(--mono);font-size:11px;color:var(--ink);background:var(--paper-2);border:1px solid var(--rule);padding:0 4px;border-radius:2px}
+#tip .tt-name{font-family:var(--serif);font-size:14.5px;color:var(--ink);line-height:1.2}
+#tip .tt-sub{font-family:var(--cond);text-transform:uppercase;letter-spacing:.09em;font-size:9.5px;color:var(--ink-3);margin:3px 0 4px}
+#tip .tt-sub b{color:var(--ink);font-weight:600}
+#tip .tt-brief{margin:0}
+#tip .tt-cd{margin-top:5px;display:flex;flex-wrap:wrap;gap:3px 9px;font-size:10.5px;color:var(--ink-3)}
+#tip .tt-foot{display:flex;justify-content:flex-end;margin-top:6px;font-size:10px;color:var(--ink-4)}
+@media (hover:none){#tip{display:none}}
+@media print{#tip{display:none}}
+@media (max-width:1180px){
+  .layout{grid-template-columns:1fr}
+  .side{position:relative;height:auto;border-left:0;border-top:1px solid var(--rule)}
+  .legend{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:720px){
+  .masthead,.scen,.cond{padding-left:16px;padding-right:16px}
+  .stage{padding:8px 16px 20px}
+  .legend{grid-template-columns:1fr}
+  .title-block h1{font-size:20px}
+}
+@media print{
+  @page{size:landscape;margin:9mm}
+  body{background:#fff}
+  .toolbar,.scen,.cond,.tabs{display:none!important}
+  .layout{display:block}
+  .side{position:static;height:auto;border:0;page-break-before:always}
+  .panel{display:none!important}
+  #p-wires{display:block!important}
+}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="title-block">
+    <div class="kicker cap"><a href="../">Plate IV</a> · A typical Florida home: 8 kW rooftop array, optional 13.5 kWh battery · Educational wiring plate, not for construction</div>
+    <h1>Sun &amp; Current — <em>how a home solar system and battery are wired</em></h1>
+  </div>
+  <nav class="toolbar" aria-label="System setup">
+    <div class="tgroup"><span class="cap">Inverter</span>
+      <select class="tsel" id="archSel" aria-label="Inverter type">
+        <option value="string">String inverter + module shutdown devices</option>
+        <option value="micro">Microinverters</option>
+      </select>
+    </div>
+    <div class="tgroup"><span class="cap">Battery</span>
+      <select class="tsel" id="battSel" aria-label="Battery">
+        <option value="0">None (grid-tied only)</option>
+        <option value="1">13.5 kWh battery + backup gateway</option>
+      </select>
+      <select class="tsel" id="bmodeSel" aria-label="Battery operating mode">
+        <option value="self">Self-powered (use it daily)</option>
+        <option value="backup">Backup only (keep it full)</option>
+      </select>
+    </div>
+    <div class="tgroup">
+      <label class="chk"><input type="checkbox" id="chkVals" checked> Live values</label>
+      <button class="tbtn" id="pauseBtn" title="Pause or resume the wire animation (Space)">❚❚ Pause</button>
+      <button class="tbtn" id="printBtn">Print</button>
+    </div>
+  </nav>
+</header>
+<div class="cond" role="group" aria-label="Conditions">
+  <div class="timebox">
+    <span class="cap">Time</span>
+    <span class="clock" id="clock">12:30 pm</span>
+    <input type="range" id="tSlider" min="0" max="23.95" step="0.05" value="12.5" aria-label="Time of day">
+    <button class="tbtn" id="playBtn" title="Run the clock through the day (P)">▶ Play the day</button>
+  </div>
+  <div class="tgroup"><span class="cap">Sky</span>
+    <select class="tsel" id="skySel" aria-label="Sky">
+      <option value="clear">Clear</option><option value="cloudy">Passing clouds</option><option value="overcast">Overcast / storm</option>
+    </select>
+  </div>
+  <div class="tgroup"><span class="cap">Utility</span>
+    <button class="tbtn alarm" id="gridBtn" title="Cut or restore utility power (G)">Grid up</button>
+  </div>
+  <div class="tgroup"><span class="cap">Fire service</span>
+    <button class="tbtn rsd" id="rsdBtn" title="Initiate rapid shutdown (R)">Rapid shutdown</button>
+  </div>
+</div>
+<div class="scen" id="scenBar" role="group" aria-label="Scenarios"><span class="cap" style="margin-right:4px">Scenarios</span></div>
+
+<main class="layout">
+  <section class="stage">
+    <div class="status" id="status"></div>
+    <div class="plate-wrap"><svg id="plate" class="plate" viewBox="0 0 1600 1000" role="img" aria-label="Wiring plate of a residential solar system"></svg></div>
+    <div class="plate-cap">
+      <span>Hover or click any wire, box or load. Every line is one conductor, in its real colour. Moving white dashes show which way energy is flowing (on AC wires the current itself alternates 60 times a second). Faded wires are de-energized.</span>
+      <span>Schematic, not to scale. Sizes are typical for this example, not a design.</span>
+    </div>
+    <div class="legend" id="legend"></div>
+  </section>
+  <aside class="side">
+    <div class="tabs" role="tablist">
+      <button class="tab on" data-p="inspect">Inspector</button>
+      <button class="tab" data-p="seq">Sequence</button>
+      <button class="tab" data-p="wires">Wires</button>
+      <button class="tab" data-p="day">Day</button>
+      <button class="tab" data-p="loads">Loads</button>
+      <button class="tab" data-p="code">Code &amp; Florida</button>
+    </div>
+    <div class="panels">
+      <div class="panel on" id="p-inspect"></div>
+      <div class="panel" id="p-seq"></div>
+      <div class="panel" id="p-wires"></div>
+      <div class="panel" id="p-day"></div>
+      <div class="panel" id="p-loads"></div>
+      <div class="panel" id="p-code"></div>
+    </div>
+  </aside>
+</main>
+
+<script>
+"use strict";
+const $ = s=>document.querySelector(s), $$ = s=>[...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+const d = pts => 'M'+pts.map(p=>(+p[0].toFixed(2))+','+(+p[1].toFixed(2))).join('L');
+
+/* =====================================================================
+   1. VOCABULARY — conductors and the example system
+   ===================================================================== */
+const CK = {
+  p:  {name:'PV +', long:'PV positive', sw:'var(--c-red)', hot:true},
+  m:  {name:'PV −', long:'PV negative', sw:'var(--c-blk)', hot:true},
+  x:  {name:'Series jumper', long:'Module-to-module series link (− of one to + of the next)', sw:'var(--c-blk)', hot:true},
+  bp: {name:'Battery +', long:'Battery DC positive', sw:'var(--c-red)', hot:true},
+  bm: {name:'Battery −', long:'Battery DC negative', sw:'var(--c-blk)', hot:true},
+  l1: {name:'L1', long:'L1 hot (black), 120 V to neutral', sw:'var(--c-blk)', hot:true},
+  l2: {name:'L2', long:'L2 hot (red), 120 V to neutral, 240 V to L1', sw:'var(--c-red)', hot:true},
+  h:  {name:'Hot', long:'Hot (black), 120 V to neutral', sw:'var(--c-blk)', hot:true},
+  n:  {name:'N', long:'Neutral (white), the grounded conductor', sw:'n'},
+  g:  {name:'EGC', long:'Equipment grounding conductor (green or bare)', sw:'var(--c-grn)'},
+  gec:{name:'GEC', long:'Grounding electrode conductor (bare copper)', sw:'var(--c-cu)'},
+  c:  {name:'Signal', long:'Communication or control signal (low voltage)', sw:'c'},
+};
+const SPEC = {arrayKW:8.0, modW:400, vmp:37.2, voc:44.8, imp:10.75, isc:11.4, heat:0.9,
+  invKW:{string:7.6, micro:6.4}, battKWh:13.5, battKW:5.0, battPeak:7.0, reserve:0.20, battV:400};
+
+/* the house circuits, in breaker order (left column of the load panel) */
+const LOADS = [
+  {id:'ac',   name:'Central AC / heat-pump condenser', where:'outdoors on its pad', v:240, brk:'2P 30 A', wire:'#10 Cu', c:['l1','l2','g'], nom:3.3, ico:'fan',
+   prof:t=>3.3*acDuty(t), does:'The outdoor half of the central air: compressor plus condenser fan. In a Florida summer it is the biggest load in the house, cycling most of the day and much of the night. A 240 V load: it uses L1 and L2 and needs no neutral.'},
+  {id:'ahu',  name:'Air handler (blower + 10 kW heat strips)', where:'garage or attic', v:240, brk:'2P 60 A', wire:'#6 Cu', c:['l1','l2','g'], nom:0.5, ico:'fan',
+   prof:t=>0.5*acDuty(t), does:'Indoor blower and coil. The breaker is big because of the electric heat strips used on the few cold mornings a year; in summer only the ~0.5 kW blower runs, whenever the condenser does.'},
+  {id:'wh',   name:'Electric water heater, 50 gal', where:'garage', v:240, brk:'2P 30 A', wire:'#10 Cu', c:['l1','l2','g'], nom:4.5, ico:'tank',
+   prof:t=>((t>=6.5&&t<7.5)||(t>=18.75&&t<19.75))?3.4:0, does:'Two 4.5 kW elements (only one heats at a time). It runs in bursts after showers and dishes, and it is one of the first loads a backup system sheds.'},
+  {id:'pool', name:'Pool pump (variable speed)', where:'outdoors, pool equipment pad', v:240, brk:'2P 20 A', wire:'#12 Cu', c:['l1','l2','g'], nom:1.1, ico:'pump',
+   prof:t=>(t>=9&&t<17)?1.1:0, does:'The pool filter pump, scheduled through the sunny hours so it runs on solar. A Florida staple; pool equipment also needs equipotential bonding (a separate #8 bonding grid), not shown here.'},
+  {id:'ev',   name:'EV charger (Level 2, 32 A)', where:'garage wall', v:240, brk:'2P 40 A', wire:'#8 Cu', c:['l1','l2','g'], nom:7.7, ico:'ev',
+   prof:t=>(t>=22.5||t<1.5)?7.7:0, does:'A 32 A charger is a continuous load, so the breaker is 125% of 32 = 40 A. At 7.7 kW it outruns a 5 kW battery, which is why backup systems shed it.'},
+  {id:'kit',  name:'Kitchen: fridge & counter receptacles', where:'kitchen', v:120, brk:'1P 20 A (L1)', wire:'#12 Cu', c:['h','n','g'], nom:1.6, ico:'plug',
+   prof:t=>0.15+((t>=17.5&&t<19)?1.4:0)+((t>=7&&t<7.75)?1.0:0), does:'A 120 V circuit: one hot from L1 plus the neutral. The current goes out on the black wire and comes back on the white one. Kitchen counters need GFCI and AFCI protection.'},
+  {id:'lts',  name:'Lights & bedroom receptacles', where:'whole house', v:120, brk:'1P 15 A (L2)', wire:'#14 Cu', c:['h','n','g'], nom:0.6, ico:'bulb',
+   prof:t=>0.08+((t>=18.5&&t<23.5)?0.45:0)+((t>=6&&t<8)?0.2:0), does:'A 120 V circuit fed from L2. Spreading 120 V circuits across L1 and L2 keeps the two legs balanced, so less current returns on the service neutral. Bedrooms need AFCI protection.'},
+];
+function acDuty(t){ const day = Math.sin(Math.PI*(t-8)/15); return (t>=8&&t<23)? 0.3+0.6*Math.max(0,day) : 0.3; }
+const LM = Object.fromEntries(LOADS.map(l=>[l.id,l]));
+const SHED_FIRST = ['ev','pool','wh'], SHED_NEXT = ['ac','ahu'];
+
+/* =====================================================================
+   2. COMPONENTS — what each box is and does
+   ===================================================================== */
+const COMPS = [
+ {id:'mod', mark:'PV-1…20', name:'Solar modules (20 × 400 W)', grp:'Array',
+  brief:'Twenty 400 W panels, 8.0 kW DC. Each one is a sheet of silicon cells that turns sunlight into direct current.',
+  does:`<p>A module is cells wired in series behind glass. Light knocks electrons loose in each cell; wired in series, the cells add up to about <b>37 V at 10.8 A</b> at the maximum-power point (45 V open circuit). Florida heat costs about 0.3% of output for every °C above 25°C, and roof-mounted cells run 30–40°C hotter than the air, so expect roughly 10% less than the nameplate on a summer afternoon.</p>
+  <p>The cells sit in three groups, each with a <b>bypass diode</b> in the module’s junction box. When a palm frond shades one group, its diode lets the current go around it instead of dragging down the whole string.</p>`,
+  fl:'Use modules with a Florida Solar Energy Center or IEC salt-mist listing near the coast. The frame is bonded to the rail (the clamps bite through the anodizing), which makes the module part of the grounding path.',
+  code:'NEC 690.43: module frames and racking are bonded. 690.7: maximum system voltage uses the coldest expected temperature (rarely below freezing in Florida, so the voltage margin is easy).'},
+ {id:'rsd', mark:'MLPE', name:'Module-level rapid-shutdown device (×20)', grp:'Array', when:c=>c.arch==='string',
+  brief:'A small box under each module that connects it to the string only while the inverter keeps sending a "keep-alive" signal.',
+  does:`<p>Each device sits between its module and the string. While it hears the inverter’s keep-alive signal (sent over the DC wires themselves, or by wireless on some brands), it passes the module’s power through. When the signal stops (rapid-shutdown button, AC disconnect opened, grid lost with no battery), every device opens within 30 seconds. Each module is then isolated and the string voltage collapses from ~340 V to a few volts, even in full sun.</p>
+  <p>Some brands (optimizers) also track each module’s maximum-power point on its own, so one shaded module doesn’t pull down the other nine.</p>`,
+  fl:'Florida fire departments expect rapid shutdown on every rooftop system. It’s what makes it safe to cut a vent hole through a roof that’s covered in panels.',
+  code:'NEC 690.12 (2020): outside the array boundary, ≤ 30 V within 30 s; inside it, ≤ 80 V within 30 s, or a listed PV hazard-control system.'},
+ {id:'micro', mark:'MI', name:'Microinverter (×20)', grp:'Array', when:c=>c.arch==='micro',
+  brief:'A small inverter under each module that turns its ~37 V DC into 240 V AC right on the roof.',
+  does:`<p>Each module has its own inverter, so the only DC is the short lead between the module and the micro. The ten micros in a row are wired <b>in parallel</b> on one AC trunk cable, so their currents add (about 1.3 A each at 240 V) and their voltages don’t.</p>
+  <p>A micro only switches on when it sees healthy 240 V at 60 Hz on its trunk, from the grid or from a battery that is forming a grid. With no grid and no battery it stays off. That is anti-islanding, done twenty times over.</p>`,
+  fl:'Because there’s no high-voltage DC on the roof, rapid shutdown is built in: open the AC disconnect and the trunk goes dead.',
+  code:'NEC 690.12 is met by the micros themselves. 690.8 / 705.28: a 20 A branch breaker limits each trunk to about 13 micros of this size.'},
+ {id:'rail', mark:'RK-1', name:'Racking: rails, flashed L-feet, clamps', grp:'Array',
+  brief:'Aluminium rails screwed through flashed L-feet into the roof trusses. These parts are what keep the array on the roof in a hurricane.',
+  does:`<p>Two rails per row, attached to the trusses every 4 ft or less with structural screws through flashing. Mid and end clamps hold the modules. The rails are bonded together and to the equipment grounding conductor, so every metal part is at earth potential.</p>`,
+  fl:'This is where Florida differs most. Attachments are engineered for the site\'s design wind speed (about 130 mph in parts of north Florida, 175 mph or more in South Florida and the Keys) and roof zone; corners and edges get closer spacing. In Miami-Dade and Broward (the High-Velocity Hurricane Zone) the racking needs a Miami-Dade NOA or Florida product approval. Arrays usually stay back from ridges and edges for wind and fire access.',
+  code:'Florida Building Code (Residential/Building) wind provisions, ASCE 7 components-and-cladding pressures; NEC 690.43 bonding.'},
+ {id:'jb', mark:'JB-1', name:'Rooftop junction box', grp:'Array',
+  brief:'Where the module wiring (PV wire, in open air under the array) changes to building wire in conduit for the trip down to the equipment.',
+  does:`<p>The cables under the modules are sunlight-resistant PV wire with snap-together MC4 connectors. At the J-box they land on terminals and continue as THWN-2 in metal conduit down the wall. The box is flashed to the roof; nothing in it switches.</p>`,
+  fl:'Keep conduit runs on the roof short and off the surface; Florida roof-surface temperatures push conductor ampacity correction factors hard.',
+  code:'NEC 690.31: PV wiring methods; 310.15 ambient-temperature corrections for conduit on roofs.'},
+ {id:'inv', mark:'INV-1', name:'String inverter, 7.6 kW', grp:'Power conversion', when:c=>c.arch==='string',
+  altName:'Hybrid inverter, 7.6 kW (solar + battery)',
+  brief:'Turns the strings\' ~340 V DC into 240 V, 60 Hz AC that matches the grid. With a battery, it also charges and discharges the battery on its DC bus.',
+  does:`<p>Inside: a DC disconnect, arc-fault and ground-fault detection, an MPPT stage that keeps adjusting the string voltage to get the most power, a ~400 V DC bus, and an H-bridge that chops the DC into a 60 Hz sine wave synchronized to the grid. Relays at the output open within 2 s if the grid voltage or frequency goes out of range.</p>
+  <p>It also sends the keep-alive signal that holds the module-level shutdown devices on.</p>`,
+  hybrid:`<p><b>DC-coupled battery:</b> the battery hangs on the inverter’s DC bus through a two-way DC-DC converter. Solar can charge the battery without being converted to AC first, and solar that would be clipped above the inverter’s 7.6 kW AC limit can go into the battery instead.</p>`,
+  fl:'Mount it out of afternoon sun if possible (it derates when hot) and above the flood elevation. Coastal installs need corrosion-resistant enclosures and stainless hardware.',
+  code:'UL 1741 / IEEE 1547 listing (grid-support "SA/SB"). NEC 690.11 arc-fault and 690.41(B) ground-fault protection are built in. Output circuit 7.6 kW ÷ 240 V = 31.7 A × 125% = 40 A breaker, #8 Cu.'},
+ {id:'cmb', mark:'CMB-1', name:'AC combiner panel + monitoring gateway', grp:'Power conversion', when:c=>c.arch==='micro',
+  brief:'A small panel where the two microinverter branch circuits each land on a 20 A breaker and combine into one 240 V output.',
+  does:`<p>Two 2-pole 20 A breakers, one per trunk, feed a small bus. Its output (about 27 A at full sun) leaves through a 40 A circuit. The monitoring gateway inside talks to the micros over the power wires and measures production with a CT.</p>`,
+  fl:'Same as any outdoor panel in Florida: NEMA 3R minimum, corrosion-rated near salt water, mounted above flood level.',
+  code:'NEC 705.12 / 690.9 overcurrent protection; 6.4 kW ÷ 240 V = 26.7 A × 125% = 33 A, so a 40 A breaker and #8 Cu.'},
+ {id:'bat', mark:'BAT-1', name:'Battery, 13.5 kWh (lithium iron phosphate)', grp:'Storage', when:c=>c.batt,
+  brief:'Stores 13.5 kWh and delivers up to 5 kW continuously. It charges from solar and carries the house at night or through an outage.',
+  does:`<p>Racks of lithium cells behind a battery-management system (BMS) that watches every cell’s voltage and temperature and opens an internal contactor if anything goes wrong. Two limits matter: <b>energy</b> (13.5 kWh: how long) and <b>power</b> (5 kW continuous, about 7 kW for a few seconds: how much at once). A 7.7 kW EV charger alone is more than it can deliver.</p>`,
+  dc:`<p><b>DC-coupled (this setup):</b> the battery connects to the hybrid inverter on high-voltage DC (≈400 V). One inverter does both jobs.</p>`,
+  ac:`<p><b>AC-coupled (this setup):</b> the battery has its own built-in inverter and connects to the gateway at 240 V AC, like a second solar system that can run backward. This is how batteries are added to existing microinverter systems. In an outage, its inverter forms the grid the micros sync to.</p>`,
+  fl:'Mount it above the design flood elevation (garage floors flood in surge zones), out of direct sun, and within the fire-code limits: individual units ≤ 20 kWh, and aggregate limits for garages and outdoor walls (NFPA 855 / residential-code ESS rules). Most installers in Florida mount it on the outside garage wall or inside the garage.',
+  code:'NEC 706 (energy storage), UL 9540 system listing, UL 9540A fire test; NFPA 855.'},
+ {id:'acd', mark:'ACD-1', name:'PV AC disconnect', grp:'Interconnection',
+  brief:'A lockable switch that visibly opens the solar output. Lets a line worker or electrician isolate the PV.',
+  does:`<p>A non-fused safety switch: two blades open L1 and L2 together. Neutral and ground pass straight through and are never switched. Many Florida utilities and inspectors want it within sight of the meter, labelled, and lockable open.</p>`,
+  micro:`<p><b>With microinverters it is also the rapid-shutdown initiator.</b> Opening it removes 240 V from the trunks, and every micro stops within seconds.</p>`,
+  fl:'The utility (FPL, Duke Energy Florida, TECO and others) checks this during the interconnection inspection before installing the net meter.',
+  code:'NEC 690.13 / 690.15 disconnecting means; 705.20; labelling per 690.13(B).'},
+ {id:'rsi', mark:'RSI', name:'Rapid-shutdown initiator', grp:'Interconnection', when:c=>c.arch==='string',
+  brief:'The red switch firefighters use. Turning it off stops the inverter\'s keep-alive signal, so every module on the roof isolates itself.',
+  does:`<p>It’s a low-voltage control switch, not a power switch. It cuts the signal (or the inverter’s AC output) that holds the module-level devices on. Within 30 seconds the conductors that leave the array drop to 30 V or less.</p>`,
+  fl:'Mounted at the service with the reflective "SOLAR PV SYSTEM EQUIPPED WITH RAPID SHUTDOWN" label so it can be found in the dark and smoke.',
+  code:'NEC 690.12(C) initiation device at a readily accessible location; label per 690.56(C).'},
+ {id:'gw', mark:'GW-1', name:'Backup gateway (islanding switch)', grp:'Interconnection', when:c=>c.batt,
+  brief:'Sits between the meter and the house. When the grid fails it opens a contactor, cutting the house off from the utility, so the battery and solar can run the house safely.',
+  does:`<p>Inside: a motorized <b>contactor</b> rated for the whole service, current transformers on the grid conductors, breakers where the solar and battery land, and a controller. It watches the grid; on an outage it opens the contactor in a fraction of a second. The house becomes an island (a microgrid) and the battery inverter forms the voltage and frequency. When the grid has been stable for a few minutes, it re-synchronizes and closes again.</p>
+  <p>It also runs the load-shedding relays: during an outage it drops the EV charger, pool pump and water heater, and the AC too if the battery can’t carry it.</p>`,
+  fl:'This box is the difference between "solar" and "solar that works after a hurricane." Whole-home backup with a single battery usually relies on this load shedding and a soft-starter on the AC compressor.',
+  code:'NEC 705.11/705.12 (connection), 706, 702 (optional standby), and the transfer equipment must be listed for the service it is on. The open contactor is what guarantees no backfeed onto utility lines.'},
+ {id:'ct', mark:'CT', name:'Current transformers on the service conductors', grp:'Interconnection', when:c=>c.batt,
+  brief:'Clamp-on rings around L1 and L2 that let the gateway measure exactly how much power is crossing the meter, and in which direction.',
+  does:`<p>A CT is a coil the wire passes through. AC current in the conductor induces a small, proportional current in the coil, read by the gateway. That reading drives the self-powered logic: if the house is importing, discharge the battery; if exporting, charge it.</p>`,
+  fl:'A CT clamped backward makes the battery do exactly the wrong thing. It’s one of the most common commissioning errors.',
+  code:'Listed with the gateway; no separate NEC sizing.'},
+ {id:'mm', mark:'MM-1', name:'Meter-main: net meter + 200 A main breaker', grp:'Service',
+  brief:'The utility\'s bidirectional meter and your 200 A main breaker (the service disconnect) in one outdoor enclosure. Neutral and ground are bonded here and only here.',
+  does:`<p>The meter counts energy both ways on two registers: <b>delivered</b> (you bought) and <b>received</b> (you exported). The main breaker below it is the service disconnect for the whole house.</p>
+  <p>The <b>main bonding jumper</b> ties the neutral bar to the enclosure and the grounding electrode conductor. That single bond is what lets a ground fault anywhere trip a breaker. Downstream panels keep neutral and ground separate.</p>`,
+  fl:'When the system passes inspection, the utility swaps the meter for a net meter. Under Florida PSC Rule 25-6.065 (investor-owned utilities such as FPL, Duke Energy Florida, TECO), exported kWh offset purchased kWh one-for-one each month; leftover credits roll forward and are paid out once a year at the utility\'s much lower avoided-cost rate. Co-ops and municipal utilities set their own rules. Check the current tariff.',
+  code:'NEC 230 (services), 250.24 (bonding at the service), 230.67 surge protection required for dwelling services.'},
+ {id:'xf', mark:'XF', name:'Utility pad-mount transformer', grp:'Service',
+  brief:'Steps the neighbourhood\'s ~7,200 V line down to 120/240 V split phase. The utility owns it.',
+  does:`<p>The secondary winding is centre-tapped. The two ends are L1 and L2 (240 V apart, 180° out of phase) and the centre tap is the neutral, bonded to earth at the transformer. Either hot to neutral is 120 V. That’s why a house has both 120 V and 240 V circuits with only three service wires.</p>
+  <p>It works in reverse too. When the house exports, solar power flows up through this transformer to the neighbours. That’s why anti-islanding matters: during an outage, backfeed would come out of this transformer at 7,200 V onto a line someone is repairing.</p>`,
+  fl:'Most Florida subdivisions built since the 1980s are fed underground from pad-mounts like this one; older neighbourhoods have pole transformers and an overhead drop. The electrical idea is the same.',
+  code:'Utility equipment, outside the NEC. The service lateral is the utility\'s or yours depending on the utility; often 4/0 Al.'},
+ {id:'gnd', mark:'GE', name:'Grounding electrodes (rods / slab Ufer)', grp:'Service',
+  brief:'The connection to earth: two driven rods 6 ft apart, plus the steel in the slab footing if one was bonded at construction.',
+  does:`<p>Grounding to earth limits voltage from lightning and from utility surges, and keeps the system referenced to earth. It does <b>not</b> clear faults; the bonded equipment grounding conductors do that. Lightning is the big one in Florida, which has more cloud-to-ground strikes per square mile than any other state.</p>`,
+  fl:'Florida slab-on-grade homes often have a concrete-encased electrode (Ufer) in the footing. If present, it must be used. Sandy soil makes rods alone a mediocre electrode.',
+  code:'NEC 250.50–250.53 (#6 Cu GEC to rods, #4 Cu to a Ufer); 690.47 PV systems use the existing electrode system.'},
+ {id:'mp', mark:'LP-1', name:'Load panel, 200 A bus', grp:'House',
+  brief:'Distributes power to the house circuits. Fed from the meter-main or gateway at the bottom; without a battery, the solar back-feeds a breaker at the top.',
+  does:`<p>Two hot busbars (L1, L2) run up the centre. Breaker positions alternate L1/L2, so a 2-pole breaker always grabs both legs (240 V) and a 1-pole grabs one (120 V). The <b>neutral bars</b> sit on insulators and are tied left-to-right by a strap; the <b>ground bars</b> are screwed to the can. Because the main bonding jumper is upstream in the meter-main, neutral and ground are deliberately kept apart here.</p>
+  <p>Power doesn’t know where it came from. Solar back-fed at the top and grid fed at the bottom share the same copper, and the loads draw from whatever is on the bus.</p>`,
+  fl:'Most Florida garages already have this panel; adding solar usually means checking the 120% rule (Code tab) before deciding between a back-fed breaker, a supply-side tap or a main-breaker derate.',
+  code:'NEC 705.12(B)(3)(2), the 120% rule: busbar × 1.2 ≥ main + 125% of inverter current, with the PV breaker at the opposite end from the main. 408.36, 250.142(B) (no neutral-ground bond downstream).'},
+ {id:'pvb', mark:'CB-PV', name:'PV back-fed breaker, 2P 40 A', grp:'House', parent:'mp', when:c=>!c.batt,
+  brief:'The breaker the solar comes in through. It\'s fed from the wire end instead of the bus end, which is why it must be at the opposite end of the busbar from the main.',
+  does:`<p>An ordinary 2-pole breaker, back-fed. With 200 A from the main at one end and 40 A of solar at the other, no single point of the busbar sees more than 200 A, as long as they’re at opposite ends. It must be bolted or clamped in place and labelled.</p>`,
+  fl:'Sized 7.6 kW ÷ 240 V × 1.25 = 39.6 A, so 40 A. That’s exactly the 120% limit of a 200 A bus with a 200 A main, which is why 7.6 kW is such a common Florida inverter size.',
+  code:'NEC 705.12(B)(2), 705.12(B)(3)(2), 408.36(D) (back-fed breakers secured).'},
+ {id:'spd', mark:'SPD', name:'Surge protective device', grp:'House', parent:'mp',
+  brief:'Clamps lightning and switching surges on L1/L2 to ground before they reach electronics. Required on new and replaced dwelling services.',
+  does:`<p>Metal-oxide varistors between each hot, neutral and ground. A surge pushes them into conduction for microseconds and the energy goes to the grounding system. The inverter also has its own DC and AC surge protection.</p>`,
+  fl:'Cheap insurance in the lightning capital of the US. Check its status light after storms; MOVs wear out.',
+  code:'NEC 230.67 (2020): Type 1 or 2 SPD for dwelling-unit services; 242.'},
+];
+LOADS.forEach(l=>COMPS.push({id:l.id, mark:l.brk.split(' (')[0], name:l.name, grp:'Loads', load:true,
+  brief:l.does.split('. ')[0]+'.', does:`<p>${l.does}</p>`, fl:'', code:`${l.v} V · ${l.brk} breaker · ${l.wire} · ${l.where}`}));
+const CM = Object.fromEntries(COMPS.map(c=>[c.id,c]));
+const compName = (id,cfg)=>{ const c=CM[id]; if(!c) return id; return (id==='inv'&&cfg&&cfg.batt&&c.altName)? c.altName : c.name; };
+
+/* =====================================================================
+   3. RUNS — every wire run, as geometry in plate coordinates
+   ===================================================================== */
+const MX = k=>60+k*82, MCX = k=>MX(k)+37, MW=74, MH=108;
+const ROWS = [{y:66, yc:182, lead:167},{y:196, yc:312, lead:297}];
+const LROW = i=>432+i*62;                     // load / breaker row centres
+const SPINE = 897;                            // service & feeder height
+function buildRuns(c){
+  const R = [];
+  const add = r=>R.push(r);
+  // --- array
+  add({id:'egc', name:'Array bonding & ground (EGC)', grp:'Grounding & bonding', from:'rail', to:'jb', kind:'gnd',
+    segs:[{pts:[[906,96],[906,160],[915,160]],c:['g']},{pts:[[906,274],[906,226],[915,226]],c:['g']}],
+    spec:'#6 bare Cu, or #10 in the conduit', carries:'Normally no current. It bonds rails and module frames together and back to the service ground, so a damaged wire touching a frame trips the protection instead of energizing the roof.'});
+  if(c.arch==='string'){
+    ROWS.forEach((row,r)=>{
+      const segs=[];
+      const plus = r===0 ? [[MCX(0)-6,row.lead],[MCX(0)-6,row.yc],[46,row.yc],[46,52],[945,52],[945,150]]
+                         : [[MCX(0)-6,row.lead],[MCX(0)-6,328],[950,328],[950,250]];
+      const minus = r===0 ? [[MCX(9)+6,row.lead],[MCX(9)+6,row.yc],[915,row.yc]]
+                          : [[MCX(9)+6,row.lead],[MCX(9)+6,row.yc],[925,row.yc],[925,250]];
+      segs.push({pts:plus,c:['p']});
+      for(let k=0;k<9;k++) segs.push({pts:[[MCX(k)+6,row.lead],[MCX(k)+6,row.yc],[MCX(k+1)-6,row.yc],[MCX(k+1)-6,row.lead]],c:['x']});
+      segs.push({pts:minus,c:['m']});
+      add({id:'s'+(r+1), name:`String ${r+1} (PV source circuit)`, grp:'DC: solar', from:'mod', to:'jb', kind:'dc', segs,
+        spec:'#10 PV wire (USE-2/PV), MC4 connectors', carries:`Ten modules in series: the + of each module’s shutdown device is jumpered to the − of the next, so the voltages add (~10 × 34 V) and the same ~9–10 A flows through all of them. The + and − home runs carry that current back to the J-box.`,
+        lab:r===0?[520,40]:[520,341]});
+    });
+    add({id:'dch', name:'PV source circuits, roof → inverter', grp:'DC: solar', from:'jb', to:'inv', kind:'dc',
+      segs:[{pts:[[975,200],[1000,200],[1000,410]],c:['p','m','p','m','g']}],
+      spec:'4 × #10 THWN-2 + #10 EGC in ¾″ EMT', carries:'Both strings, still separate (S1+, S1−, S2+, S2−), plus the equipment ground, in metal conduit down the wall. Up to ~400 V DC when the shutdown devices are on.', lab:[1032,300]});
+    add({id:'rsig', name:'Rapid-shutdown signal', grp:'Control & comms', from:'rsi', to:'inv', kind:'com',
+      segs:[{pts:[[1240,420],[1240,395],[1040,395],[1040,410]],c:['c']}],
+      spec:'2-conductor low-voltage control cable', carries:'Tells the inverter to stop its keep-alive signal. With the switch off, the inverter stops and the module devices open.'});
+    add({id:'iac', name:c.batt?'Hybrid inverter AC output':'Inverter output circuit', grp:'AC: solar & battery', from:'inv', to:'acd', kind:'ac',
+      segs:[{pts:[[1060,460],[1110,460]],c:['l1','l2','n','g']}],
+      spec:'3 × #8 THWN-2 + #10 EGC in ¾″ conduit', carries:'240 V AC from the inverter. Neutral is used for voltage sensing (and, on hybrids, to serve 120 V loads when islanded).'});
+    if(c.batt){
+      add({id:'bdc', name:'Battery DC circuit', grp:'DC: battery', from:'bat', to:'inv', kind:'dc',
+        segs:[{pts:[[985,600],[985,550]],c:['bp','bm','g']}],
+        spec:'2 × #6 THWN-2 (DC) + #10 EGC', carries:'High-voltage DC (~400 V) between the battery and the hybrid inverter\'s DC bus. Current flows up when discharging and down when charging.', lab:[955,575]});
+      add({id:'bcom', name:'Battery ⇄ inverter communication', grp:'Control & comms', from:'bat', to:'inv', kind:'com',
+        segs:[{pts:[[1040,600],[1040,550]],c:['c']}], spec:'CAN / RS-485 twisted pair', carries:'State of charge, cell temperatures, charge and discharge limits from the BMS; commands back from the inverter.'});
+      add({id:'icom', name:'Inverter ⇄ gateway communication', grp:'Control & comms', from:'inv', to:'gw', kind:'com',
+        segs:[{pts:[[1060,535],[1088,535],[1088,800],[1110,800]],c:['c']}], spec:'RS-485 twisted pair', carries:'Grid status and CT readings from the gateway; the inverter is told when to island and how hard to charge or discharge.'});
+    }
+  } else {
+    ROWS.forEach((row,r)=>{
+      const segs=[{pts: r===0?[[54,row.yc],[915,row.yc]]:[[54,row.yc],[925,row.yc],[925,250]], c:['l1','l2']}];
+      for(let k=0;k<10;k++) segs.push({pts:[[MCX(k),row.lead],[MCX(k),row.yc]],c:['l1','l2']});
+      add({id:'b'+(r+1), name:`Branch circuit ${r+1}: microinverter trunk cable`, grp:'AC: solar & battery', from:'micro', to:'jb', kind:'ac', segs,
+        spec:'Manufacturer trunk cable (2 × #12), 20 A max', carries:'Ten microinverters in parallel on one 240 V cable. Each adds about 1.3 A, so the end nearest the J-box carries the most (about 13 A at full sun). The far end is capped.',
+        lab:r===0?[520,40]:[520,341]});
+    });
+    add({id:'ach', name:'Branch circuits, roof → AC combiner', grp:'AC: solar & battery', from:'jb', to:'cmb', kind:'ac',
+      segs:[{pts:[[975,200],[1000,200],[1000,410]],c:['l1','l2','l1','l2','g']}],
+      spec:'4 × #10 THWN-2 + #10 EGC in ¾″ EMT', carries:'Both trunks continue separately (B1 L1/L2, B2 L1/L2) down to their own 20 A breakers in the combiner. This is ordinary 240 V AC; there is no high-voltage DC anywhere.', lab:[1032,300]});
+    add({id:'iac', name:'AC combiner output circuit', grp:'AC: solar & battery', from:'cmb', to:'acd', kind:'ac',
+      segs:[{pts:[[1060,460],[1110,460]],c:['l1','l2','n','g']}],
+      spec:'3 × #8 THWN-2 + #10 EGC', carries:'All 20 micros combined: up to 6.4 kW, about 27 A on each hot.'});
+    if(c.batt){
+      add({id:'bac', name:'Battery AC circuit (AC-coupled)', grp:'AC: solar & battery', from:'bat', to:'gw', kind:'ac',
+        segs:[{pts:[[1060,780],[1110,780]],c:['l1','l2','n','g']}],
+        spec:'3 × #10 THWN-2 + #10 EGC, 30 A breaker', carries:'The battery\'s own inverter output: 240 V AC, both directions. It charges by drawing AC from the gateway bus and discharges by pushing AC into it.'});
+      add({id:'bcom', name:'Battery ⇄ gateway communication', grp:'Control & comms', from:'bat', to:'gw', kind:'com',
+        segs:[{pts:[[1060,808],[1110,808]],c:['c']}], spec:'CAN / RS-485 twisted pair', carries:'Charge and discharge commands, state of charge, and the islanding handshake.'});
+    }
+  }
+  if(c.batt){
+    add({id:'agw', name:'Solar circuit, disconnect → gateway', grp:'AC: solar & battery', from:'acd', to:'gw', kind:'ac',
+      segs:[{pts:[[1145,505],[1145,770]],c:['l1','l2','n','g']}], spec:'3 × #8 THWN-2 + #10 EGC', carries:'Solar lands on a breaker inside the gateway, on the house side of the islanding contactor, so it can keep running the house (and charging the battery) during an outage.', lab:[1180,640]});
+  } else {
+    add({id:'amp', name:'Solar circuit, disconnect → load panel', grp:'AC: solar & battery', from:'acd', to:'pvb', kind:'ac',
+      segs:[{pts:[[1145,505],[1145,575],[890,575],[890,440],[880,440]],c:['l1','l2','n','g']}], spec:'3 × #8 THWN-2 + #10 EGC', carries:'Through the garage wall to the 40 A back-fed breaker at the top of the load panel.', lab:[1020,575]});
+  }
+  add({id:'svc', name:'Service lateral (utility)', grp:'Service & feeder', from:'xf', to:'mm', kind:'ac',
+    segs:[{pts:[[1510,930],[1510,965],[1400,965],[1400,910]],c:['l1','l2','n']}],
+    spec:'3 × 4/0 Al (two hots, one neutral), underground', carries:'The utility\'s 120/240 V service: two hots and a neutral, no separate ground. The neutral is grounded at the transformer and at your service. Flows in when you import and out when you export.', lab:[1455,965]});
+  if(c.batt){
+    add({id:'fgw', name:'Service feeder, meter-main → gateway', grp:'Service & feeder', from:'mm', to:'gw', kind:'ac',
+      segs:[{pts:[[1320,SPINE],[1250,SPINE]],c:['l1','l2','n','g']}], spec:'3 × 4/0 Al + #4 Al EGC', carries:'Everything the house buys or sells passes through here and through the CTs.'});
+    add({id:'gmp', name:'Feeder, gateway → load panel', grp:'Service & feeder', from:'gw', to:'mp', kind:'ac',
+      segs:[{pts:[[1110,SPINE],[880,SPINE]],c:['l1','l2','n','g']}], spec:'3 × 4/0 Al + #4 Al EGC', carries:'The whole house load, whether it comes from the grid, the solar or the battery. In an outage this side stays live while the grid side is dead.', lab:[990,920]});
+    add({id:'ctl', name:'CT leads', grp:'Control & comms', from:'ct', to:'gw', kind:'com',
+      segs:[{pts:[[1285,884],[1285,850],[1250,850]],c:['c']}], spec:'Twisted pair from each CT', carries:'A small current proportional to the service current, so the gateway knows exactly what is crossing the meter.'});
+  } else {
+    add({id:'fdr', name:'Feeder, meter-main → load panel', grp:'Service & feeder', from:'mm', to:'mp', kind:'ac',
+      segs:[{pts:[[1320,SPINE],[880,SPINE]],c:['l1','l2','n','g']}], spec:'3 × 4/0 Al + #4 Al EGC', carries:'A 4-wire feeder. Neutral and ground run separately from here on because the main bonding jumper is upstream in the meter-main. Flows backward toward the meter when solar exceeds the house load.', lab:[1100,920]});
+  }
+  add({id:'gec', name:'Grounding electrode conductor', grp:'Grounding & bonding', from:'mm', to:'gnd', kind:'gnd',
+    segs:[{pts:[[1335,910],[1335,945]],c:['gec']},{pts:[[1335,952],[1285,952],[1285,945]],c:['gec']}],
+    spec:'#6 bare Cu to rods (#4 Cu to a slab Ufer)', carries:'Connects the bonded neutral/ground at the service to the earth electrodes. It carries current only during lightning or utility faults.'});
+  LOADS.forEach((l,i)=>add({id:'br-'+l.id, name:`Branch circuit: ${l.name}`, grp:'Branch circuits', from:'mp', to:l.id, kind:'ac',
+    segs:[{pts:[[660,LROW(i)],[600,LROW(i)]],c:l.c}], spec:`${l.wire}, ${l.c.length===3&&l.v===240?'2 hots + ground':'hot + neutral + ground'} · ${l.brk}`,
+    carries:l.v===240?'240 V across L1 and L2. Current goes out on one leg and back on the other, so no neutral is needed.':'120 V from one leg. Current goes out on the black hot and returns on the white neutral.'}));
+  return R;
+}
+
+/* =====================================================================
+   4. SCENARIOS
+   ===================================================================== */
+const SCEN = [
+ {id:'noon', name:'Sunny noon', set:{t:12.5, sky:'clear', grid:true, rsd:false, soc:0.55},
+  head:'Sunny noon: the array makes more than the house uses',
+  steps:c=>[
+   {t:'Sunlight on 20 modules: about 6.5 kW of DC after Florida heat derating. Each module makes ~34 V at ~10 A.', ids:['mod']},
+   c.arch==='string'
+    ? {t:'In each row, ten modules are wired in series through their shutdown devices, so the voltages add: about 340 V DC per string at ~9.5 A. The + and − home runs close each loop at the J-box.', ids:['rsd','s1','s2','jb']}
+    : {t:'Each module feeds its own microinverter, which makes 240 V AC on the roof. Ten micros per row share a trunk cable in parallel, so their currents add.', ids:['micro','b1','b2','jb']},
+   c.arch==='string'
+    ? {t:'Four PV conductors plus a ground run down in conduit to the inverter, which converts DC to 240 V, 60 Hz AC locked to the grid.', ids:['dch','inv']}
+    : {t:'The two trunks run down to the AC combiner, each on its own 20 A breaker, and combine into one 240 V output.', ids:['ach','cmb']},
+   {t:'The AC goes through the PV AC disconnect.', ids:['iac','acd']},
+   c.batt
+    ? {t:'From the disconnect it goes into the gateway. The house takes what it needs first; with the battery in self-powered mode, up to 5 kW of the surplus charges it.', ids:['agw','gw',c.arch==='string'?'bdc':'bac','bat','gmp','mp']}
+    : {t:'From the disconnect it lands on the 40 A back-fed breaker at the top of the load panel. The loads draw from the busbar; solar supplies them first because it holds the bus a fraction of a volt higher than the grid.', ids:['amp','pvb','mp']},
+   {t:'The rest goes backward through the feeder, the meter and the transformer to the neighbours. The net meter counts it as "received"; under Florida net metering each exported kWh offsets a kWh bought later.', ids:[c.batt?'fgw':'fdr','mm','svc','xf']},
+  ]},
+ {id:'morning', name:'Morning ramp', set:{t:7.25, sky:'clear', grid:true, rsd:false, soc:0.35},
+  head:'Early morning: low sun, hot showers, breakfast',
+  steps:c=>[
+   {t:'The sun is barely up and the array makes a few hundred watts.', ids:['mod']},
+   {t:'The water heater (3–4.5 kW on L1 + L2) and the kitchen circuit are running.', ids:['wh','br-wh','kit','br-kit']},
+   c.batt&&c.bmode==='self'
+    ? {t:'The battery covers the gap down to its 20% reserve, so the meter barely moves.', ids:['bat','gw']}
+    : {t:'The grid covers the gap: power flows in through the transformer, meter and feeder. The meter\'s "delivered" register counts up.', ids:['xf','svc','mm',c.batt?'fgw':'fdr']},
+   {t:'All sources meet at the panel busbar. Solar, battery and grid share it; the loads don\'t care which electrons are which.', ids:['mp']},
+  ]},
+ {id:'peak', name:'Afternoon AC peak', set:{t:16.5, sky:'clear', grid:true, rsd:false, soc:0.9},
+  head:'4:30 pm in July: the AC runs flat out',
+  steps:c=>[
+   {t:'The condenser and air handler are near full duty: ~3.5 kW, both 240 V loads on L1 + L2.', ids:['ac','br-ac','ahu','br-ahu']},
+   {t:'The pool pump is still on its sunny-hours schedule.', ids:['pool','br-pool']},
+   {t:'The array is past its peak and losing output to heat, but it still covers most of the house.', ids:['mod']},
+   {t:'Whether the meter turns forward or backward depends on the clouds. Try "Passing clouds" in the Sky menu.', ids:['mm']},
+  ]},
+ {id:'evening', name:'After sunset', set:{t:20.3, sky:'clear', grid:true, rsd:false, soc:0.95},
+  head:'8:15 pm: no sun, the house still needs cooling',
+  steps:c=>[
+   {t:'No solar. Lights, the AC and the kitchen are on.', ids:['ac','lts','kit']},
+   c.arch==='string'
+    ? {t:'With no sun the inverter is asleep. Its AC terminals are still live from the grid side, but no power flows.', ids:['inv','iac']}
+    : {t:'With no sun the micros are idle. The trunk cables are still at 240 V from the grid but carry no current.', ids:['micro','b1','b2']},
+   c.batt&&c.bmode==='self'
+    ? {t:'Self-powered mode: the battery discharges (up to 5 kW) to run the house, and the meter sits near zero.', ids:['bat','gw','gmp',c.arch==='string'?'bdc':'bac']}
+    : c.batt
+      ? {t:'Backup-only mode: the battery stays full for the next storm and the house buys from the grid. Under Florida\'s 1:1 net metering that costs about the same as using the battery, and it keeps the battery ready.', ids:['bat','xf','mm','fgw']}
+      : {t:'Everything comes from the grid. The credits from the afternoon\'s export are being used up.', ids:['xf','svc','mm','fdr']},
+  ]},
+ {id:'night', name:'Night EV charging', set:{t:23.2, sky:'clear', grid:true, rsd:false, soc:0.6},
+  head:'11 pm: the EV charger draws 7.7 kW',
+  steps:c=>[
+   {t:'The EV charger runs at 32 A on a 40 A, 240 V circuit.', ids:['ev','br-ev']},
+   c.batt
+    ? {t:'A 13.5 kWh battery could cover the energy but not the power: it delivers 5 kW, so the grid supplies the rest. It stops at its 20% reserve. Most owners set the car to charge from the grid and keep the battery for the house.', ids:['bat','gw','fgw']}
+    : {t:'All from the grid. Night charging uses the export credits earned at noon.', ids:['svc','mm','fdr']},
+  ]},
+ {id:'outday', name:'Hurricane outage, midday', out:true, set:{t:13, sky:'cloudy', grid:false, rsd:false, soc:0.8},
+  head:'The grid goes down after the storm passes',
+  steps:c=>c.batt?[
+   {t:'Utility voltage disappears. The gateway senses it and opens its islanding contactor in a fraction of a second. The house is now disconnected from the street.', ids:['gw','fgw','mm']},
+   {t:c.arch==='string'?'The hybrid inverter switches from following the grid to forming it: it makes 240 V, 60 Hz itself from the battery.':'The battery\'s own inverter switches to grid-forming and makes 240 V, 60 Hz. The micros see a "grid" again and restart after a short delay.', ids:c.arch==='string'?['inv','bat','bdc']:['bat','bac','micro']},
+   {t:'Solar keeps working: whatever the house doesn\'t use recharges the battery.', ids:['mod','agw']},
+   {t:'The gateway sheds the big discretionary loads (EV charger, pool pump, water heater) so the battery isn\'t overloaded.', ids:['ev','pool','wh']},
+   {t:'The service lateral and transformer stay dead. Nothing from this house can reach a line worker.', ids:['svc','xf']},
+  ]:[
+   {t:'Utility voltage disappears. The inverter\'s anti-islanding protection sees it and shuts down within 2 seconds, as UL 1741 / IEEE 1547 require.', ids:[c.arch==='string'?'inv':'micro']},
+   {t:c.arch==='string'?'With no keep-alive signal, every module\'s shutdown device opens. Even in full sun the roof conductors drop to a few volts.':'Each microinverter loses its reference voltage and stops. The trunks go dead.', ids:c.arch==='string'?['rsd','s1','s2','dch']:['b1','b2','ach']},
+   {t:'The house is dark despite 20 panels in the sun. A grid-tied inverter needs the grid to follow and cannot run the house on its own; if it kept running it could back-feed the transformer at 7,200 V onto a line someone is repairing.', ids:['mp','xf']},
+   {t:'When power returns, the inverter waits until the grid has been stable for about 5 minutes before reconnecting. To get power in an outage you need a battery and gateway (switch Battery on above).', ids:['mm']},
+  ]},
+ {id:'outnight', name:'Outage at night', out:true, set:{t:21.5, sky:'clear', grid:false, rsd:false, soc:0.7},
+  head:'Day three without power, 9:30 pm',
+  steps:c=>c.batt?[
+   {t:'Islanded and running on the battery alone. The AC, fridge and lights are on; the EV charger, pool pump and water heater are shed.', ids:['bat','gw','ac','kit','lts']},
+   {t:'Watch the state of charge. At about 2.5–3 kW average a 13.5 kWh battery lasts roughly 4–5 hours with the AC running, or most of a night with it off. Tomorrow\'s sun refills it.', ids:['bat']},
+   {t:c.arch==='micro'?'With AC-coupled micros the battery must never run completely flat: the micros need its 60 Hz signal to restart in the morning, so the system keeps a small reserve.':'DC-coupled systems can usually restart from solar in the morning even after the battery hits its cutoff, because the inverter can wake up on PV voltage.', ids:[c.arch==='micro'?'micro':'inv']},
+  ]:[
+   {t:'No grid and no battery: the solar is off and the house is dark.', ids:['mp','mm']},
+  ]},
+ {id:'full', name:'Outage, battery full', out:true, needsBatt:true, set:{t:12.3, sky:'clear', grid:false, rsd:false, soc:1.0},
+  head:'Islanded at noon with the battery already full: where does the extra solar go?',
+  steps:c=>[
+   {t:'The house needs ~3 kW (with the pool pump shed), the array could make ~6 kW, and the battery can take no more. With no grid to export to, production has to be held back.', ids:['mod','bat']},
+   c.arch==='string'
+    ? {t:'DC-coupled: the hybrid inverter simply moves the strings off their maximum-power point. The string voltage rises toward open-circuit and only the power the house needs is drawn.', ids:['inv','s1','s2','dch']}
+    : {t:'AC-coupled: the battery inverter raises the island\'s frequency, from 60.0 Hz toward 60.5–61 Hz. The micros, following their frequency-watt curves, see it and ramp down. Frequency is the signal.', ids:['bat','gw','micro','b1','b2']},
+   {t:'The gateway keeps the contactor open the whole time. When the grid returns it re-synchronizes before reconnecting.', ids:['gw']},
+  ]},
+ {id:'rsd', name:'Rapid shutdown', fault:true, set:{t:12.5, sky:'clear', grid:true, rsd:true, soc:0.6},
+  head:'Fire service initiates rapid shutdown',
+  steps:c=>[
+   c.arch==='string'
+    ? {t:'A firefighter turns off the rapid-shutdown initiator at the meter.', ids:['rsi','rsig']}
+    : {t:'A firefighter opens the PV AC disconnect, which is the rapid-shutdown initiator for a microinverter system.', ids:['acd']},
+   c.arch==='string'
+    ? {t:'The inverter stops and its keep-alive signal goes quiet. Within 30 s every module\'s device opens: wiring outside the array falls below 30 V and the modules are isolated from one another.', ids:['inv','rsd','s1','s2','dch']}
+    : {t:'The trunk cables lose voltage and every micro stops. The only DC left is inside each module and its 1 m lead to the micro.', ids:['micro','b1','b2','ach']},
+   {t:'Rapid shutdown does not de-energize the house. The grid (and battery, if any) still feed the panel; firefighters also open the main or pull the meter, and use the battery\'s own disconnect.', ids:['mm','mp'].concat(c.batt?['bat','gw']:[])},
+   {t:'The modules still make voltage in daylight. Firefighters treat them as live and don\'t cut through them.', ids:['mod']},
+  ]},
+];
+const SM = Object.fromEntries(SCEN.map(s=>[s.id,s]));
+
+/* =====================================================================
+   5. MODEL — power balance at one instant
+   ===================================================================== */
+const SIM = {arch:'string', batt:false, bmode:'self', t:12.5, sky:'clear', grid:true, rsd:false, soc:0.55,
+  playing:false, speed:1.2, mode:Object.fromEntries(LOADS.map(l=>[l.id,'auto'])), reg:{del:18342.0, rec:6120.0}, scen:'noon'};
+function sun(t){ if(t<=7||t>=19.6) return 0; return Math.pow(Math.sin(Math.PI*(t-7)/12.6),1.25); }
+function skyF(sky,t){ return sky==='clear'?1 : sky==='cloudy'? clamp(0.6+0.32*Math.sin(t*9.1)*Math.sin(t*3.7+1),0.25,1) : 0.18; }
+function loadKW(L,t,st){ const m = st.mode[L.id]; return m==='on'? L.nom : m==='off'? 0 : L.prof(t); }
+const sum = o=>Object.values(o).reduce((a,b)=>a+b,0);
+
+function model(st){
+  const arch=st.arch, hasB=st.batt, invMax=SPEC.invKW[arch];
+  const sunF = sun(st.t)*skyF(st.sky, st.t);
+  const pvDCa = SPEC.arrayKW*0.84*sunF;
+  const pvACa = Math.min(pvDCa*0.965, invMax);
+  const raw = {}; LOADS.forEach(L=>raw[L.id]=loadKW(L,st.t,st));
+  const served = {...raw}, shed = {};
+  const R = {sunF, pvACa, raw, served, shed, pv:0, batt:0, grid:0, curtail:0, dark:false, island:false, freq:60, invOn:true, mlpe:true, acdOpen:false, overload:false, empty:false};
+  const full = st.soc>=0.999, emptyB = st.soc<=0.005;
+  const pvBlocked = st.rsd;
+  if(pvBlocked){ R.mlpe=false; if(arch==='string') R.invOn=false; else R.acdOpen=true; }
+  const battBlocked = st.rsd && arch==='string';   // RSD shuts the whole hybrid inverter down
+  if(st.grid){
+    R.pv = pvBlocked? 0 : pvACa;
+    const load = sum(served);
+    if(hasB && !battBlocked){
+      const net = R.pv - load;
+      if(net>0 && !full) R.batt = -Math.min(net, SPEC.battKW);
+      else if(net<0 && st.bmode==='self' && st.soc>SPEC.reserve+0.002) R.batt = Math.min(-net, SPEC.battKW);
+    }
+    R.grid = load - R.pv - R.batt;
+  } else {
+    if(!hasB || battBlocked){
+      R.dark=true; R.invOn=false; R.mlpe=false; LOADS.forEach(L=>served[L.id]=0);
+    } else {
+      R.island=true;
+      SHED_FIRST.forEach(id=>{ if(raw[id]>0){ shed[id]=raw[id]; served[id]=0; } });
+      const pvA = pvBlocked? 0 : pvACa;
+      let load = sum(served);
+      if(load > pvA + SPEC.battPeak || (emptyB && load>pvA)){ SHED_NEXT.forEach(id=>{ if(served[id]>0){ shed[id]=served[id]; served[id]=0; } }); load = sum(served); R.overload = true; }
+      const net = pvA - load;
+      if(net>=0){ const ch = full?0:Math.min(net, SPEC.battKW); R.batt=-ch; R.curtail=net-ch; R.pv=pvA-R.curtail; }
+      else if(!emptyB){ R.batt=Math.min(-net, SPEC.battPeak); R.pv=pvA; }
+      else { R.dark=true; R.empty=true; R.pv=0; R.batt=0; LOADS.forEach(L=>served[L.id]=0); }
+      if(R.curtail>0.05 && arch==='micro') R.freq = 60.2 + Math.min(1.0, R.curtail/Math.max(pvA,0.1)*1.4);
+    }
+    R.grid = 0;
+  }
+  R.load = sum(served);
+  R.live = st.grid || (R.island && !R.dark);         // is there 240 V on the house bus?
+  R.pvDC = R.pv/0.965;
+  // string voltage
+  const vmpStr = 10*SPEC.vmp*SPEC.heat, vocStr = 10*SPEC.voc*SPEC.heat;
+  R.vStr = (!R.mlpe || sunF<=0) ? (sunF>0? 8 : 0) : (R.pv<0.02 ? vocStr : R.curtail>0.05 ? vmpStr+ (vocStr-vmpStr)*Math.min(1,R.curtail/Math.max(pvACa,.1)) : vmpStr);
+  if(arch==='string' && R.invOn && !R.mlpe) R.vStr = 8;
+  // per-run values: v (volts, 0 = dead) and p (kW along the run’s drawn direction)
+  const ac = R.live? 240 : 0, V = {}, P = {};
+  const pvSrcLive = arch==='micro' ? (R.live && !R.acdOpen) : true;
+  V.s1=V.s2=V.dch=R.vStr; P.s1=P.s2=R.pvDC/2; P.dch=R.pvDC;
+  V.b1=V.b2=V.ach= pvSrcLive? ac:0; P.b1=P.b2=R.pv/2; P.ach=R.pv;
+  V.iac = arch==='micro' ? (pvSrcLive?ac:0) : ac;
+  P.iac = (arch==='string'&&hasB)? R.pv+R.batt : R.pv;
+  V.amp=V.agw=ac; P.amp=P.agw=P.iac;
+  V.bdc = hasB && !battBlocked? SPEC.battV : 0; P.bdc=R.batt;
+  V.bac = ac; P.bac=R.batt;
+  V.svc=V.fgw=V.fdr= st.grid?240:0; P.svc=P.fgw=P.fdr=R.grid;
+  V.gmp=ac; P.gmp=R.load;
+  LOADS.forEach(L=>{ V['br-'+L.id]=ac? L.v:0; P['br-'+L.id]=served[L.id]; });
+  V.rsig = R.invOn? 12:0; V.bcom = hasB?5:0; V.icom=hasB?5:0; V.ctl=hasB?1:0; V.egc=V.gec=0;
+  R.V=V; R.P=P;
+  return R;
+}
+
+/* =====================================================================
+   6. SVG HELPERS & PLATE
+   ===================================================================== */
+const SP = 3.3;
+function offsetPts(pts,o){
+  const n=[];
+  for(let i=0;i<pts.length-1;i++){ const dx=pts[i+1][0]-pts[i][0], dy=pts[i+1][1]-pts[i][1], L=Math.hypot(dx,dy)||1; n.push([-dy/L,dx/L]); }
+  return pts.map((p,i)=>{
+    const a=n[Math.max(0,i-1)], b=n[Math.min(n.length-1,i)];
+    let ox,oy;
+    if(i===0){ox=b[0];oy=b[1];} else if(i===pts.length-1){ox=a[0];oy=a[1];}
+    else if(Math.abs(a[0]-b[0])<1e-6&&Math.abs(a[1]-b[1])<1e-6){ox=a[0];oy=a[1];}
+    else {ox=a[0]+b[0];oy=a[1]+b[1];}
+    return [p[0]+o*ox,p[1]+o*oy];
+  });
+}
+/* where each conductor of a run ends: [{k,x,y}] at the start (0) or end (-1) of a segment */
+function ends(run, segIdx, atEnd){
+  const s=run.segs[segIdx], n=s.c.length;
+  return s.c.map((k,j)=>{ const p=offsetPts(s.pts,(j-(n-1)/2)*SP); const q=atEnd?p[p.length-1]:p[0]; return {k,x:q[0],y:q[1]}; });
+}
+function runSVG(r){
+  let halo='',hit='',body='';
+  r.segs.forEach(s=>{
+    const n=s.c.length, w=n*SP+2.5, dd=d(s.pts);
+    halo+=`<path class="halo" d="${dd}" stroke-width="${w+2}"/>`;
+    hit+=`<path class="rhit" d="${dd}" stroke-width="${Math.max(13,w+6)}"/>`;
+    s.c.forEach((k,j)=>{
+      const pd=d(offsetPts(s.pts,(j-(n-1)/2)*SP));
+      if(k==='n') body+=`<path class="cd cd-no" d="${pd}"/><path class="cd cd-n" d="${pd}"/>`;
+      else body+=`<path class="cd cd-${k}" d="${pd}"/>`;
+      if(CK[k].hot) body+=`<path class="fl" d="${pd}"/>`;
+    });
+  });
+  return `<g class="run k-${r.kind}" data-run="${r.id}">${halo}${hit}${body}</g>`;
+}
+/* a short in-box termination line in conductor colours */
+function term(e, x2, y2){
+  const pts = y2==null? [[e.x,e.y],[x2,e.y]] : [[e.x,e.y],[x2,e.y],[x2,y2]];
+  const pd=d(pts), dot=pts[pts.length-1];
+  const ln = e.k==='n'? `<path class="cd cd-no" d="${pd}"/><path class="cd cd-n" d="${pd}"/>` : `<path class="cd cd-${e.k}" d="${pd}"/>`;
+  return ln+`<circle cx="${dot[0]}" cy="${dot[1]}" r="1.7" fill="var(--ink-2)"/>`;
+}
+function compG(id, box, inner, extra=''){
+  const [x,y,w,h]=box;
+  return `<g class="comp" data-id="${id}" ${extra}><rect class="hit" x="${x}" y="${y}" width="${w}" height="${h}"/>${inner}<rect class="hovring" x="${x-3}" y="${y-3}" width="${w+6}" height="${h+6}" rx="3"/><rect class="selring" x="${x-4}" y="${y-4}" width="${w+8}" height="${h+8}" rx="3"/></g>`;
+}
+const ICO = {
+  fan:(x,y)=>`<circle cx="${x}" cy="${y}" r="13" fill="var(--paper-2)" stroke="var(--ink-3)"/><g class="lspin"><path d="M${x},${y}l0,-10a5,5 0 0 1 4,8zM${x},${y}l8.7,5a5,5 0 0 1 -9,1zM${x},${y}l-8.7,5a5,5 0 0 1 5,-9z" fill="var(--ink-3)"/></g>`,
+  tank:(x,y)=>`<rect x="${x-9}" y="${y-14}" width="18" height="28" rx="6" fill="var(--paper-2)" stroke="var(--ink-3)"/><path d="M${x-4},${y+6}q4,-6 0,-12M${x+3},${y+6}q4,-6 0,-12" stroke="var(--s-home)" fill="none"/>`,
+  pump:(x,y)=>`<circle cx="${x}" cy="${y}" r="11" fill="var(--paper-2)" stroke="var(--ink-3)"/><path d="M${x-14},${y+8}h28M${x},${y}l7,-4" stroke="var(--ink-3)" stroke-width="1.5"/><path d="M${x-6},${y-14}q6,-6 12,0" stroke="var(--blue-2)" fill="none" stroke-width="1.5"/>`,
+  ev:(x,y)=>`<rect x="${x-9}" y="${y-14}" width="18" height="24" rx="2" fill="var(--paper-2)" stroke="var(--ink-3)"/><path d="M${x+1},${y-10}l-5,8h5l-2,7l6,-9h-5z" fill="var(--s-sun)"/><path d="M${x+9},${y}q8,2 6,12" stroke="var(--ink-3)" fill="none"/>`,
+  plug:(x,y)=>`<rect x="${x-11}" y="${y-13}" width="22" height="26" rx="3" fill="var(--paper-2)" stroke="var(--ink-3)"/><path d="M${x-4},${y-7}v5M${x+4},${y-7}v5" stroke="var(--ink-2)" stroke-width="2"/><path d="M${x-3},${y+6}a3,3 0 0 1 6,0" stroke="var(--ink-2)" fill="none" stroke-width="1.5"/>`,
+  bulb:(x,y)=>`<circle cx="${x}" cy="${y-4}" r="9" fill="#f6ecd2" stroke="var(--ink-3)"/><rect x="${x-4}" y="${y+5}" width="8" height="7" fill="var(--ink-4)"/>`,
+};
+
+const svg = $('#plate');
+let RUNS=[], RM={};
+function cfg(){ return {arch:SIM.arch, batt:SIM.batt, bmode:SIM.bmode}; }
+function present(id,c){ const x=CM[id]; return x && (!x.when || x.when(c)); }
+
+function buildPlate(){
+  const c = cfg();
+  RUNS = buildRuns(c); RM = Object.fromEntries(RUNS.map(r=>[r.id,r]));
+  let H = `<defs>
+   <pattern id="tile" width="16" height="10" patternUnits="userSpaceOnUse"><rect width="16" height="10" fill="#efe6d8"/><path d="M0,10H16M8,0V5M0,5H16M0,0V5" stroke="#e1d5c2" stroke-width=".8"/></pattern>
+   <pattern id="soil" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#efe8da"/><path d="M0,10L10,0" stroke="#d9cfbc" stroke-width=".8"/></pattern>
+   <pattern id="block" width="20" height="10" patternUnits="userSpaceOnUse"><rect width="20" height="10" fill="#e9e3d6"/><path d="M0,0H20M0,5H20M5,0V5M15,5V10" stroke="#d6ccb9" stroke-width=".7"/></pattern>
+   <pattern id="hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="5" fill="#f4efe6"/><path d="M0,0V5" stroke="#d9cfbc" stroke-width="1.6"/></pattern>
+   <pattern id="cells" width="12.33" height="10.8" patternUnits="userSpaceOnUse"><rect width="12.33" height="10.8" fill="#2c3a55" class="sunmod"/><path d="M0,0H12.33M0,0V10.8" stroke="#53627f" stroke-width=".6"/></pattern>
+   <linearGradient id="glint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  </defs>`;
+  /* ---- zones */
+  H += `<g class="bg">
+   <rect x="30" y="30" width="1010" height="318" fill="url(#tile)" stroke="var(--rule)"/>
+   <text x="30" y="22" class="t-zone">Roof · looking down on the south-facing slope</text>
+   <rect x="30" y="362" width="866" height="600" fill="#f6f2e9" stroke="var(--rule-2)"/>
+   <text x="40" y="382" class="t-zone">Inside · garage</text>
+   <rect x="896" y="358" width="10" height="572" fill="url(#block)" stroke="var(--ink-4)" stroke-width=".8"/>
+   <text x="901" y="372" class="t-xs t-mid" transform="rotate(-90 901 372)" text-anchor="end">exterior wall</text>
+   <text x="1290" y="382" class="t-zone">Outside · garage wall</text>
+   <rect x="906" y="930" width="694" height="70" fill="url(#soil)"/>
+   <path d="M906,930H1600" stroke="var(--ink-3)" stroke-width="1.5"/>
+   <text x="1592" y="944" class="t-sm t-end">grade</text>
+   <text x="1592" y="996" class="t-xs t-end">underground</text>
+   <rect x="30" y="962" width="866" height="38" fill="url(#hatch)" opacity=".6"/>
+   <text x="40" y="985" class="t-xs">slab-on-grade floor</text>
+  </g>`;
+  /* ---- sun & energy box */
+  H += `<g id="skyBox">
+   <rect x="1056" y="30" width="530" height="318" fill="#fdfbf6" stroke="var(--rule)"/>
+   <text x="1072" y="52" class="t-zone">Sun &amp; energy · now</text>
+   <text x="1072" y="92" id="rd-time" class="t-eq" style="font-size:28px">12:30 pm</text>
+   <text x="1072" y="112" id="rd-sky" class="t-sm">Clear sky</text>
+   <path d="M1090,300A105,105 0 0 1 1300,300" fill="none" stroke="var(--rule)" stroke-dasharray="3 4"/>
+   <path d="M1072,300H1318" stroke="var(--ink-4)"/>
+   <text x="1090" y="316" class="t-xs t-mid">7:00 am</text><text x="1300" y="316" class="t-xs t-mid">7:36 pm</text>
+   <text x="1195" y="334" class="t-xs t-mid">sun path, Florida summer</text>
+   <g id="sunG"><circle r="20" fill="var(--s-sun)" opacity=".12"/><circle r="11" fill="#e9b949" stroke="var(--s-sun)"/></g>
+   <g id="cloudG" opacity="0"><path d="M1160,200a14,14 0 0 1 26,-6a12,12 0 0 1 22,8a10,10 0 0 1 -2,20h-44a11,11 0 0 1 -2,-22z" fill="#e9e6e0" stroke="var(--ink-4)"/></g>
+   <text id="moon" x="1195" y="240" class="t-sm t-mid" opacity="0">night: no solar</text>
+   ${['pv','home','bat','grid'].map((k,i)=>{ const y=58+i*72, col={pv:'--s-sun',home:'--s-home',bat:'--s-bat',grid:'--s-grid'}[k];
+     return `<g><rect x="1340" y="${y}" width="4" height="56" fill="var(${col})"/>
+      <text x="1352" y="${y+10}" class="t-zone" style="fill:var(--ink-3)">${{pv:'Solar',home:'Home',bat:'Battery',grid:'Grid'}[k]}</text>
+      <text x="1352" y="${y+36}" id="rd-${k}" class="t-eq" style="font-size:22px">0.0 kW</text>
+      <text x="1352" y="${y+52}" id="rd-${k}s" class="t-sm">—</text></g>`; }).join('')}
+   <rect x="1490" y="208" width="80" height="10" fill="var(--paper-2)" stroke="var(--ink-4)" id="socOut"/><rect x="1490" y="208" width="40" height="10" fill="var(--s-bat)" id="socBar"/>
+  </g>`;
+
+  /* ---- racking (behind modules) */
+  let rails='';
+  ROWS.forEach(r=>{ [r.y+30, r.y+MH-30].forEach(y=>{ rails+=`<path d="M52,${y}H906" stroke="#a69f92" stroke-width="3.5"/>`; for(let k=0;k<=10;k++){ const x=k===10?MX(9)+MW+6:MX(k)-4; rails+=`<rect x="${x-3}" y="${y-4}" width="6" height="8" fill="#8d8679"/>`; } }); });
+  H += compG('rail',[40,86,20,200], rails+`<text x="38" y="342" class="t-xs">rails &amp; L-feet</text>`);
+  /* ---- modules + MLPE / micro */
+  let mods='', dev='';
+  ROWS.forEach((row,r)=>{ for(let k=0;k<10;k++){
+    const x=MX(k), y=row.y;
+    mods+=`<rect x="${x}" y="${y}" width="${MW}" height="${MH}" fill="url(#cells)" stroke="#9aa3ad" stroke-width="1.6"/><rect x="${x}" y="${y}" width="${MW}" height="${MH}" fill="url(#glint)" class="glint"/>`;
+    if(c.arch==='string') dev+=`<g class="mlpe"><rect class="mb" x="${MCX(k)-11}" y="${y+MH-21}" width="22" height="14" rx="2" fill="#ece7dc" stroke="var(--ink-2)"/><text x="${MCX(k)-6}" y="${y+MH-11}" class="t-xs t-mid" style="fill:var(--c-red)">+</text><text x="${MCX(k)+6}" y="${y+MH-11}" class="t-xs t-mid" style="fill:var(--ink)">−</text></g>`;
+    else dev+=`<g class="mlpe"><rect class="mb" x="${MCX(k)-13}" y="${y+MH-22}" width="26" height="15" rx="2" fill="#d5dde5" stroke="var(--ink-2)"/><text x="${MCX(k)}" y="${y+MH-11.5}" class="t-xs t-mid" style="fill:var(--ink)">~</text></g>`;
+  }});
+  H += compG('mod',[60,66,812,238], mods);
+  /* ---- runs (drawn now so equipment sits on top) */
+  RUNS.forEach(r=>H+=runSVG(r));
+  H += compG(c.arch==='string'?'rsd':'micro',[60,151,812,150], dev);
+  if(c.arch==='micro') H += `<g>${ROWS.map(r=>`<rect x="48" y="${r.yc-4}" width="7" height="8" rx="2" fill="var(--ink-3)"/>`).join('')}<text x="48" y="${ROWS[1].yc+18}" class="t-xs">end caps</text></g>`;
+  H += `<text x="880" y="62" class="t-xs t-end">${c.arch==='string'?'String 1 · 10 in series':'Branch 1 · 10 micros in parallel'}</text><text x="880" y="192" class="t-xs t-end">${c.arch==='string'?'String 2 · 10 in series':'Branch 2 · 10 micros in parallel'}</text>`;
+  /* ---- J-box */
+  H += compG('jb',[915,150,60,100], `<rect x="915" y="150" width="60" height="100" rx="3" fill="#ece7dc" stroke="var(--ink-2)"/><rect x="925" y="168" width="40" height="62" fill="var(--paper)" stroke="var(--ink-4)"/>${[0,1,2,3,4].map(i=>`<rect x="929" y="${172+i*11}" width="32" height="7" fill="#d9d2c3" stroke="var(--ink-4)" stroke-width=".6"/>`).join('')}<text x="945" y="244" class="t-mk t-mid">JB-1</text>`);
+  H += `<text x="1014" y="250" class="t-xs">conduit down</text><text x="1014" y="261" class="t-xs">the wall</text>`;
+
+  /* ---- inverter / combiner */
+  if(c.arch==='string'){
+    H += compG('inv',[940,410,120,140], `<rect x="940" y="410" width="120" height="140" rx="5" fill="#e6e5e1" stroke="var(--ink-2)"/>
+      ${[0,1,2,3,4,5].map(i=>`<path d="M1052,${425+i*20}h8" stroke="var(--ink-4)" stroke-width="3"/>`).join('')}
+      <rect x="954" y="424" width="58" height="26" rx="2" fill="#2d3a37"/><text x="983" y="441" id="invLcd" class="t-mk t-mid" style="fill:#9fe0b6;font-size:10px">— kW</text>
+      <text x="954" y="470" class="t-eq">INV-1</text><text x="954" y="484" class="t-sm">${c.batt?'hybrid · 7.6 kW':'string · 7.6 kW'}</text>
+      <circle cx="966" cy="525" r="11" fill="#d8d4cb" stroke="var(--ink-2)"/><rect x="963" y="514" width="6" height="22" rx="2" fill="var(--ink-2)" id="dcKnob"/><text x="983" y="529" class="t-xs">DC disc.</text>`);
+  } else {
+    H += compG('cmb',[940,410,120,140], `<rect x="940" y="410" width="120" height="140" rx="3" fill="#dedcd6" stroke="var(--ink-2)"/>
+      <rect x="950" y="420" width="100" height="40" fill="#f1efe9" stroke="var(--ink-4)"/><text x="1000" y="436" class="t-xs t-mid">monitoring gateway</text><circle cx="1000" cy="449" r="3" id="envLed" fill="#53a26a"/>
+      <rect x="958" y="470" width="20" height="30" fill="#2f2f2f"/><rect x="984" y="470" width="20" height="30" fill="#2f2f2f"/><text x="968" y="489" class="t-xs t-mid" style="fill:#eee">20</text><text x="994" y="489" class="t-xs t-mid" style="fill:#eee">20</text>
+      <text x="954" y="522" class="t-eq">CMB-1</text><text x="954" y="538" class="t-sm">AC combiner</text>`);
+  }
+  /* ---- battery */
+  if(c.batt){
+    H += compG('bat',[940,600,120,220], `<rect x="940" y="600" width="120" height="220" rx="10" fill="#f3f2ee" stroke="var(--ink-2)"/>
+      <rect x="1036" y="620" width="10" height="180" rx="3" fill="var(--paper-2)" stroke="var(--ink-4)"/><rect id="batFill" x="1036" y="700" width="10" height="100" rx="3" fill="var(--s-bat)"/>
+      <text x="954" y="636" class="t-eq">BAT-1</text><text x="954" y="652" class="t-sm">13.5 kWh · 5 kW</text>
+      <text x="954" y="668" class="t-sm">${c.arch==='string'?'DC-coupled':'AC-coupled'}</text>${c.arch==='micro'?'<text x="954" y="682" class="t-xs">(own inverter inside)</text>':''}
+      <text x="954" y="760" id="batPct" class="t-eq" style="font-size:20px">55%</text><text x="954" y="776" id="batMode" class="t-xs">idle</text>`);
+  }
+  /* ---- AC disconnect */
+  H += compG('acd',[1110,415,70,90], `<rect x="1110" y="415" width="62" height="90" rx="3" fill="#cfd2d4" stroke="var(--ink-2)"/>
+    <g id="acdHandle"><rect x="1172" y="440" width="8" height="30" rx="2" fill="var(--ink-2)"/></g>
+    <text x="1141" y="438" class="t-mk t-mid">ACD-1</text><text x="1141" y="452" class="t-xs t-mid">PV AC</text><text x="1141" y="462" class="t-xs t-mid">disconnect</text>
+    <text x="1141" y="490" id="acdTxt" class="t-xs t-mid" style="fill:var(--ink)">ON</text>`);
+  /* ---- rapid shutdown initiator */
+  if(c.arch==='string'){
+    H += compG('rsi',[1215,420,52,62], `<rect x="1215" y="420" width="50" height="62" rx="3" fill="#f2cf3a" stroke="var(--ink-2)"/>
+      <circle cx="1240" cy="447" r="12" fill="#fff" stroke="var(--ink-2)"/><rect id="rsiKnob" x="1237" y="436" width="6" height="22" rx="2" fill="#c23b22"/>
+      <text x="1240" y="470" class="t-xs t-mid" style="fill:var(--ink)">RAPID</text><text x="1240" y="479" class="t-xs t-mid" style="fill:var(--ink)">SHUTDOWN</text>`);
+  }
+  /* ---- gateway & CT */
+  if(c.batt){
+    H += compG('gw',[1110,770,140,140], `<rect x="1110" y="770" width="140" height="140" rx="6" fill="#f3f2ee" stroke="var(--ink-2)"/>
+      <text x="1122" y="790" class="t-eq">GW-1</text><text x="1122" y="804" class="t-sm">backup gateway</text>
+      <circle cx="1155" cy="858" r="3" fill="var(--ink)"/><circle cx="1210" cy="858" r="3" fill="var(--ink)"/>
+      <path id="gwBlade" d="M1155,858L1207,858" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" style="transition:transform .3s;transform-origin:1155px 858px"/>
+      <text x="1182" y="878" class="t-xs t-mid" id="gwTxt">contactor closed</text>
+      <text x="1236" y="852" class="t-xs t-end">grid</text><text x="1126" y="852" class="t-xs">home</text>`);
+    H += compG('ct',[1272,884,26,26], `<circle cx="1285" cy="${SPINE}" r="11" fill="none" stroke="var(--ink-2)" stroke-width="3"/><text x="1285" y="${SPINE+24}" class="t-xs t-mid">CT</text>`);
+  }
+  /* ---- meter-main */
+  H += compG('mm',[1320,600,110,310], `<rect x="1320" y="600" width="110" height="310" rx="4" fill="#cfd2d4" stroke="var(--ink-2)"/>
+    <circle cx="1375" cy="664" r="38" fill="#eef2f3" stroke="var(--ink-2)" stroke-width="2"/><rect x="1349" y="648" width="52" height="22" rx="2" fill="#2d3a37"/>
+    <text x="1375" y="663" id="mtrTxt" class="t-mk t-mid" style="fill:#9fe0b6;font-size:10px">→ 0.0</text>
+    <text x="1375" y="684" class="t-xs t-mid">net meter</text>
+    <text x="1328" y="724" class="t-mk">MM-1</text><text x="1328" y="738" class="t-xs">del <tspan id="regDel">18342</tspan> kWh</text><text x="1328" y="750" class="t-xs">rec <tspan id="regRec">06120</tspan> kWh</text>
+    <rect x="1345" y="770" width="60" height="38" rx="2" fill="#2f2f2f"/><text x="1375" y="793" class="t-xs t-mid" style="fill:#eee">200 A MAIN</text>
+    <rect x="1336" y="846" width="78" height="6" fill="#fff" stroke="var(--ink-3)"/><text x="1340" y="842" class="t-xs">N bar</text>
+    <path d="M1340,852V880H1335V910" stroke="var(--c-grn)" stroke-width="2.4" fill="none"/><text x="1346" y="874" class="t-xs">MBJ</text>`);
+  /* ---- transformer & rods */
+  H += compG('xf',[1480,850,105,80], `<rect x="1480" y="850" width="105" height="80" rx="3" fill="#7d9375" stroke="var(--ink-2)"/><rect x="1474" y="926" width="117" height="6" fill="#c9c1b0"/>
+    <text x="1532" y="878" class="t-xs t-mid" style="fill:#fff">UTILITY</text><text x="1532" y="890" class="t-xs t-mid" style="fill:#fff">7.2 kV → 120/240 V</text><text x="1532" y="912" class="t-mk t-mid" style="fill:#fff">XF</text>`);
+  H += compG('gnd',[1276,940,70,50], `<path d="M1335,945V980M1285,945V980" stroke="var(--c-cu)" stroke-width="4"/><path d="M1331,980l4,8l4,-8M1281,980l4,8l4,-8" fill="var(--c-cu)"/><text x="1310" y="998" class="t-xs t-mid">rods 6 ft apart</text>`);
+  H += `<text x="1585" y="826" class="t-xs t-end">primary cable</text><text x="1585" y="838" class="t-xs t-end">from the street ↑</text>`;
+
+  /* ---- load panel (with in-panel terminations) */
+  let P = `<rect x="660" y="392" width="220" height="545" rx="3" fill="#e9e8e3" stroke="var(--ink-2)" stroke-width="1.4"/>
+    <text x="770" y="406" class="t-mk t-mid">LP-1 · 200 A bus</text>
+    <rect x="757" y="418" width="9" height="442" fill="#c9a26b" stroke="#8a6b3d"/><rect x="773" y="418" width="9" height="442" fill="#c9a26b" stroke="#8a6b3d"/>
+    <text x="761.5" y="866" class="t-xs t-mid" transform="rotate(-90 761.5 866)" text-anchor="end"> </text>
+    <text x="761" y="428" class="t-xs t-mid" style="fill:#5a3e16">L1</text><text x="777" y="428" class="t-xs t-mid" style="fill:#5a3e16">L2</text>
+    <rect x="665" y="418" width="6" height="430" fill="#fff" stroke="var(--ink-3)"/><rect x="675" y="418" width="6" height="430" fill="#cfe1cf" stroke="var(--c-grn)"/>
+    <rect x="866" y="418" width="6" height="510" fill="#fff" stroke="var(--ink-3)"/><rect x="856" y="418" width="6" height="510" fill="#cfe1cf" stroke="var(--c-grn)"/>
+    <path d="M668,414H869" stroke="var(--ink-3)" stroke-width="3"/><path d="M668,414H869" stroke="#fff" stroke-width="1.5"/>
+    <text x="668" y="858" class="t-xs">N</text><text x="676" y="866" class="t-xs" style="fill:var(--c-grn)">G</text>`;
+  LOADS.forEach((L,i)=>{
+    const y=LROW(i), two=L.v===240, onL2 = L.id==='lts';
+    P += `<rect x="694" y="${y-17}" width="56" height="34" rx="2" fill="#2f2f2f"/><text x="722" y="${y+3}" class="t-xs t-mid" style="fill:#eee">${L.brk.split(' ')[1].replace(' ','')}${L.brk.split(' ')[2]}</text><text x="722" y="${y+13}" class="t-xs t-mid" style="fill:#aaa">${two?'2-pole':'1-pole'}</text>`;
+    if(two) P += `<path d="M750,${y-7}H761.5M750,${y+7}H777.5" stroke="#555" stroke-width="2.4"/><circle cx="761.5" cy="${y-7}" r="2" fill="#5a3e16"/><circle cx="777.5" cy="${y+7}" r="2" fill="#5a3e16"/>`;
+    else P += `<path d="M750,${y}H${onL2?777.5:761.5}" stroke="#555" stroke-width="2.4"/><circle cx="${onL2?777.5:761.5}" cy="${y}" r="2" fill="#5a3e16"/>`;
+    ends(RM['br-'+L.id],0,false).forEach(e=>{ P += term(e, e.k==='n'?668:e.k==='g'?678:694); });
+  });
+  // right column: PV back-feed (no battery) and SPD
+  const ry0=LROW(0), ry1=LROW(1);
+  let pvb='';
+  if(!c.batt){
+    pvb = `<rect x="790" y="${ry0-17}" width="56" height="34" rx="2" fill="#2f2f2f"/><text x="818" y="${ry0+1}" class="t-xs t-mid" style="fill:#f2cf3a">PV 40 A</text><text x="818" y="${ry0+12}" class="t-xs t-mid" style="fill:#aaa">back-fed</text>
+      <path d="M790,${ry0-7}H777.5M790,${ry0+7}H761.5" stroke="#555" stroke-width="2.4"/><circle cx="777.5" cy="${ry0-7}" r="2" fill="#5a3e16"/><circle cx="761.5" cy="${ry0+7}" r="2" fill="#5a3e16"/>`;
+    ends(RM.amp,0,true).forEach(e=>{ pvb += term(e, e.k==='n'?869:e.k==='g'?859:846); });
+  } else {
+    P += `<rect x="790" y="${ry0-17}" width="56" height="34" rx="2" fill="none" stroke="var(--ink-4)" stroke-dasharray="3 2"/><text x="818" y="${ry0+4}" class="t-xs t-mid">spare</text>`;
+  }
+  const spd = `<rect x="790" y="${ry1-17}" width="56" height="34" rx="2" fill="#2f2f2f"/><text x="818" y="${ry1+3}" class="t-xs t-mid" style="fill:#eee">20 A</text><text x="818" y="${ry1+13}" class="t-xs t-mid" style="fill:#aaa">SPD</text>
+    <path d="M790,${ry1-7}H777.5M790,${ry1+7}H761.5" stroke="#555" stroke-width="2.4"/>
+    <rect x="796" y="${ry1+24}" width="44" height="30" rx="3" fill="#3d5a80" stroke="var(--ink-2)"/><text x="818" y="${ry1+43}" class="t-xs t-mid" style="fill:#fff">SPD</text><circle cx="834" cy="${ry1+30}" r="2.2" fill="#6fcf87"/>`;
+  // main breaker at the bottom (opposite end from the PV breaker)
+  P += `<rect x="735" y="862" width="70" height="60" rx="2" fill="#2f2f2f"/><text x="770" y="888" class="t-xs t-mid" style="fill:#eee">200 A</text><text x="770" y="900" class="t-xs t-mid" style="fill:#aaa">main</text>
+    <path d="M761.5,860V866M777.5,860V866" stroke="#c9a26b" stroke-width="4"/>`;
+  ends(RM[c.batt?'gmp':'fdr'],0,true).forEach(e=>{ P += term(e, e.k==='n'?869:e.k==='g'?859:805); });
+  H += `<g class="comp" data-id="mp"><rect class="hit" x="660" y="392" width="220" height="545"/>${P}
+     ${!c.batt?compG('pvb',[788,ry0-19,60,38],pvb):''}${compG('spd',[788,ry1-19,60,76],spd)}
+     <rect class="hovring" x="657" y="389" width="226" height="551" rx="3"/><rect class="selring" x="656" y="388" width="228" height="553" rx="3"/></g>`;
+
+  /* ---- loads */
+  LOADS.forEach((L,i)=>{
+    const y=LROW(i);
+    H += compG(L.id,[70,y-27,530,54], `<g class="load" id="ld-${L.id}"><rect class="lbg" x="70" y="${y-27}" width="530" height="54" rx="3" fill="#fbf9f4" stroke="var(--rule)"/>
+      <g class="ico">${ICO[L.ico](98,y)}</g>
+      <text x="124" y="${y-6}" class="t-eq" style="font-size:13.5px">${esc(L.name)}</text>
+      <text x="124" y="${y+10}" class="t-sm">${L.v} V · ${esc(L.brk)} · ${esc(L.wire)} · ${esc(L.where)}</text>
+      <rect x="440" y="${y+12}" width="150" height="5" fill="var(--paper-2)"/><rect class="bar" x="440" y="${y+12}" width="0" height="5" fill="var(--s-home)"/>
+      <text x="590" y="${y-6}" class="t-mk t-end" id="lv-${L.id}" style="font-size:11px">0.00 kW</text>
+      <text x="590" y="${y+7}" class="t-xs t-end" id="ls-${L.id}">off</text></g>`);
+  });
+  H += `<g class="dark-ov"><rect x="30" y="362" width="866" height="600" fill="rgba(31,29,26,.16)"/><text x="330" y="960" class="t-eq" style="fill:#5b1d1d" id="darkTxt">No power: the house is dark</text></g>`;
+
+  /* ---- run value labels */
+  RUNS.filter(r=>r.lab).forEach(r=>{ H += `<g class="rlab" data-rl="${r.id}" data-cx="${r.lab[0]}"><rect x="${r.lab[0]-48}" y="${r.lab[1]-8}" width="96" height="16" rx="2"/><text x="${r.lab[0]}" y="${r.lab[1]}">—</text></g>`; });
+
+  svg.innerHTML = H;
+  bindPlate();
+}
+
+/* =====================================================================
+   7. STATE, UPDATE & INTERACTION
+   ===================================================================== */
+let runEls={}, compEls={}, labEls={}, LAST=null;
+const ST = {sel:null, selRun:null, step:-1};
+function bindPlate(){
+  runEls = Object.fromEntries($$('#plate [data-run]').map(g=>[g.dataset.run,g]));
+  compEls = {}; $$('#plate .comp').forEach(g=>{ (compEls[g.dataset.id] ||= []).push(g); });
+  labEls = Object.fromEntries($$('#plate [data-rl]').map(g=>[g.dataset.rl,g]));
+  svg.classList.toggle('novals', !$('#chkVals').checked);
+}
+const fmtKW = (k,dp=1)=>(Math.abs(k)<0.005?0:k).toFixed(dp)+' kW';
+function fmtTime(t){ const h=Math.floor(t), m=Math.floor((t-h)*60+1e-6); const hh=((h+11)%12)+1; return `${hh}:${String(m).padStart(2,'0')} ${h<12?'am':'pm'}`; }
+
+function update(){
+  const r = model(SIM); LAST = r;
+  const c = cfg();
+  // runs
+  for(const id in runEls){
+    const g=runEls[id], run=RM[id], v=r.V[id]||0, p=r.P[id]||0;
+    const isCom = run.kind==='com', isGnd = run.kind==='gnd';
+    const live = isGnd? true : v>0;
+    const flowing = !isCom && !isGnd && live && Math.abs(p)>0.02;
+    g.classList.toggle('dead', !live);
+    g.classList.toggle('on', flowing || (isCom && live));
+    g.classList.toggle('rev', flowing && p<0);
+    if(flowing){ const dur = clamp(1.5-Math.abs(p)*0.16, 0.35, 1.5).toFixed(1)+'s'; if(g.style.getPropertyValue('--dur')!==dur) g.style.setProperty('--dur',dur); }
+    const lab = labEls[id];
+    if(lab){ let t;
+      if(!live) t='de-energized';
+      else if(run.kind==='dc') t = (id==='bdc'? `${Math.abs(p).toFixed(1)} kW ${p>0.02?'↑':p<-0.02?'↓':''}` : `${Math.round(v)} V · ${(Math.abs(p)*1000/Math.max(v,1)/(id==='dch'?2:1)).toFixed(1)} A`);
+      else t = `${Math.abs(p).toFixed(1)} kW · ${Math.round(Math.abs(p)*1000/(id==='b1'||id==='b2'?240:240))} A`;
+      if(run.kind==='dc' && id!=='bdc' && v>0 && v<30) t = `${Math.round(v)} V (safe)`;
+      if(lab._t!==t){ lab._t=t; lab.querySelector('text').textContent = t; const w=t.length*5.9+12, rc=lab.querySelector('rect'); rc.setAttribute('width',w); rc.setAttribute('x',+lab.dataset.cx-w/2); } }
+  }
+  // sky box
+  $('#rd-time').textContent = fmtTime(SIM.t);
+  $('#rd-sky').textContent = {clear:'Clear sky',cloudy:'Passing clouds',overcast:'Overcast / tropical storm'}[SIM.sky] + (r.sunF>0? ` · sun ${Math.round(r.sunF*100)}%`:'');
+  const up = SIM.t>7 && SIM.t<19.6, th = Math.PI*(1-(SIM.t-7)/12.6);
+  const sg=$('#sunG'); sg.setAttribute('transform', `translate(${1195+105*Math.cos(th)},${300-105*Math.sin(th)})`); sg.style.opacity = up?1:0;
+  $('#cloudG').setAttribute('opacity', SIM.sky==='clear'?0: SIM.sky==='cloudy'?.75:1);
+  $('#moon').setAttribute('opacity', up?0:1);
+  $('#rd-pv').textContent = fmtKW(r.pv);
+  $('#rd-pvs').textContent = r.curtail>0.05? `held back ${r.curtail.toFixed(1)} kW (nowhere to go)` : (!r.mlpe&&r.sunF>0? (SIM.rsd?'rapid shutdown: off':'inverter off (no grid)') : r.pv>0? `${(r.pvDC).toFixed(1)} kW DC from the array` : 'no sun');
+  $('#rd-home').textContent = fmtKW(r.load);
+  const shedN = Object.keys(r.shed).length;
+  $('#rd-homes').textContent = r.dark? 'no power' : shedN? `${shedN} load${shedN>1?'s':''} shed` : 'all circuits available';
+  if(SIM.batt){
+    $('#rd-bat').textContent = fmtKW(Math.abs(r.batt));
+    $('#rd-bats').textContent = `${Math.round(SIM.soc*100)}% · ${r.batt>0.02?'discharging':r.batt<-0.02?'charging':'idle'}${SIM.bmode==='backup'&&SIM.grid?' · backup-only':''}`;
+    $('#socBar').setAttribute('width', 80*SIM.soc); $('#socBar').style.display=$('#socOut').style.display='';
+  } else { $('#rd-bat').textContent='—'; $('#rd-bats').textContent='none installed'; $('#socBar').style.display=$('#socOut').style.display='none'; }
+  if(SIM.grid){ $('#rd-grid').textContent = fmtKW(Math.abs(r.grid)); $('#rd-grids').textContent = r.grid>0.02?'importing (buying)':r.grid<-0.02?'exporting (net-meter credit)':'balanced'; }
+  else { $('#rd-grid').textContent='OUTAGE'; $('#rd-grids').textContent = r.island? `islanded · ${r.freq.toFixed(1)} Hz` : 'utility power lost'; }
+  // equipment
+  const lcd=$('#invLcd'); if(lcd) lcd.textContent = r.invOn? (SIM.batt? (r.pv+r.batt).toFixed(1):r.pv.toFixed(1))+' kW' : 'OFF';
+  const led=$('#envLed'); if(led) led.setAttribute('fill', r.live&&!r.acdOpen?'#53a26a':'#c23b22');
+  $$('#plate .mlpe .mb').forEach(m=>m.setAttribute('fill', r.mlpe&&r.sunF>0&&(SIM.arch==='string'||r.live)? (SIM.arch==='string'?'#ece7dc':'#d5dde5') : '#ead2cc'));
+  $$('#plate .glint').forEach(g=>g.style.opacity = r.sunF>0? (0.3+0.7*r.sunF):0);
+  const acdOpen = r.acdOpen; $('#acdHandle').setAttribute('transform', acdOpen?'rotate(-35 1176 455)':''); $('#acdTxt').textContent = acdOpen?'OFF (open)':'ON';
+  const rk=$('#rsiKnob'); if(rk) rk.setAttribute('transform', SIM.rsd?'rotate(90 1240 447)':'');
+  const bl=$('#gwBlade'); if(bl){ bl.style.transform = r.island||!SIM.grid? 'rotate(-28deg)':''; $('#gwTxt').textContent = SIM.grid?'contactor closed':'OPEN: islanded'; }
+  if(SIM.batt){ const h=180*SIM.soc; $('#batFill').setAttribute('y', 800-h); $('#batFill').setAttribute('height', h);
+    $('#batPct').textContent = Math.round(SIM.soc*100)+'%'; $('#batMode').textContent = r.batt>0.02?`discharging ${r.batt.toFixed(1)} kW`:r.batt<-0.02?`charging ${(-r.batt).toFixed(1)} kW`:'idle'; }
+  $('#mtrTxt').textContent = !SIM.grid? 'no volts' : (r.grid>=0? '→ ':'← ')+Math.abs(r.grid).toFixed(1)+' kW';
+  $('#regDel').textContent = String(Math.floor(SIM.reg.del)).padStart(5,'0'); $('#regRec').textContent = String(Math.floor(SIM.reg.rec)).padStart(5,'0');
+  // loads
+  LOADS.forEach(L=>{
+    const g=$('#ld-'+L.id), kw=r.served[L.id], isShed = r.shed[L.id]!=null;
+    g.classList.toggle('shed', isShed); g.classList.toggle('nopower', r.dark && r.raw[L.id]>0);
+    g.querySelector('.bar').setAttribute('width', Math.min(150, kw/8*150));
+    $('#lv-'+L.id).textContent = kw.toFixed(2)+' kW';
+    $('#ls-'+L.id).textContent = isShed? 'shed by gateway (outage)' : r.dark&&r.raw[L.id]>0? 'no power' : kw>0.01? `running · ${(kw*1000/L.v).toFixed(1)} A` : (SIM.mode[L.id]==='off'?'switched off':'idle');
+    const sp = g.querySelector('.lspin'); if(sp) sp.classList.toggle('spin', kw>0.05);
+  });
+  svg.classList.toggle('dark', r.dark);
+  $('#darkTxt').textContent = r.empty? 'Battery empty: the house is dark' : 'No power: the house is dark, even with sun on the roof';
+  // toolbar state
+  $('#clock').textContent = fmtTime(SIM.t); const sl=$('#tSlider'); if(+sl.value!==SIM.t) sl.value = SIM.t;
+  $('#gridBtn').classList.toggle('on', !SIM.grid); $('#gridBtn').textContent = SIM.grid? 'Grid up':'Grid DOWN (outage)';
+  $('#rsdBtn').classList.toggle('on', SIM.rsd); $('#rsdBtn').textContent = SIM.rsd? 'Rapid shutdown ON':'Rapid shutdown';
+  renderStatus(r); renderLive(); markDay();
+}
+function renderStatus(r){
+  const sc = SM[SIM.scen];
+  let s;
+  if(r.dark) s = r.empty? 'The battery has run down; the house is dark until the sun returns.' : SIM.rsd&&SIM.grid? 'Rapid shutdown' : 'Grid down, no backup: solar is off and the house is dark.';
+  else if(r.island) s = `Islanded: ${r.pv>0.05?`solar ${r.pv.toFixed(1)} kW`:'no solar'}${r.batt>0.02?`, battery supplying ${r.batt.toFixed(1)} kW`:r.batt<-0.02?`, battery charging ${(-r.batt).toFixed(1)} kW`:''}${r.curtail>0.05?`, ${r.curtail.toFixed(1)} kW of solar held back`:''}.`;
+  else s = `Solar ${r.pv.toFixed(1)} kW · Home ${r.load.toFixed(1)} kW${SIM.batt?` · Battery ${r.batt>0.02?'−':r.batt<-0.02?'+':''}${Math.abs(r.batt).toFixed(1)} kW`:''} · ${r.grid>0.02?`buying ${r.grid.toFixed(1)} kW`:r.grid<-0.02?`selling ${(-r.grid).toFixed(1)} kW`:'grid ≈ 0'}`;
+  const badge = !SIM.grid? `<span class="badge fault">Outage</span>` : SIM.rsd? `<span class="badge fault">Rapid shutdown</span>` : '';
+  $('#status').innerHTML = `${sc?`<span>${esc(sc.head)}</span>`:''}${badge}<small>${esc(s)}</small>`;
+}
+
+/* ---- the clock */
+let lastTs=null;
+function tick(ts){
+  if(!SIM.playing){ lastTs=null; return; }
+  if(lastTs==null) lastTs=ts;
+  const dt=Math.min(0.1,(ts-lastTs)/1000); lastTs=ts;
+  const dh=dt*SIM.speed, r=LAST||model(SIM);
+  if(SIM.batt){ if(r.batt<0) SIM.soc += (-r.batt)*0.95*dh/SPEC.battKWh; else SIM.soc -= r.batt/0.95*dh/SPEC.battKWh; SIM.soc=clamp(SIM.soc,0,1); }
+  if(r.grid>0) SIM.reg.del += r.grid*dh; else SIM.reg.rec += -r.grid*dh;
+  SIM.t += dh; if(SIM.t>=24) SIM.t -= 24;
+  update();
+  requestAnimationFrame(tick);
+}
+function setPlaying(on){ SIM.playing=on; $('#playBtn').textContent = on? '❚❚ Stop the clock':'▶ Play the day'; $('#playBtn').classList.toggle('on',on); if(on) requestAnimationFrame(tick); }
+
+/* ---- focus & selection */
+function clearFocus(){ svg.classList.remove('focus'); $$('#plate .hl').forEach(e=>e.classList.remove('hl')); $$('#plate .sel').forEach(e=>e.classList.remove('sel')); }
+function focusIds(ids){
+  clearFocus(); ids = ids.filter(id=>compEls[id]||runEls[id]); if(!ids.length) return;
+  svg.classList.add('focus');
+  ids.forEach(id=>{ (compEls[id]||[]).forEach(g=>g.classList.add('hl')); if(runEls[id]){ runEls[id].classList.add('hl'); labEls[id]&&labEls[id].classList.add('hl'); }
+    const c=CM[id]; if(c&&c.parent) (compEls[c.parent]||[]).forEach(g=>g.classList.add('hl')); });
+}
+const runsOf = id => RUNS.filter(r=>r.from===id||r.to===id).map(r=>r.id);
+function select(id){ ST.sel=id; ST.selRun=null; ST.step=-1; focusIds([id, ...runsOf(id)]); (compEls[id]||[]).forEach(g=>g.classList.add('sel')); showTab('inspect'); renderInspector(id); }
+function selectRun(id){ ST.selRun=id; ST.sel=null; ST.step=-1; const r=RM[id]; focusIds([id, r.from, r.to]); runEls[id].classList.add('sel'); showTab('inspect'); renderRunPanel(id); }
+function clearSel(){ ST.sel=null; ST.selRun=null; ST.step=-1; clearFocus(); renderHome(); renderSeq(); }
+function go(id){ if(RM[id]) selectRun(id); else if(compEls[id]) select(id); }
+svg.addEventListener('click', e=>{
+  const t = e.target.closest('[data-id],[data-run]');
+  if(!t){ clearSel(); return; }
+  if(t.dataset.id) select(t.dataset.id); else selectRun(t.dataset.run);
+});
+
+/* ---- tooltip */
+const tip = document.createElement('div'); tip.id='tip'; tip.setAttribute('role','tooltip'); document.body.appendChild(tip);
+let tipKey=null;
+function swatch(k){ const s=CK[k].sw; return s==='n'?'<span class="sw n"></span>': s==='c'?'<span class="sw c"></span>':`<span class="sw" style="background:${s}"></span>`; }
+function runLive(id){
+  const r=LAST, run=RM[id], v=r.V[id]||0, p=r.P[id]||0;
+  if(run.kind==='gnd') return 'normally no current';
+  if(run.kind==='com') return v>0? 'signal active':'no signal';
+  if(v<=0) return 'de-energized';
+  if(run.kind==='dc') return `${Math.round(v)} V DC · ${Math.abs(p).toFixed(2)} kW${id!=='bdc'?` · ${(Math.abs(p)*1000/v/(id==='dch'?2:1)).toFixed(1)} A${id==='dch'?' per string':''}`:''}`;
+  const vv = id.startsWith('br-')? LM[id.slice(3)].v : 240;
+  return `${vv} V AC · ${Math.abs(p).toFixed(2)} kW · ${(Math.abs(p)*1000/vv).toFixed(1)} A${Math.abs(p)>0.02?(p<0?' · flowing back':''):' · no flow'}`;
+}
+function tipFor(el){
+  const t = el && el.closest && el.closest('[data-id],[data-run]');
+  if(!t || !svg.contains(t)) return null;
+  if(t.dataset.run){ const r=RM[t.dataset.run]; const cds=[...new Set(r.segs.flatMap(s=>s.c))];
+    return {key:'r:'+r.id, color:'var(--ink-3)', html:`<div class="tt-h"><span class="tt-name">${esc(r.name)}</span></div>
+      <div class="tt-sub">${esc(r.grp)} · <b>${esc(runLive(r.id))}</b></div><p class="tt-brief">${esc(r.carries.split('. ')[0])}.</p>
+      <div class="tt-cd">${cds.map(k=>`<span>${swatch(k)}${esc(CK[k].name)}</span>`).join('')}</div><div class="tt-foot">Click for details</div>`}; }
+  const c=CM[t.dataset.id]; if(!c) return null;
+  return {key:'c:'+c.id, color:'var(--ink-3)', html:`<div class="tt-h"><span class="tt-mark">${esc(c.mark)}</span><span class="tt-name">${esc(compName(c.id,cfg()))}</span></div>
+    <div class="tt-sub">${esc(c.grp)}${liveLine(c.id)?` · <b>${esc(liveLine(c.id))}</b>`:''}</div><p class="tt-brief">${esc(c.brief)}</p><div class="tt-foot">Click for details</div>`};
+}
+function liveLine(id){
+  const r=LAST; if(!r) return '';
+  if(CM[id]&&CM[id].load){ const kw=r.served[id]; return r.shed[id]!=null?'shed':r.dark&&r.raw[id]>0?'no power':kw>0.01?kw.toFixed(2)+' kW':'idle'; }
+  return {mod: r.sunF>0? `${(r.pvDC).toFixed(1)} kW DC${r.mlpe?'':' (isolated)'}`:'dark',
+    inv: r.invOn? `${(SIM.batt?r.pv+r.batt:r.pv).toFixed(1)} kW AC`:'off', cmb: r.pv.toFixed(1)+' kW',
+    rsd: r.mlpe&&r.sunF>0? 'passing power':'isolated (safe)', micro: r.pv>0.01? `${(r.pv/20*1000).toFixed(0)} W each`:'off',
+    bat: SIM.batt? `${Math.round(SIM.soc*100)}% · ${r.batt>0.02?'discharging':r.batt<-0.02?'charging':'idle'}`:'',
+    gw: SIM.grid? 'on grid':'islanded', mm: SIM.grid? (r.grid>=0?'importing ':'exporting ')+Math.abs(r.grid).toFixed(1)+' kW':'no utility voltage',
+    acd: r.acdOpen? 'open':'closed', rsi: SIM.rsd?'OFF (initiated)':'on', mp: r.live? r.load.toFixed(1)+' kW to loads':'dead', xf: SIM.grid?'energized':'de-energized'}[id]||'';
+}
+function placeTip(x,y){ const pad=14, rr=tip.getBoundingClientRect(); let l=x+pad, t=y+pad; if(l+rr.width>innerWidth-8) l=x-pad-rr.width; if(t+rr.height>innerHeight-8) t=y-pad-rr.height; tip.style.left=Math.max(8,l)+'px'; tip.style.top=Math.max(8,t)+'px'; }
+function hideTip(){ tip.classList.remove('on'); tipKey=null; }
+svg.addEventListener('pointermove', e=>{
+  if(e.pointerType && e.pointerType!=='mouse' && e.pointerType!=='pen') return;
+  const t=tipFor(e.target); if(!t){ hideTip(); return; }
+  if(t.key!==tipKey || SIM.playing){ tipKey=t.key; tip.innerHTML=t.html; tip.style.setProperty('--tipc',t.color); }
+  tip.classList.add('on'); placeTip(e.clientX,e.clientY);
+});
+svg.addEventListener('pointerleave', hideTip); svg.addEventListener('pointerdown', hideTip); addEventListener('scroll', hideTip, {passive:true});
+
+/* =====================================================================
+   8. PANELS
+   ===================================================================== */
+function showTab(p){ $$('.tab').forEach(t=>t.classList.toggle('on',t.dataset.p===p)); $$('.panel').forEach(x=>x.classList.toggle('on',x.id==='p-'+p)); if(p==='day') renderDay(); }
+$$('.tab').forEach(t=>t.addEventListener('click',()=>showTab(t.dataset.p)));
+const chipName = id => RM[id]? RM[id].name : CM[id]? (CM[id].mark+' · '+compName(id,cfg())) : id;
+const chips = ids => `<div class="chips">${ids.filter(id=>RM[id]||compEls[id]).map(id=>`<span class="chip" data-go="${id}">${esc(chipName(id))}</span>`).join('')}</div>`;
+function bindChips(root){ root.querySelectorAll('[data-go]').forEach(ch=>ch.addEventListener('click',()=>go(ch.dataset.go))); }
+
+function renderHome(){
+  const c=cfg();
+  $('#p-inspect').innerHTML = `<div class="cap">Start here</div><h2>How the system works</h2>
+   <p class="lede">Solar makes DC, an inverter turns it into the same 240 V AC the utility delivers, and it joins the house wiring where the loads use it first. Anything left over flows out through the meter.</p>
+   <h3>Follow the energy</h3>
+   <ol>
+    <li><b>Modules</b> make DC. ${c.arch==='string'?'Ten in series make a ~340 V <b>string</b>; a device under each module can isolate it for firefighters.':'Each has a <b>microinverter</b>, so the roof wiring is already 240 V AC.'}</li>
+    <li>${c.arch==='string'?'The <b>inverter</b> converts DC to AC, synchronized to the grid.':'The <b>AC combiner</b> gathers the two microinverter branch circuits.'}</li>
+    <li>The <b>PV AC disconnect</b> lets anyone isolate the solar.</li>
+    <li>${c.batt?'The <b>backup gateway</b> joins solar, battery, grid and house, and cuts the house off from the grid in an outage.':'Solar lands on a <b>back-fed breaker</b> in the load panel, at the opposite end of the busbar from the main.'}</li>
+    <li>The <b>net meter</b> counts energy bought and energy exported.</li>
+   </ol>
+   <h3>Try this</h3>
+   <ul>
+    <li>Press <b>▶ Play the day</b> and watch the arrows reverse through the meter around 9 am and again before sunset.</li>
+    <li>Run <b>Hurricane outage</b> with Battery set to None, then with the battery. This is the most common Florida surprise.</li>
+    <li>Switch Inverter between string and microinverters: the roof wiring changes from a series loop of DC to parallel AC.</li>
+    <li>Hover any wire to see what its conductors are. Click it for sizes and live volts and amps.</li>
+   </ul>
+   <div class="box warn"><h4>A teaching model</h4><p>Wire sizes, breaker sizes and equipment are typical for this example (a 2,000 sq ft Florida home with a 200 A service). A real system is designed and permitted for the site by a licensed contractor.</p></div>`;
+}
+function inside(id,c){ const f=FIG[id]; return f? `<h3>Inside</h3>${f(c)}` : ''; }
+function renderInspector(id){
+  const c=cfg(), x=CM[id];
+  let body = x.does;
+  if(id==='inv'&&c.batt) body += x.hybrid;
+  if(id==='bat') body += c.arch==='string'? x.dc : x.ac;
+  if(id==='acd'&&c.arch==='micro') body += x.micro;
+  const rs = runsOf(id);
+  $('#p-inspect').innerHTML = `<div class="cap">${esc(x.grp)} · ${esc(x.mark)}</div><h2>${esc(compName(id,c))}</h2>
+    <p class="lede">${esc(x.brief)}</p>
+    <div class="box live" id="liveBox"></div>
+    ${body}
+    ${x.load? loadControl(id):''}
+    ${inside(id,c)}
+    ${rs.length?`<h3>Wires in &amp; out</h3>${connTable(rs)}`:''}
+    ${x.fl?`<div class="box fl"><h4>Florida notes</h4><p>${x.fl}</p></div>`:''}
+    ${x.code?`<div class="box code"><h4>${x.load?'Circuit':'Code'}</h4><p>${esc(x.code)}</p></div>`:''}`;
+  bindChips($('#p-inspect')); bindLoadSel($('#p-inspect')); renderLive();
+}
+function connTable(ids){
+  return `<table class="tbl"><tr><th>Run</th><th>Conductors</th></tr>${ids.map(id=>{ const r=RM[id]; const cds=r.segs.flatMap(s=>s.c); const uniq=[...new Set(cds)];
+    return `<tr class="row" data-go="${id}"><td>${esc(r.name)}<br><span style="color:var(--ink-3)">${esc(chipName(r.from))} → ${esc(chipName(r.to))}</span></td><td>${uniq.map(k=>`${swatch(k)}${esc(CK[k].name)}${cds.filter(q=>q===k).length>1&&r.segs.length===1?' ×'+cds.filter(q=>q===k).length:''}`).join('<br>')}</td></tr>`; }).join('')}</table>`;
+}
+function renderRunPanel(id){
+  const r=RM[id], s=r.segs.length===1? r.segs[0] : null;
+  const list = s? s.c : [...new Set(r.segs.flatMap(q=>q.c))];
+  $('#p-inspect').innerHTML = `<div class="cap">${esc(r.grp)}</div><h2>${esc(r.name)}</h2>
+    <p class="lede">${esc(chipName(r.from))} → ${esc(chipName(r.to))}</p>
+    <div class="box live" id="liveBox"></div>
+    <p>${esc(r.carries)}</p>
+    <h3>Conductors in this run</h3>
+    <table class="tbl"><tr><th></th><th>Conductor</th><th>Job</th></tr>${list.map(k=>`<tr><td>${swatch(k)}</td><td>${esc(CK[k].name)}</td><td>${esc(CK[k].long)}</td></tr>`).join('')}</table>
+    <table class="kv"><tr><td>Typical wiring</td><td class="v">${esc(r.spec)}</td></tr><tr><td>From</td><td>${esc(chipName(r.from))}</td></tr><tr><td>To</td><td>${esc(chipName(r.to))}</td></tr></table>
+    ${chips([r.from,r.to])}
+    ${r.kind==='ac'&&!id.startsWith('br-')?`<p class="note">On an AC wire the current reverses 120 times a second. The arrows show which way the <i>energy</i> is going, which is what the meter counts.</p>`:''}
+    ${r.kind==='dc'?`<p class="note">DC flows one way: out of + and back on −. The arrows on both conductors show energy moving toward the inverter${id==='bdc'?' (discharging) or toward the battery (charging)':''}.</p>`:''}`;
+  bindChips($('#p-inspect')); renderLive();
+}
+function renderLive(){
+  const b=$('#liveBox'); if(!b||!LAST) return;
+  if(ST.selRun) b.innerHTML = `<span class="cap">Now · ${esc(fmtTime(SIM.t))}</span><br><span class="mono">${esc(runLive(ST.selRun))}</span>`;
+  else if(ST.sel) b.innerHTML = `<span class="cap">Now · ${esc(fmtTime(SIM.t))}</span><br><span class="mono">${esc(liveLine(ST.sel)||'—')}</span>`;
+}
+function loadControl(id){ return `<div class="loadrow" style="margin:6px 0">Schedule: <select data-load="${id}"><option value="auto">Typical day</option><option value="on">Force on</option><option value="off">Force off</option></select></div>`; }
+function bindLoadSel(root){ root.querySelectorAll('select[data-load]').forEach(s=>{ s.value=SIM.mode[s.dataset.load]; s.addEventListener('change',()=>{ SIM.mode[s.dataset.load]=s.value; dayCache=null; update(); renderLoads(); if(ST.sel) renderLive(); }); }); }
+
+function renderSeq(){
+  const sc=SM[SIM.scen];
+  if(!sc){ $('#p-seq').innerHTML = `<div class="cap">Sequence</div><h2>Free running</h2><p>Pick a scenario above to get a step-by-step account. Each step highlights the parts involved.</p>`; return; }
+  const steps=sc.steps(cfg());
+  $('#p-seq').innerHTML = `<div class="cap">Scenario</div><h2>${esc(sc.head)}</h2>
+    <p class="lede">${esc(fmtTime(sc.set.t))} · ${{clear:'clear',cloudy:'passing clouds',overcast:'overcast'}[sc.set.sky]} · grid ${sc.set.grid?'up':'down'}${SIM.batt?' · battery':' · no battery'} · ${SIM.arch==='string'?'string inverter':'microinverters'}</p>
+    <ol class="steps">${steps.map((s,i)=>`<li data-i="${i}" class="${ST.step===i?'on':''}">${esc(s.t)}</li>`).join('')}</ol>
+    <p class="note">Click a step to highlight its parts. Change the battery or inverter setup and the steps rewrite themselves.</p>`;
+  $$('#p-seq .steps li').forEach(li=>li.addEventListener('click',()=>{ const i=+li.dataset.i; ST.step=i; ST.sel=ST.selRun=null; focusIds(steps[i].ids); $$('#p-seq .steps li').forEach(x=>x.classList.toggle('on',+x.dataset.i===i)); }));
+}
+function renderWires(){
+  const grps=[...new Set(RUNS.map(r=>r.grp))];
+  $('#p-wires').innerHTML = `<div class="cap">Wire schedule · this setup</div><h2>Every run, every conductor</h2>
+   <p>Each line on the plate is one conductor in its standard colour. The sizes are typical for this example.</p>
+   <table class="tbl"><tr><th>Run</th><th>Conductors &amp; size</th></tr>
+   ${grps.map(g=>`<tr class="grp"><td colspan="2">${esc(g)}</td></tr>`+RUNS.filter(r=>r.grp===g).map(r=>{ const uniq=[...new Set(r.segs.flatMap(s=>s.c))];
+     return `<tr class="row" data-go="${r.id}"><td>${esc(r.name)}<br><span style="color:var(--ink-3)">${esc(chipName(r.from))} → ${esc(chipName(r.to))}</span></td><td>${uniq.map(swatch).join('')}<br>${esc(r.spec)}</td></tr>`; }).join('')).join('')}
+   </table>
+   <h3>Colour code</h3>
+   <table class="tbl">${Object.keys(CK).map(k=>`<tr><td>${swatch(k)}</td><td>${esc(CK[k].long)}</td></tr>`).join('')}</table>
+   <p class="note">US practice: hots are black or red (any colour but white, grey or green), the neutral is white or grey, the equipment ground is green or bare. PV DC conductors are commonly red (+) and black (−) and must be marked with polarity. In this plate N is drawn white with a grey edge.</p>`;
+  bindChips($('#p-wires'));
+}
+function renderLoads(){
+  const r=LAST||model(SIM);
+  $('#p-loads').innerHTML = `<div class="cap">House circuits</div><h2>Loads</h2>
+   <p>Each load follows a typical Florida summer day. Force one on or off to see how it changes the balance and the day chart.</p>
+   <table class="tbl"><tr><th>Load</th><th>Schedule</th><th style="text-align:right">Now</th></tr>
+   ${LOADS.map(L=>`<tr><td><span class="chip" data-go="${L.id}">${esc(L.name)}</span><br><span style="color:var(--ink-3)">${L.v} V · ${esc(L.brk)}</span></td><td class="loadrow"><select data-load="${L.id}"><option value="auto">Typical day</option><option value="on">Force on</option><option value="off">Force off</option></select></td><td class="num">${r.served[L.id].toFixed(2)} kW</td></tr>`).join('')}
+   </table>
+   <div class="box"><h4>In an outage (with a battery)</h4><p>The gateway sheds the EV charger, pool pump and water heater first, then the AC if the load exceeds what the battery and solar can deliver (about ${SPEC.battPeak} kW peak plus solar). Real systems do this with relays, smart breakers or a smart panel.</p></div>`;
+  bindChips($('#p-loads')); bindLoadSel($('#p-loads'));
+}
+
+/* ---- day chart */
+const SER = [{k:'pv',name:'Solar',col:'var(--s-sun)'},{k:'home',name:'Home',col:'var(--s-home)'},{k:'bat',name:'Battery (+ out, − in)',col:'var(--s-bat)'},{k:'grid',name:'Grid (+ buy, − sell)',col:'var(--s-grid)'}];
+let dayCache=null;
+function simDay(){
+  if(dayCache) return dayCache;
+  const st={...SIM, mode:{...SIM.mode}, soc:SIM.batt?0.5:0, t:0}, pts=[], dt=0.1;
+  const tot={pv:0,home:0,imp:0,exp:0,dis:0,ch:0};
+  for(let i=0;i<=240;i++){
+    st.t=i*dt; const r=model(st);
+    pts.push({t:st.t, pv:r.pv, home:r.load, bat:SIM.batt?r.batt:null, grid:r.grid, soc:st.soc});
+    if(i<240){ tot.pv+=r.pv*dt; tot.home+=r.load*dt; if(r.grid>0) tot.imp+=r.grid*dt; else tot.exp-=r.grid*dt; if(r.batt>0) tot.dis+=r.batt*dt; else tot.ch-=r.batt*dt;
+      if(SIM.batt){ if(r.batt<0) st.soc+=(-r.batt)*0.95*dt/SPEC.battKWh; else st.soc-=r.batt/0.95*dt/SPEC.battKWh; st.soc=clamp(st.soc,0,1); } }
+  }
+  return dayCache={pts,tot};
+}
+function renderDay(){
+  const {pts,tot}=simDay(), W=340, H=200, L=30, Rr=8, T=10, B=24, iw=W-L-Rr, ih=H-T-B;
+  const vals=pts.flatMap(p=>[p.pv,p.home,p.bat??0,p.grid]); const ymax=Math.ceil(Math.max(2,...vals)), ymin=Math.floor(Math.min(0,...vals));
+  const X=t=>L+t/24*iw, Y=v=>T+(ymax-v)/(ymax-ymin)*ih;
+  let g='';
+  for(let v=ymin; v<=ymax; v+= (ymax-ymin>8?2:1)) g+=`<path d="M${L},${Y(v)}H${W-Rr}" stroke="${v===0?'var(--ink-4)':'var(--rule-2)'}" stroke-width="${v===0?1:.6}"/><text x="${L-4}" y="${Y(v)+3}" text-anchor="end">${v}</text>`;
+  [0,6,12,18,24].forEach(h=>g+=`<text x="${X(h)}" y="${H-8}" text-anchor="middle">${h===0||h===24?'12a':h===12?'12p':h<12?h+'a':(h-12)+'p'}</text>`);
+  const series = SER.filter(s=>s.k!=='bat'||SIM.batt);
+  series.forEach(s=>{ g+=`<path d="${d(pts.map(p=>[X(p.t),Y(p[s.k])]))}" fill="none" stroke="${s.col}" stroke-width="2" stroke-linejoin="round"/>`; });
+  // direct labels at each series' daily extreme
+  const placed=[];
+  series.forEach(s=>{ let best=pts[0]; pts.forEach(p=>{ if(Math.abs(p[s.k])>Math.abs(best[s.k])) best=p; });
+    let ly=Y(best[s.k])+(best[s.k]>=0?-6:12); while(placed.some(q=>Math.abs(q-ly)<11)) ly+=11; placed.push(ly);
+    const lx=clamp(X(best.t),L+20,W-Rr-30);
+    g+=`<text class="lbl" x="${lx}" y="${ly}" text-anchor="middle" style="paint-order:stroke;stroke:var(--paper);stroke-width:3px">${s.name.split(' ')[0]}</text>`; });
+  g+=`<path id="dayNow" d="M0,${T}V${T+ih}" stroke="var(--ink-2)" stroke-dasharray="3 3"/><g id="dayHover" style="display:none"><path d="M0,${T}V${T+ih}" stroke="var(--ink-3)"/></g>`;
+  g+=`<rect id="dayHit" x="${L}" y="${T}" width="${iw}" height="${ih}" fill="transparent"/>`;
+  // SOC strip
+  let soc='';
+  if(SIM.batt){ const sh=50, sT=10, sY=v=>sT+(1-v)*sh;
+    soc=`<h3>Battery state of charge</h3><div class="chart"><svg viewBox="0 0 ${W} ${sh+30}"><path d="M${L},${sY(1)}H${W-Rr}M${L},${sY(SPEC.reserve)}H${W-Rr}" stroke="var(--rule-2)"/><text x="${L-4}" y="${sY(1)+3}" text-anchor="end">100%</text><text x="${L-4}" y="${sY(SPEC.reserve)+3}" text-anchor="end">20%</text><path d="M${L},${sY(0)}H${W-Rr}" stroke="var(--ink-4)"/><text x="${L-4}" y="${sY(0)+3}" text-anchor="end">0</text>
+      <path d="${d(pts.map(p=>[X(p.t),sY(p.soc)]))}" fill="none" stroke="var(--s-bat)" stroke-width="2"/></svg></div>`; }
+  const self = tot.pv>0? Math.round((tot.pv-tot.exp)/tot.pv*100):0;
+  $('#p-day').innerHTML = `<div class="cap">24 hours with today’s settings</div><h2>A day of energy</h2>
+   <p>${SIM.grid?'':'<b>All day without the grid.</b> '}Power in kW across the day, starting at midnight${SIM.batt?' with the battery at 50%':''}. Positive grid = buying; negative = selling.</p>
+   <div class="clegend">${series.map(s=>`<span><i style="background:${s.col}"></i>${esc(s.name)}</span>`).join('')}</div>
+   <div class="chart" id="dayChart"><svg viewBox="0 0 ${W} ${H}">${g}</svg><div class="ctip" id="dayTip"></div></div>
+   ${soc}
+   <h3>Totals for the day</h3>
+   <table class="tbl"><tr><td>Solar produced</td><td class="num">${tot.pv.toFixed(1)} kWh</td></tr><tr><td>House used</td><td class="num">${tot.home.toFixed(1)} kWh</td></tr>
+   <tr><td>Bought from the grid</td><td class="num">${tot.imp.toFixed(1)} kWh</td></tr><tr><td>Exported to the grid</td><td class="num">${tot.exp.toFixed(1)} kWh</td></tr>
+   ${SIM.batt?`<tr><td>Battery charged / discharged</td><td class="num">${tot.ch.toFixed(1)} / ${tot.dis.toFixed(1)} kWh</td></tr>`:''}
+   <tr><td>Solar used on site</td><td class="num">${self}%</td></tr><tr><td>Net from the grid</td><td class="num">${(tot.imp-tot.exp).toFixed(1)} kWh</td></tr></table>
+   <p class="note">Under Florida’s 1:1 net metering a kWh exported at noon offsets a kWh bought at night, so the bill depends mostly on the <i>net</i> figure, not on when you use the power. That’s why many Florida owners run their battery in backup-only mode. Under time-of-use or reduced export rates, self-powered mode would be worth more.</p>`;
+  const chart=$('#dayChart'), hit=$('#dayHit'), tipD=$('#dayTip'), hov=$('#dayHover'), sv=chart.querySelector('svg');
+  hit.addEventListener('pointermove', e=>{
+    const b=sv.getBoundingClientRect(), sx=(e.clientX-b.left)/b.width*W, t=clamp((sx-L)/iw*24,0,24), p=pts[Math.round(t/0.1)];
+    hov.style.display=''; hov.setAttribute('transform',`translate(${X(p.t)},0)`);
+    tipD.innerHTML = `<b>${fmtTime(p.t%24)}</b>`+series.map(s=>`<div class="r"><span><i class="sw" style="background:${s.col};width:10px;height:2px"></i>${esc(s.name.split(' ')[0])}</span><span>${p[s.k].toFixed(1)} kW</span></div>`).join('')+(SIM.batt?`<div class="r"><span>Charge</span><span>${Math.round(p.soc*100)}%</span></div>`:'');
+    tipD.classList.add('on'); const cx=(X(p.t)/W)*b.width; tipD.style.left = (cx>b.width/2? cx-tipD.offsetWidth-10 : cx+10)+'px'; tipD.style.top='8px';
+  });
+  hit.addEventListener('pointerleave',()=>{ tipD.classList.remove('on'); hov.style.display='none'; });
+  hit.addEventListener('click', e=>{ const b=sv.getBoundingClientRect(); SIM.t=clamp(((e.clientX-b.left)/b.width*W-L)/iw*24,0,23.95); update(); });
+  markDay();
+}
+function markDay(){ const n=$('#dayNow'); if(!n) return; const W=340,L=30,iw=W-L-8; n.setAttribute('transform',`translate(${L+SIM.t/24*iw},0)`); }
+
+/* ---- code & Florida */
+function renderCode(){
+  $('#p-code').innerHTML = `<div class="cap">Rules behind the drawing</div><h2>Code &amp; Florida</h2>
+   <h3>The 120% rule (back-fed breaker)</h3>
+   <p>A panel’s busbar is rated for a fixed current. With solar back-fed at the far end, NEC 705.12(B)(3)(2) allows it if <b>busbar × 120% ≥ main breaker + 125% × inverter output current</b>.</p>
+   <div class="calc">
+    <label for="cBus">Busbar rating (A)</label><input id="cBus" type="number" value="200">
+    <label for="cMain">Main breaker (A)</label><input id="cMain" type="number" value="200">
+    <label for="cInv">Inverter AC output (kW)</label><input id="cInv" type="number" value="7.6" step="0.1">
+   </div><div id="cOut"></div>
+   <p class="note">Alternatives when it fails: a supply-side tap ahead of the main (705.11), downsizing the main breaker after a load calculation, a bigger busbar, or (with a battery) landing the solar in the gateway.</p>
+   <h3>Florida specifics</h3>
+   <ul>
+    <li><b>Code edition.</b> Florida’s 8th-edition building code (2023) adopts the 2020 NEC. Articles 690 (PV), 705 (interconnection), 706 (storage) and 230.67 (surge protection) are the ones on this plate.</li>
+    <li><b>Wind.</b> Racking is engineered to the Florida Building Code’s design wind speeds (roughly 130–180 mph by county) and roof zones. In Miami-Dade and Broward (HVHZ) components need Miami-Dade NOA or Florida product approval.</li>
+    <li><b>Net metering.</b> PSC Rule 25-6.065 covers FPL, Duke Energy Florida, TECO and FPUC: Tier 1 is up to 10 kW, Tier 2 is 10–100 kW. Monthly 1:1 crediting, with surplus paid once a year at avoided cost. Co-ops and municipal utilities have their own policies. Confirm the current tariff.</li>
+    <li><b>Hurricanes.</b> Grid-tied solar without storage shuts off in an outage by design. Backup needs a battery and an islanding gateway (or a hybrid inverter with a backup port and transfer switch).</li>
+    <li><b>Lightning.</b> Florida leads the US in cloud-to-ground strikes. Surge protection at the service (required) and at the inverter, plus a solid grounding electrode system.</li>
+    <li><b>Flood &amp; salt.</b> Mount inverters, batteries and disconnects above the design flood elevation; use corrosion-rated equipment within a few miles of the coast.</li>
+    <li><b>Your rights.</b> Florida’s Solar Rights Act (F.S. 163.04) keeps HOAs from banning solar, though they can have a say on placement if it doesn’t hurt production. Solar equipment is exempt from state sales tax, and the added value is exempt from property tax.</li>
+    <li><b>The process.</b> Design → building/electrical permit → install → city/county inspection → utility interconnection agreement → net-meter swap → permission to operate.</li>
+   </ul>
+   <h3>Key NEC sections on this plate</h3>
+   <table class="tbl">
+    <tr><td class="num">690.7</td><td>Maximum DC voltage (string length vs. coldest temperature)</td></tr>
+    <tr><td class="num">690.8–.9</td><td>Circuit sizing at 125% / 156% of short-circuit current; overcurrent protection</td></tr>
+    <tr><td class="num">690.11</td><td>DC arc-fault protection</td></tr>
+    <tr><td class="num">690.12</td><td>Rapid shutdown: ≤ 30 V outside the array within 30 s</td></tr>
+    <tr><td class="num">690.13/.15</td><td>PV disconnecting means</td></tr>
+    <tr><td class="num">690.43, .47</td><td>Bonding of frames and racking; grounding electrode system</td></tr>
+    <tr><td class="num">690.56, 705.10</td><td>Labels and directory at the service showing every power source</td></tr>
+    <tr><td class="num">705.11 / .12</td><td>Supply-side vs. load-side connections; the 120% rule</td></tr>
+    <tr><td class="num">706</td><td>Energy storage systems (with UL 9540, NFPA 855)</td></tr>
+    <tr><td class="num">230.67</td><td>Surge protection on dwelling services</td></tr>
+    <tr><td class="num">250.24, .50</td><td>Neutral-to-ground bond at the service only; grounding electrodes</td></tr>
+   </table>`;
+  const calc=()=>{ const bus=+$('#cBus').value, main=+$('#cMain').value, kw=+$('#cInv').value;
+    const amps=kw*1000/240, ocpd=amps*1.25, brk=Math.ceil(ocpd/5)*5, allow=bus*1.2-main, ok=main+ocpd<=bus*1.2+1e-9;
+    $('#cOut').innerHTML = `<table class="kv"><tr><td>Inverter current</td><td class="v">${amps.toFixed(1)} A</td></tr><tr><td>× 125% (continuous)</td><td class="v">${ocpd.toFixed(1)} A → ${brk} A breaker</td></tr><tr><td>Room on the bus</td><td class="v">${bus} × 1.2 − ${main} = ${allow.toFixed(0)} A</td></tr></table>
+      <div class="verdict ${ok?'ok':'bad'}">${ok?`Passes: ${(main+ocpd).toFixed(1)} A ≤ ${(bus*1.2).toFixed(0)} A. Put the PV breaker at the opposite end of the bus from the main.`:`Fails by ${(main+ocpd-bus*1.2).toFixed(1)} A. Use a supply-side tap, derate the main, or upgrade the panel.`}</div>`; };
+  ['#cBus','#cMain','#cInv'].forEach(s=>$(s).addEventListener('input',calc)); calc();
+}
+
+/* ---- "inside" figures */
+const FD = `<defs><marker id="fa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#47433c"/></marker></defs>`;
+const fig=(w,h,b)=>`<svg class="fig" viewBox="0 0 ${w} ${h}">${FD}${b}</svg>`;
+const B=(x,y,w,h,t,s,f)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="${f||'#fbf9f4'}" stroke="#47433c"/><text x="${x+w/2}" y="${y+(s?h/2-2:h/2+3.5)}" class="ft">${t}</text>${s?`<text x="${x+w/2}" y="${y+h/2+10}" class="fs">${s}</text>`:''}`;
+const A=(pts,col)=>`<path d="${d(pts)}" stroke="${col||'#47433c'}" stroke-width="1.6" fill="none" marker-end="url(#fa)"/>`;
+const FIG = {
+  mod:()=>fig(340,170,`<rect x="20" y="16" width="190" height="140" fill="#2c3a55" stroke="#9aa3ad" stroke-width="2"/>
+    ${[0,1,2].map(i=>`<rect x="${26+i*62}" y="22" width="56" height="128" fill="none" stroke="#e9b949" stroke-dasharray="3 2"/>`).join('')}
+    ${[...Array(6)].map((_,i)=>`<path d="M${26+i*31+15},26V146" stroke="#53627f"/>`).join('')}
+    <rect x="232" y="40" width="70" height="66" fill="#fbf9f4" stroke="#47433c"/><text x="267" y="54" class="ft">module J-box</text>
+    ${[0,1,2].map(i=>`<path d="M${244+i*20},70v14" stroke="#47433c"/><path d="M${239+i*20},78l5,-6l5,6z" fill="#47433c"/>`).join('')}
+    <text x="267" y="98" class="fs">3 bypass diodes</text>
+    <path d="M302,60H330" stroke="#c23b22" stroke-width="2.4"/><path d="M302,90H330" stroke="#22201c" stroke-width="2.4"/><text x="316" y="54" class="fs">+ MC4</text><text x="316" y="104" class="fs">− MC4</text>
+    <text x="115" y="166" class="fs">cells in three series groups (yellow); each group bridged by a diode</text>`),
+  rsd:()=>fig(340,140,`${B(14,44,70,44,'Module','≈ 37 V')}${A([[84,58],[118,58]],'#c23b22')}${A([[118,76],[84,76]],'#22201c')}
+    <rect x="118" y="30" width="110" height="74" rx="3" fill="#ece7dc" stroke="#47433c"/><text x="173" y="46" class="ft">shutdown device</text>
+    <path d="M140,66h20l14,-10M176,66h22" stroke="#47433c" stroke-width="2" fill="none"/><text x="173" y="92" class="fs">switch held closed by keep-alive</text>
+    ${A([[228,58],[272,58]],'#c23b22')}${A([[272,76],[228,76]],'#22201c')}${B(272,40,56,54,'String','in series')}
+    <text x="170" y="126" class="fs">no keep-alive → switch opens and the output is shorted/limited to &lt; 1 V</text>`),
+  micro:()=>fig(340,120,`${B(8,36,62,44,'Module','≈ 37 V DC')}${A([[70,58],[90,58]])}${B(90,36,62,44,'MPPT','DC-DC')}${A([[152,58],[172,58]])}${B(172,36,74,44,'inverter','HF bridge')}${A([[246,58],[266,58]])}${B(266,36,66,44,'240 V AC','to trunk')}
+    <text x="170" y="104" class="fs">it starts only when the trunk shows healthy 240 V / 60 Hz from the grid or a battery</text>`),
+  inv:c=>fig(340,c.batt?220:170,`${B(6,14,58,40,'PV in','2 strings')}${A([[64,34],[78,34]])}${B(78,14,76,40,'DC disconnect','AFCI · GFDI')}${A([[154,34],[168,34]])}${B(168,14,66,40,'MPPT','per string')}${A([[234,34],[250,34]])}${B(250,14,84,40,'DC bus','≈ 400 V')}
+    ${A([[292,54],[292,84]])}${B(250,84,84,40,'H-bridge','60 Hz')}${A([[250,104],[236,104]])}${B(150,84,86,40,'filter + relays','anti-islanding')}${A([[150,104],[136,104]])}${B(52,84,84,40,'AC out','L1 · L2 · N · G')}
+    ${B(6,130,110,30,'RSD keep-alive','to module devices','#f3ead5')}
+    ${c.batt?`${B(250,160,84,44,'battery DC-DC','bi-directional','#e3f0eb')}<path d="M292,124V160" stroke="#13866f" stroke-width="2" stroke-dasharray="4 2"/><text x="250" y="216" class="fs" text-anchor="start">↕ to BAT-1 (≈ 400 V DC)</text>`:''}`),
+  cmb:()=>fig(340,150,`${B(10,20,74,34,'Trunk 1','L1 · L2')}${B(10,70,74,34,'Trunk 2','L1 · L2')}${A([[84,37],[110,37]])}${A([[84,87],[110,87]])}
+    ${B(110,20,60,34,'20 A','2-pole','#e9e8e3')}${B(110,70,60,34,'20 A','2-pole','#e9e8e3')}${A([[170,37],[200,55]])}${A([[170,87],[200,70]])}${B(200,44,60,36,'bus','')}${A([[260,62],[290,62]])}${B(290,44,44,36,'out','40 A')}
+    ${B(110,116,150,26,'monitoring gateway + CT','','#f3ead5')}`),
+  bat:c=>fig(340,140,`${B(8,20,90,90,'cell modules','LFP · 3.2 V cells')}${A([[98,65],[118,65]])}${B(118,30,80,70,'BMS','cell V & °C')}${A([[198,65],[214,65]])}${B(214,40,50,50,'contactor','')}
+    ${A([[264,65],[282,65]])}${c.arch==='string'?B(282,40,52,50,'DC out','≈ 400 V'):B(282,40,52,50,'inverter','240 V AC','#e3f0eb')}
+    <text x="170" y="130" class="fs">${c.arch==='string'?'DC-coupled: the hybrid inverter does the AC conversion':'AC-coupled: its own inverter forms the grid in an outage'}</text>`),
+  acd:()=>fig(340,140,`<rect x="40" y="16" width="200" height="110" fill="#fbf9f4" stroke="#47433c"/>
+    ${[['L1','#22201c',40],['L2','#c23b22',70]].map(([n,col,y])=>`<path d="M10,${y}H90" stroke="${col}" stroke-width="2.4"/><circle cx="90" cy="${y}" r="3"/><path d="M90,${y}L130,${y-18}" stroke="#47433c" stroke-width="3"/><circle cx="140" cy="${y}" r="3"/><path d="M140,${y}H300" stroke="${col}" stroke-width="2.4"/><text x="16" y="${y-5}" class="fs" text-anchor="start">${n}</text>`).join('')}
+    <path d="M110,22V62" stroke="#47433c" stroke-dasharray="3 2"/><text x="250" y="20" class="fs" text-anchor="start">blades open</text>
+    <path d="M10,96H300" stroke="#7d776c" stroke-width="3.3"/><path d="M10,96H300" stroke="#fff" stroke-width="1.5"/><text x="150" y="92" class="fs">neutral passes through (never switched)</text>
+    <path d="M10,116H300" stroke="#3d8b45" stroke-width="2.4"/><text x="150" y="112" class="fs">ground lug</text>`),
+  gw:()=>fig(340,170,`${B(270,30,62,40,'grid','from meter')}${A([[270,50],[236,50]])}<rect x="196" y="26" width="40" height="48" fill="#fbf9f4" stroke="#47433c"/><text x="216" y="22" class="fs">CTs</text><circle cx="216" cy="50" r="9" fill="none" stroke="#47433c" stroke-width="2"/>
+    ${A([[196,50],[168,50]])}<circle cx="164" cy="50" r="3"/><path d="M164,50L128,36" stroke="#47433c" stroke-width="3"/><circle cx="124" cy="50" r="3"/><text x="144" y="74" class="fs">islanding contactor</text>
+    ${A([[124,50],[92,50]])}${B(10,30,82,40,'home bus','to LP-1')}
+    ${B(10,110,90,36,'solar breaker','','#f3ead5')}${B(110,110,90,36,'battery breaker','','#e3f0eb')}<path d="M55,110V70M155,110V70" stroke="#47433c"/><path d="M155,70V60H124" stroke="#47433c" fill="none"/>
+    ${B(220,110,112,36,'controller','sense · sync · shed','#e4ebf1')}
+    <text x="170" y="164" class="fs">open = house islanded; solar and battery stay on the home side</text>`),
+  mm:()=>fig(340,190,`<circle cx="70" cy="56" r="40" fill="#eef2f3" stroke="#47433c"/><text x="70" y="52" class="ft">net meter</text><text x="70" y="66" class="fs">line jaws ↓ load jaws ↑</text>
+    ${A([[70,180],[70,98]])}<text x="76" y="170" class="fs" text-anchor="start">from transformer</text>${A([[110,56],[150,56]])}${B(150,36,78,40,'200 A main','service disc.','#e9e8e3')}${A([[228,56],[268,56]])}${B(268,36,64,40,'feeder','to LP-1')}
+    <rect x="150" y="104" width="120" height="10" fill="#fff" stroke="#7d776c"/><text x="210" y="100" class="fs">neutral bar</text>
+    <path d="M270,109H300V150" stroke="#3d8b45" stroke-width="2.4" fill="none"/><text x="304" y="128" class="fs" text-anchor="start">MBJ</text>
+    <path d="M300,150V176" stroke="#b8743d" stroke-width="2.6"/><text x="296" y="186" class="fs" text-anchor="end">GEC → rods / Ufer</text>
+    <text x="200" y="140" class="fs">N and G bonded here, and only here</text>`),
+  mp:()=>fig(340,200,`<rect x="130" y="14" width="10" height="160" fill="#c9a26b"/><rect x="150" y="14" width="10" height="160" fill="#c9a26b"/><text x="135" y="10" class="fs">L1</text><text x="155" y="10" class="fs">L2</text>
+    ${B(170,18,80,30,'PV 40 A','back-fed','#f3ead5')}${B(118,176,54,22,'200 A','main','#e9e8e3')}
+    <text x="210" y="70" class="fs">← solar enters at the top</text><text x="210" y="190" class="fs" text-anchor="start">← grid enters at the bottom</text>
+    <path d="M60,60H130M60,90H160M60,120H130M60,150H160" stroke="#47433c" stroke-width="1.5"/>
+    <text x="10" y="64" class="fs" text-anchor="start">1P → L1</text><text x="10" y="94" class="fs" text-anchor="start">2P → L1+L2</text><text x="10" y="124" class="fs" text-anchor="start">1P → L1</text><text x="10" y="154" class="fs" text-anchor="start">2P → L1+L2</text>
+    <text x="270" y="110" class="fs">no point on</text><text x="270" y="121" class="fs">the bus sees</text><text x="270" y="132" class="fs">&gt; 200 A</text>`),
+  xf:()=>fig(340,160,`<text x="60" y="18" class="ft">primary 7,200 V</text>
+    ${[0,1,2,3].map(i=>`<path d="M${30+i*16},50a8,8 0 0 1 16,0" fill="none" stroke="#47433c" stroke-width="2"/>`).join('')}
+    <path d="M30,50V30M94,50V30" stroke="#47433c"/><path d="M20,62H110M20,68H110" stroke="#7d776c" stroke-width="2"/>
+    ${[0,1,2,3].map(i=>`<path d="M${30+i*16},80a8,8 0 0 0 16,0" fill="none" stroke="#47433c" stroke-width="2"/>`).join('')}
+    <path d="M30,80V120H130" stroke="#22201c" stroke-width="2.4" fill="none"/><path d="M62,80V140H130" stroke="#7d776c" stroke-width="3.3" fill="none"/><path d="M62,80V140H130" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M94,80V100H130" stroke="#c23b22" stroke-width="2.4" fill="none"/>
+    <path d="M62,140V156" stroke="#b8743d" stroke-width="2"/><text x="70" y="156" class="fs" text-anchor="start">grounded</text>
+    <text x="136" y="104" class="fs" text-anchor="start">L2</text><text x="136" y="124" class="fs" text-anchor="start">L1</text><text x="136" y="144" class="fs" text-anchor="start">N (centre tap)</text>
+    <text x="250" y="96" class="ft">L1–N = 120 V</text><text x="250" y="112" class="ft">L2–N = 120 V</text><text x="250" y="128" class="ft">L1–L2 = 240 V</text>`),
+};
+FIG.ct = ()=>fig(340,110,`<path d="M10,55H330" stroke="#22201c" stroke-width="3"/><ellipse cx="170" cy="55" rx="16" ry="34" fill="none" stroke="#47433c" stroke-width="5"/><path d="M170,21V8H260" stroke="#7a4f9c" stroke-dasharray="4 3" fill="none"/><text x="264" y="12" class="fs" text-anchor="start">to gateway</text><text x="170" y="104" class="fs">service conductor passes through; a coil senses its magnetic field</text>`);
+
+/* =====================================================================
+   9. LEGEND, CONTROLS, STARTUP
+   ===================================================================== */
+function renderLegend(){
+  const ln=(k)=>{ const s=CK[k].sw; const st = s==='n'?`<path d="M2,6H30" stroke="#7d776c" stroke-width="3.3"/><path d="M2,6H30" stroke="#fff" stroke-width="1.5"/>` : s==='c'?`<path d="M2,6H30" stroke="var(--c-com)" stroke-width="1.4" stroke-dasharray="4 3"/>`:`<path d="M2,6H30" stroke="${s}" stroke-width="${k==='gec'?2.6:2.1}"/>`; return `<div class="it"><svg width="32" height="12">${st}</svg>${esc(CK[k].long)}</div>`; };
+  $('#legend').innerHTML = `<div class="lg"><h4>AC conductors</h4>${['l1','l2','n','g'].map(ln).join('')}</div>
+   <div class="lg"><h4>DC &amp; grounding</h4>${['p','m','gec','c'].map(ln).join('')}</div>
+   <div class="lg"><h4>Reading the plate</h4>
+    <div class="it"><svg width="32" height="12"><path d="M2,6H30" stroke="var(--c-blk)" stroke-width="2.1"/><path d="M2,6H30" stroke="#fff" stroke-width="1.25" stroke-dasharray="3 7"/></svg>Energized and carrying power</div>
+    <div class="it"><svg width="32" height="12"><path d="M2,6H30" stroke="var(--c-blk)" stroke-width="2.1" opacity=".28"/></svg>De-energized (0 V)</div>
+    <div class="it"><svg width="32" height="12"><rect x="2" y="1" width="28" height="10" fill="url(#lgh)"/><defs><pattern id="lgh" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="5" fill="#f4efe6"/><path d="M0,0V5" stroke="#d9cfbc" stroke-width="1.6"/></pattern></defs></svg>Load shed by the gateway</div>
+    <div class="it">Keys: 1–9 scenarios · P play · G grid · R rapid shutdown · Esc clear</div></div>`;
+}
+function applyScenario(id){
+  const sc=SM[id]; SIM.scen=id;
+  if(sc.needsBatt && !SIM.batt){ SIM.batt=true; $('#battSel').value='1'; buildPlate(); }
+  Object.assign(SIM, {...sc.set}); if(!SIM.batt) SIM.soc=0;
+  $('#skySel').value=SIM.sky; setPlaying(false); dayCache=null;
+  $$('#scenBar .tbtn').forEach(b=>b.classList.toggle('on', b.dataset.s===id));
+  ST.step=-1; clearFocus(); update(); renderSeq(); if(ST.sel||ST.selRun){ ST.sel=ST.selRun=null; } renderHome(); renderLoads();
+  if($('#p-day').classList.contains('on')) renderDay();
+}
+function reconfigure(){
+  SIM.arch=$('#archSel').value; SIM.batt=$('#battSel').value==='1'; SIM.bmode=$('#bmodeSel').value;
+  $('#bmodeSel').style.display = SIM.batt? '':'none';
+  if(SIM.batt && SIM.soc<=0) SIM.soc=0.6;
+  const keep = ST.sel||ST.selRun; dayCache=null;
+  buildPlate(); update(); renderWires(); renderSeq(); renderLoads();
+  if(keep && (CM[keep]? compEls[keep] : RM[keep])) go(keep); else { ST.sel=ST.selRun=null; renderHome(); }
+  if($('#p-day').classList.contains('on')) renderDay();
+}
+SCEN.forEach((s,i)=>{ const b=document.createElement('button'); b.className='tbtn'+(s.out?' out':''); b.dataset.s=s.id; b.innerHTML=`<span class="k">${i+1}</span>${esc(s.name)}`; b.addEventListener('click',()=>applyScenario(s.id)); $('#scenBar').appendChild(b); });
+['#archSel','#battSel','#bmodeSel'].forEach(s=>$(s).addEventListener('change',reconfigure));
+$('#tSlider').addEventListener('input',e=>{ SIM.t=+e.target.value; SIM.scen=null; $$('#scenBar .tbtn').forEach(b=>b.classList.remove('on')); update(); renderSeq(); });
+$('#skySel').addEventListener('change',e=>{ SIM.sky=e.target.value; dayCache=null; update(); if($('#p-day').classList.contains('on')) renderDay(); });
+$('#gridBtn').addEventListener('click',()=>{ SIM.grid=!SIM.grid; dayCache=null; update(); if($('#p-day').classList.contains('on')) renderDay(); });
+$('#rsdBtn').addEventListener('click',()=>{ SIM.rsd=!SIM.rsd; dayCache=null; update(); });
+$('#playBtn').addEventListener('click',()=>{ if(!SIM.playing && SIM.scen){ SIM.scen=null; $$('#scenBar .tbtn').forEach(b=>b.classList.remove('on')); renderSeq(); } setPlaying(!SIM.playing); });
+$('#chkVals').addEventListener('change',e=>svg.classList.toggle('novals',!e.target.checked));
+let paused=false;
+function togglePause(){ paused=!paused; svg.classList.toggle('paused',paused); $('#pauseBtn').textContent = paused?'▶ Animate':'❚❚ Pause'; }
+$('#pauseBtn').addEventListener('click',togglePause);
+$('#printBtn').addEventListener('click',()=>print());
+addEventListener('keydown',e=>{
+  if(e.target.closest('input,select,textarea')) return;
+  if(e.key>='1'&&e.key<='9'&&SCEN[+e.key-1]) applyScenario(SCEN[+e.key-1].id);
+  else if(e.key===' '){ e.preventDefault(); togglePause(); }
+  else if(e.key==='p'||e.key==='P') $('#playBtn').click();
+  else if(e.key==='g'||e.key==='G') $('#gridBtn').click();
+  else if(e.key==='r'||e.key==='R') $('#rsdBtn').click();
+  else if(e.key==='Escape') clearSel();
+});
+
+buildPlate(); renderLegend(); renderWires(); renderCode(); renderHome();
+$('#bmodeSel').style.display='none';
+applyScenario('noon');
+
+/* ---- self-test: every cross-reference resolves in every configuration */
+(function selfTest(){
+  const errs=[];
+  for(const arch of ['string','micro']) for(const batt of [false,true]){
+    const c={arch,batt,bmode:'self'}, runs=buildRuns(c), rm=Object.fromEntries(runs.map(r=>[r.id,r]));
+    runs.forEach(r=>{ [r.from,r.to].forEach(id=>{ if(!CM[id]) errs.push(`${arch}/${batt}: run ${r.id} → unknown ${id}`); else if(!present(id,c)) errs.push(`${arch}/${batt}: run ${r.id} → ${id} not present`); });
+      r.segs.forEach(s=>s.c.forEach(k=>{ if(!CK[k]) errs.push(`run ${r.id}: unknown conductor ${k}`); })); });
+    SCEN.filter(s=>batt||!s.needsBatt).forEach(s=>s.steps(c).forEach((st,i)=>st.ids.forEach(id=>{ if(!rm[id] && !(CM[id]&&present(id,c))) errs.push(`${arch}/${batt}: ${s.id} step ${i+1} → ${id} missing`); })));
+    const m=model({...SIM,arch,batt,mode:{...SIM.mode}});
+    runs.forEach(r=>{ if(r.kind!=='gnd' && m.V[r.id]==null) errs.push(`${arch}/${batt}: no model value for ${r.id}`); });
+  }
+  if(errs.length) console.warn('Sun & Current self-test:', errs); else console.log('Sun & Current self-test: all cross-references resolve in all four configurations.');
+})();
+</script>
+</body>
+</html>
