@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning — interactive study plates</title>
+<meta name="description" content="Self-built interactive explainers for HVAC and building systems: duct airflow, and how a boiler, air handler and water heater work together.">
+<style>
+:root{
+  --paper:#f7f3ea; --sheet:#fbf9f4; --ink:#1f1d1a; --ink-2:#47433c; --ink-3:#7d776c; --rule:#d3cab8; --rule-2:#e2dbcc; --terra:#ad543a;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:"Avenir Next","Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --cond:"Avenir Next Condensed","Arial Narrow","Helvetica Neue","Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+main{max-width:860px;margin:0 auto;padding:48px 20px 64px}
+.cap{font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--ink-3)}
+h1{font-family:var(--serif);font-weight:normal;font-size:38px;line-height:1.1;margin:6px 0 10px}
+h1 em{color:var(--ink-2)}
+.lede{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--ink-2);margin:0 0 34px;max-width:620px}
+.plates{display:grid;gap:16px}
+a.plate{display:grid;grid-template-columns:120px minmax(0,1fr);gap:18px;align-items:center;text-decoration:none;color:inherit;background:var(--sheet);border:1px solid var(--rule);padding:18px;box-shadow:inset 0 0 0 4px var(--sheet),inset 0 0 0 5px var(--rule-2);transition:border-color .2s}
+a.plate:hover,a.plate:focus-visible{border-color:var(--ink-3);outline:none}
+a.plate:hover h2,a.plate:focus-visible h2{color:var(--terra)}
+.plate svg{width:120px;height:84px;display:block}
+.plate h2{font-family:var(--serif);font-weight:normal;font-size:23px;margin:2px 0 4px;transition:color .2s}
+.plate h2 em{color:var(--ink-2)}
+.plate p{margin:0;color:var(--ink-2);font-size:14px}
+footer{margin-top:40px;padding-top:12px;border-top:1px solid var(--rule-2);font-size:12px;color:var(--ink-3)}
+@media (max-width:560px){
+  main{padding:32px 16px 48px}
+  h1{font-size:30px}
+  a.plate{grid-template-columns:1fr}
+  .plate svg{width:100%;height:auto;max-height:110px}
+}
+</style>
+</head>
+<body>
+<main>
+  <div class="cap">Learning · interactive study plates</div>
+  <h1>Building systems, <em>taken apart and animated</em></h1>
+  <p class="lede">Self-built explainers drawn like plates from an engineering reference book. Click any part to see what it does, and run the scenarios to watch the system work.</p>
+  <div class="plates">
+    <a class="plate" href="hvac-duct-lab/">
+      <svg viewBox="0 0 120 84" aria-hidden="true"><rect x="6" y="30" width="26" height="44" fill="#e9e1d1" stroke="#7d776c"/><path d="M32,40H104M32,58H90" stroke="#7d776c" stroke-width="9" fill="none"/><path d="M32,40H104M32,58H90" stroke="#f4efe5" stroke-width="7" fill="none"/><path d="M60,44V74M84,44V74" stroke="#7d776c" stroke-width="7"/><path d="M60,44V74M84,44V74" stroke="#f4efe5" stroke-width="5"/><path d="M40,40h12M70,40h12M40,58h12" stroke="#4c6f93" stroke-width="1.6" stroke-dasharray="3 3"/></svg>
+      <div><div class="cap">Plate I</div><h2>Air in Motion — <em>a duct-design laboratory</em></h2>
+      <p>Duct sizing, velocity, static pressure, fan and system curves, and branch balancing, all from a real network solution of a four-room supply system.</p></div>
+    </a>
+    <a class="plate" href="hydronic-plant-lab/">
+      <svg viewBox="0 0 120 84" aria-hidden="true"><rect x="44" y="40" width="30" height="40" fill="#efe6d6" stroke="#47433c"/><rect x="48" y="62" width="22" height="14" fill="#3b332c"/><path d="M66,40V12H18V44" stroke="#b5432c" stroke-width="3" fill="none"/><path d="M14,52H30M52,40V24H26" stroke="#3f6496" stroke-width="3" fill="none"/><rect x="8" y="44" width="22" height="34" fill="#f6f2ea" stroke="#47433c"/><path d="M66,12H96V46" stroke="#b5432c" stroke-width="3" fill="none"/><rect x="88" y="46" width="22" height="34" rx="6" fill="#f3e6d6" stroke="#47433c"/><path d="M50,40V30" stroke="#8b8579" stroke-width="5"/></svg>
+      <div><div class="cap">Plate II</div><h2>Heat &amp; Water — <em>boiler, air handler and water heater</em></h2>
+      <p>Every pipe, valve and valve type between an oil boiler, a hydro-air handler and an indirect water heater, plus the incoming water and the exhaust, with animated sequences of operation.</p></div>
+    </a>
+  </div>
+  <footer>Educational models, not design tools or construction documents. Everything runs in your browser; no data leaves the page.</footer>
+</main>
+</body>
+</html>

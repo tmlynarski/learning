@@ -1,0 +1,1282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heat &amp; Water — Boiler, Air Handler &amp; Water Heater Schematic</title>
+<meta name="description" content="An interactive piping and venting schematic showing how an oil boiler, a hydro-air handler and an indirect water heater work together: every connection, every valve and valve type, the incoming water and the exhaust.">
+<style>
+/* =====================================================================
+   VISUAL SYSTEM — a plate from an engineering reference book
+   (shares its palette with ../hvac-duct-lab)
+   ===================================================================== */
+:root{
+  --paper:#f7f3ea; --paper-2:#f1ebdf; --paper-3:#e9e1d1; --sheet:#fbf9f4;
+  --ink:#1f1d1a; --ink-2:#47433c; --ink-3:#7d776c; --ink-4:#a69f92; --rule:#d3cab8; --rule-2:#e2dbcc;
+  --blue:#4c6f93; --blue-2:#7f9dbb; --blue-4:#e4ebf1;
+  --terra:#ad543a; --terra-2:#cf8a71; --terra-4:#f6e7df;
+  --olive:#5f7444; --amber:#a7792b;
+  /* piping systems */
+  --hws:#b5432c; --hwr:#3f6496; --cw:#2b8577; --dhw:#d27a1c; --dhwt:#c2531c;
+  --oil:#6b5627; --ref:#7a4f9c; --cnd:#5b9fd0; --sump:#6b8799; --flue:#8b8579; --gas:#9d968a; --ctl:#8a6d3b;
+  /* provenance */
+  --p-rec:#5f7444; --p-unv:#a7792b; --p-req:#ad543a; --p-typ:#7d776c;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",Georgia,serif;
+  --sans:"Avenir Next","Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --cond:"Avenir Next Condensed","Arial Narrow","Helvetica Neue","Segoe UI",sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:13px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:normal;margin:0;color:var(--ink)}
+.cap{font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:10px;color:var(--ink-3)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* masthead */
+.masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:14px 18px;padding:14px 22px 10px;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.title-block h1{font-size:26px;line-height:1.08}
+.title-block h1 em{color:var(--ink-2)}
+.title-block .kicker{margin-bottom:5px}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.tgroup{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.tbtn{border:1px solid var(--rule);background:var(--sheet);padding:3px 9px;border-radius:2px;cursor:pointer;font-size:12px;line-height:18px;color:var(--ink-2);white-space:nowrap}
+.tbtn:hover{border-color:var(--ink-3);color:var(--ink)}
+.tbtn.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.tbtn:focus-visible,.tab:focus-visible,select:focus-visible,input:focus-visible,.row:focus-visible{outline:2px solid var(--blue-2);outline-offset:1px}
+select.tsel{border:1px solid var(--rule);background:var(--sheet);padding:3px 6px;border-radius:2px;font-size:12px}
+label.chk{display:inline-flex;gap:4px;align-items:center;font-size:12px;color:var(--ink-2);cursor:pointer}
+label.chk input{accent-color:var(--ink)}
+
+/* scenario strip */
+.scen{display:flex;gap:5px;flex-wrap:wrap;padding:8px 22px;border-bottom:1px solid var(--rule-2);align-items:center}
+.scen .tbtn{font-size:11.5px}
+.scen .tbtn .k{font-family:var(--mono);font-size:10px;color:var(--ink-4);margin-right:4px}
+.scen .tbtn.on .k{color:var(--paper-3)}
+.scen .tbtn.fault{border-style:dashed}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,28vw);align-items:start}
+.stage{padding:10px 16px 26px 22px;min-width:0}
+.side{border-left:1px solid var(--rule);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;min-width:0;background:var(--paper)}
+
+.plate-wrap{position:relative;background:var(--sheet);border:1px solid var(--rule);box-shadow:inset 0 0 0 6px var(--sheet),inset 0 0 0 7px var(--rule-2)}
+#plate{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none}
+.plate-cap{display:flex;justify-content:space-between;gap:12px;padding:6px 2px 0;flex-wrap:wrap;font-size:11px;color:var(--ink-3)}
+.status{font-family:var(--serif);font-size:15px;color:var(--ink);padding:2px 2px 8px;min-height:28px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.status .badge{font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:10px;padding:2px 7px;border:1px solid currentColor;border-radius:2px;color:var(--terra)}
+.status .badge.fault{color:#8b1d1d;background:#f4dede}
+.status small{font-family:var(--sans);font-size:11.5px;color:var(--ink-3)}
+
+/* legend */
+.legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+.lg{background:var(--sheet);border:1px solid var(--rule-2);padding:8px 10px}
+.lg h4{font-size:14px;margin-bottom:4px}
+.lg .it{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink-2);padding:1.5px 0;cursor:default}
+.lg .it svg{flex:none}
+.lg .it.click{cursor:pointer}
+.lg .it.click:hover{color:var(--ink)}
+
+/* SVG plate */
+.plate text{font-family:var(--cond);fill:var(--ink-2)}
+.plate .t-title{font-family:var(--serif);fill:var(--ink)}
+.plate .t-zone{font-size:10px;letter-spacing:.16em;text-transform:uppercase;fill:var(--ink-4)}
+.plate .t-sm{font-size:9px;fill:var(--ink-3)}
+.plate .t-eq{font-family:var(--serif);font-size:15px;fill:var(--ink)}
+.comp,.pipe{cursor:pointer;transition:opacity .3s}
+.plate.focus .comp:not(.hl),.plate.focus .pipe:not(.hl),.plate.focus .tag:not(.hl){opacity:.22}
+.plate.focus .bg-dim{opacity:.55}
+.comp.sel .selring{opacity:1}
+.selring{fill:none;stroke:var(--terra);stroke-width:2;stroke-dasharray:4 3;opacity:0;pointer-events:none}
+.comp:hover .hovring{opacity:.9}
+.hovring{fill:none;stroke:var(--blue-2);stroke-width:1.5;opacity:0;pointer-events:none}
+.hit{fill:transparent;stroke:none}
+.pipe .halo{fill:none;stroke:var(--sheet);stroke-linecap:round;stroke-linejoin:round}
+.pipe .body{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.pipe .flow{fill:none;stroke:#fff;stroke-linecap:round;stroke-dasharray:3 11;opacity:0;pointer-events:none}
+.pipe .phit{fill:none;stroke:transparent;stroke-width:14;stroke-linecap:round}
+.pipe.on .flow{opacity:.9;animation:flow .7s linear infinite}
+.pipe.on.rev .flow{animation-direction:reverse}
+.pipe.sel .body{filter:drop-shadow(0 0 3px rgba(173,84,58,.75))}
+@keyframes flow{from{stroke-dashoffset:14}to{stroke-dashoffset:0}}
+.pipe.gasp .flow{stroke:#efece6;stroke-dasharray:6 10}
+.pipe.ctlp .flow{stroke:#fff3d8}
+/* valve bodies by state */
+.vb{stroke:var(--ink);stroke-width:1.2;stroke-linejoin:round;fill:var(--sheet)}
+.v-closed .vb{fill:var(--ink)}
+.v-flow .vb{fill:currentColor}
+.v-lift .vb{fill:#8b1d1d}
+.v-unknown .vb{fill:url(#hatch)}
+.vk{stroke:var(--ink);stroke-width:1.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.vkf{fill:var(--ink)}
+.v-lift .liftmark{opacity:1}
+.liftmark{opacity:0}
+/* tags */
+.tag rect{fill:var(--sheet);stroke:var(--ink-3);stroke-width:.9}
+.tag text{font-family:var(--mono);font-size:9.5px;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.tag.typ rect,.tag.req rect{stroke-dasharray:2.5 2}
+.tag.typ text{fill:var(--ink-3);font-style:italic}
+.tag.req text{fill:var(--terra);font-style:italic}
+.plate.nolabels .tag.minor{display:none}
+.plate.notyp .typonly{display:none}
+.plate.noctl .ctl-layer{display:none}
+/* colour-by modes for tags */
+.plate.by-prov .tag rect{stroke-width:1.6;stroke-dasharray:none}
+.plate.by-prov .tag.p-rec rect{stroke:var(--p-rec);fill:#eef2e6}
+.plate.by-prov .tag.p-unv rect{stroke:var(--p-unv);fill:#f6edd9}
+.plate.by-prov .tag.p-req rect{stroke:var(--p-req);fill:var(--terra-4)}
+.plate.by-prov .tag.p-typ rect{stroke:var(--p-typ);fill:var(--paper-2)}
+.plate.by-disp .tag rect{stroke-width:1.6;stroke-dasharray:none}
+.plate.by-disp .tag.d-remain rect{stroke:var(--olive);fill:#eef2e6}
+.plate.by-disp .tag.d-replace rect{stroke:var(--terra);fill:var(--terra-4)}
+.plate.by-disp .tag.d-relocate rect{stroke:var(--blue);fill:var(--blue-4)}
+.plate.by-disp .tag.d-verify rect{stroke:var(--amber);fill:#f6edd9}
+.plate.by-disp .tag.d-add rect{stroke:#8b1d1d;fill:#f4dede}
+.plate.by-disp .tag.d-nic rect,.plate.by-disp .tag.d-none rect{stroke:var(--ink-4);fill:var(--paper-2)}
+/* equipment animation */
+.spin{animation:spin 1.1s linear infinite;transform-box:fill-box;transform-origin:center}
+.paused .spin,.paused .pipe.on .flow,.paused .flick{animation-play-state:paused}
+@keyframes spin{to{transform:rotate(360deg)}}
+.unit-off .spinner{animation:none}
+.flame{opacity:0;transition:opacity .4s}
+.burner-on .flame{opacity:1}
+.flick{animation:flick .35s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes flick{from{transform:scaleY(.86) skewX(-3deg)}to{transform:scaleY(1.08) skewX(3deg)}}
+.airarrow{opacity:.15;transition:opacity .4s}
+.blower-on .airarrow{opacity:1}
+.heatair{display:none}.coolair{display:none}
+.blower-on.heat .heatair{display:inline}.blower-on.cool .coolair{display:inline}
+@media (prefers-reduced-motion:reduce){
+  .pipe.on .flow{animation:none;stroke-dasharray:2 6}
+  .spin,.flick{animation:none}
+}
+
+/* side panel */
+.tabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding:6px 10px 0}
+.tab{border:0;background:none;padding:6px 7px 5px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.09em;font-size:10.5px;color:var(--ink-3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--terra)}
+.panels{overflow-y:auto;flex:1;padding:12px 16px 40px}
+.panel{display:none}
+.panel.on{display:block}
+.panel h2{font-size:21px;line-height:1.15;margin:0 0 4px}
+.panel h3{font-size:15px;margin:16px 0 5px;padding-top:9px;border-top:1px solid var(--rule-2)}
+.panel h3:first-child{border-top:0;padding-top:0;margin-top:0}
+.panel p{margin:0 0 8px;color:var(--ink-2)}
+.panel ul,.panel ol{margin:0 0 8px;padding-left:18px;color:var(--ink-2)}
+.panel li{margin-bottom:4px}
+.lede{font-family:var(--serif);font-size:14px;color:var(--ink-2);font-style:italic}
+.pill{display:inline-block;font-family:var(--cond);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;border:1px solid currentColor;padding:0 5px;border-radius:2px;color:var(--ink-3);vertical-align:1px;white-space:nowrap}
+.pill.p-rec{color:var(--p-rec)}.pill.p-unv{color:var(--p-unv)}.pill.p-req{color:var(--p-req)}.pill.p-typ{color:var(--p-typ)}
+.pill.d-remain{color:var(--olive)}.pill.d-replace{color:var(--terra)}.pill.d-relocate{color:var(--blue)}.pill.d-verify{color:var(--amber)}.pill.d-add{color:#8b1d1d}
+.pill.st{color:var(--ink)}
+.kv{width:100%;border-collapse:collapse;font-size:11.5px;margin:4px 0 8px}
+.kv td{border-bottom:1px dotted var(--rule);padding:3px 0;vertical-align:baseline}
+.kv td:first-child{color:var(--ink-3);padding-right:10px;width:38%}
+.kv td.v{font-family:var(--mono);font-size:11px;color:var(--ink)}
+.box{background:var(--sheet);border:1px solid var(--rule-2);padding:8px 10px;margin:6px 0 10px}
+.box.typebox{border-left:3px solid var(--blue-2)}
+.box.warnbox{border-left:3px solid var(--amber);background:#f8f0de}
+.box h4{font-size:14px;margin-bottom:3px}
+.box p:last-child{margin-bottom:0}
+.symbox{display:flex;gap:10px;align-items:center}
+.symbox svg{flex:none;background:var(--paper);border:1px solid var(--rule-2)}
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{font-family:var(--cond);font-weight:normal;text-transform:uppercase;letter-spacing:.09em;font-size:9.5px;color:var(--ink-3);text-align:left;padding:3px 4px;border-bottom:1px solid var(--rule)}
+.tbl td{padding:4px;border-bottom:1px dotted var(--rule);vertical-align:top;color:var(--ink-2)}
+.tbl td.tg{font-family:var(--mono);white-space:nowrap;color:var(--ink)}
+.tbl tr.row{cursor:pointer}
+.tbl tr.row:hover td{background:var(--paper-2)}
+.tbl tr.grp td{font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:10px;color:var(--terra);padding-top:10px;border-bottom:1px solid var(--rule)}
+.steps{list-style:none;padding:0!important;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:6px 6px 6px 30px;border-bottom:1px solid var(--rule-2);cursor:pointer;margin:0}
+.steps li::before{content:counter(s);position:absolute;left:4px;top:5px;font-family:var(--serif);font-size:17px;color:var(--ink-4)}
+.steps li:hover{background:var(--paper-2)}
+.steps li.on{background:var(--terra-4)}
+.steps li.on::before{color:var(--terra)}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 8px}
+.chip{font-family:var(--mono);font-size:10.5px;border:1px solid var(--rule);background:var(--sheet);padding:1px 6px;border-radius:2px;cursor:pointer}
+.chip:hover{border-color:var(--ink-3)}
+.note{font-size:11px;color:var(--ink-3);border-top:1px solid var(--rule-2);padding-top:6px;margin-top:10px}
+.fc li{list-style:none;margin-left:-18px;padding-left:20px;position:relative}
+.fc li::before{content:"□";position:absolute;left:2px;color:var(--amber)}
+
+@media (max-width:1180px){
+  .layout{grid-template-columns:1fr}
+  .side{position:relative;height:auto;border-left:0;border-top:1px solid var(--rule)}
+  .panels{max-height:none}
+  .legend{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:720px){
+  .masthead,.scen{padding-left:16px;padding-right:16px}
+  .stage{padding:8px 16px 20px}
+  .legend{grid-template-columns:1fr}
+  .title-block h1{font-size:20px}
+}
+@media print{
+  @page{size:landscape;margin:9mm}
+  body{background:#fff}
+  .toolbar,.scen,.tabs{display:none!important}
+  .layout{display:block}
+  .side{position:static;height:auto;border:0;page-break-before:always}
+  .panel{display:none!important}
+  #p-valves{display:block!important}
+  .plate-wrap{box-shadow:none}
+}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="title-block">
+    <div class="kicker cap">Plate II · An existing basement plant, drawn from its equipment schedule · Educational schematic, not for construction</div>
+    <h1>Heat &amp; Water — <em>how the boiler, air handler and water heater work together</em></h1>
+  </div>
+  <nav class="toolbar" aria-label="Plate controls">
+    <div class="tgroup"><span class="cap">Colour tags by</span>
+      <select class="tsel" id="colorBy" aria-label="Colour tags by">
+        <option value="none">Plain</option>
+        <option value="prov">Where the information comes from</option>
+        <option value="disp">Proposed disposition</option>
+      </select>
+    </div>
+    <div class="tgroup"><span class="cap">Layers</span>
+      <label class="chk"><input type="checkbox" id="chkTyp" checked> Typical / required parts</label>
+      <label class="chk"><input type="checkbox" id="chkCtl"> Control wiring</label>
+      <label class="chk"><input type="checkbox" id="chkLbl" checked> All tags</label>
+    </div>
+    <div class="tgroup">
+      <button class="tbtn" id="pauseBtn" title="Pause or resume the animation (Space)">❚❚ Pause</button>
+      <button class="tbtn" id="printBtn">Print</button>
+    </div>
+  </nav>
+</header>
+<div class="scen" id="scenBar" role="group" aria-label="Operating scenarios"><span class="cap" style="margin-right:4px">Run a scenario</span></div>
+
+<main class="layout">
+  <section class="stage">
+    <div class="status" id="status"></div>
+    <div class="plate-wrap"><svg id="plate" class="plate" viewBox="0 0 1600 1000" role="img" aria-label="Schematic section of the basement plant"></svg></div>
+    <div class="plate-cap">
+      <span>Click any pipe, valve or unit to inspect it. Valve bodies: <b style="color:var(--ink)">white</b> = open, no flow · <b style="color:var(--ink)">black</b> = closed · <b>coloured</b> = open and flowing · <b style="color:#8b1d1d">red</b> = relief lifted. Esc clears.</span>
+      <span>Schematic, not to scale. Pipe routes are diagrammatic; no pipe sizes are recorded except the 5/8 in. meter.</span>
+    </div>
+    <div class="legend" id="legend"></div>
+  </section>
+  <aside class="side">
+    <div class="tabs" role="tablist">
+      <button class="tab on" data-p="inspect">Inspector</button>
+      <button class="tab" data-p="seq">Sequence</button>
+      <button class="tab" data-p="valves">Valves</button>
+      <button class="tab" data-p="conn">Connections</button>
+      <button class="tab" data-p="vent">Water in · Exhaust out</button>
+      <button class="tab" data-p="field">Field checks</button>
+    </div>
+    <div class="panels">
+      <div class="panel on" id="p-inspect"></div>
+      <div class="panel" id="p-seq"></div>
+      <div class="panel" id="p-valves"></div>
+      <div class="panel" id="p-conn"></div>
+      <div class="panel" id="p-vent"></div>
+      <div class="panel" id="p-field"></div>
+    </div>
+  </aside>
+</main>
+
+<script>
+"use strict";
+/* =====================================================================
+   1. VOCABULARY — piping systems, provenance, dispositions, valve types
+   ===================================================================== */
+const SYS = {
+  hws:  {name:'Heating water supply',          color:'var(--hws)', w:6},
+  hwr:  {name:'Heating water return',          color:'var(--hwr)', w:6},
+  hwx:  {name:'Expansion-tank connection',     color:'var(--hws)', w:4},
+  mu:   {name:'Boiler make-up (fill) water',   color:'var(--cw)',  w:4},
+  cw:   {name:'Domestic cold water',           color:'var(--cw)',  w:5},
+  dhwt: {name:'Domestic hot water, from tank (unmixed)', color:'var(--dhwt)', w:5},
+  dhw:  {name:'Domestic hot water, tempered',  color:'var(--dhw)', w:5},
+  tc:   {name:'Tankless-coil stubs (status unknown)', color:'var(--ink-4)', w:4, dash:'5 4'},
+  oil:  {name:'No. 2 fuel-oil line',           color:'var(--oil)', w:3},
+  refl: {name:'Refrigerant liquid line',       color:'var(--ref)', w:3},
+  refs: {name:'Refrigerant suction line (insulated)', color:'var(--ref)', w:4, insul:true},
+  cond: {name:'Condensate drain',              color:'var(--cnd)', w:3},
+  sump: {name:'Sump-pump discharge',           color:'var(--sump)', w:4},
+  relb: {name:'Relief-valve discharge (boiler)', color:'var(--hws)', w:4, dash:'7 4'},
+  reld: {name:'T&P relief discharge (water heater)', color:'var(--dhwt)', w:4, dash:'7 4'},
+  flue: {name:'Flue vent connector',           color:'var(--flue)', w:17, flue:true},
+  gas:  {name:'Flue gases in chimney',         color:'var(--gas)', w:10, gas:true},
+  air:  {name:'Combustion & dilution air',     color:'var(--ink-4)', w:2, dash:'3 4'},
+  ctl:  {name:'Control wiring',                color:'var(--ctl)', w:1.4, dash:'5 3', ctl:true},
+};
+const PROV = {
+  rec:{name:'In the schedule', long:'Recorded in the equipment schedule (from nameplate data).'},
+  unv:{name:'In the schedule — unverified', long:'Listed in the schedule, but the schedule itself marks part of it TBD, tentative or "confirm on site".'},
+  req:{name:'Required — not in the schedule', long:'Not listed in the schedule, but code or the manufacturer requires it (or the schedule says to add it). Confirm whether it exists.'},
+  typ:{name:'Typical — not in the schedule', long:'Not listed in the schedule. Shown because an installation like this normally has it. Treat as an assumption until it is seen on site.'},
+};
+const DISP = {
+  remain:'Existing to remain', replace:'Existing to be demolished / replaced', relocate:'Existing to be relocated',
+  verify:'Verify', add:'Proposed addition', nic:'Not in contract', none:'No disposition recorded'
+};
+
+const VT = {
+  ball:{name:'Ball valve', kind:'Isolation', how:'A ball with a full-size bore turns 90° in its seats. Bore in line with the pipe means open; crosswise means shut. It is meant to be all the way open or all the way closed. It is a service shutoff, not a throttling valve.', normal:'Normally open'},
+  curb:{name:'Curb stop (in a curb box)', kind:'Isolation', how:'A quarter-turn valve buried on the water service near the property line. You work it from grade with a long curb key down through the curb box. It shuts the whole house off from the street side and usually belongs to the water utility.', normal:'Normally open'},
+  meterv:{name:'Meter valve, street side', kind:'Isolation', how:'A shutoff on the street side of the meter, so the meter can be changed without digging to the curb stop. Older houses often have a gate valve here, newer ones a ball valve.', normal:'Normally open'},
+  zone:{name:'Two-way motorized zone valve', kind:'Control', how:'A 24 V actuator drives a two-way valve. When the zone calls, the motor opens it. At full open an <b>end switch</b> closes, which tells the boiler control there is a call; the control then starts the circulator and, if needed, the burner. When the call ends, a spring closes the valve. The manual lever opens it by hand for purging, or if the actuator fails.', normal:'Normally closed'},
+  flowcheck:{name:'Weighted flow-check valve', kind:'Check', how:'A heavy disc rests on a seat. The circulator’s push lifts it easily. The much weaker push of hot water trying to rise by itself (thermosiphon, or "ghost flow") cannot, so a zone doesn’t heat when the pump is off. A lever can hold it open for gravity circulation in a power cut.', normal:'Closed until the pump runs'},
+  check:{name:'Check valve', kind:'Check', how:'A swing or spring disc lets water pass one way only. On the sump discharge, it stops the water standing in the riser from falling back into the pit each time the pump stops.', normal:'Closed until the pump runs'},
+  bfp:{name:'Backflow preventer', kind:'Protection', how:'Stops boiler water (stale, hot, possibly treated) from being siphoned or pushed back into the drinking water. An untreated residential boiler normally gets a dual check with an atmospheric vent (ASSE 1012). If the boiler water is chemically treated, use a reduced-pressure-zone assembly (RPZ, ASSE 1013). Confirm with the local plumbing code.', normal:'Closed until make-up water flows'},
+  prv:{name:'Pressure-reducing boiler fill valve', kind:'Control', how:'A spring-and-diaphragm valve that drops street pressure (often 50–80 psi) to the boiler’s cold fill pressure, commonly 12 psi. That is enough to lift water about 28 ft to the top of a house system, plus a margin. If system pressure falls below the setting, it opens and adds water, then closes. The fast-fill lever bypasses the reduction for filling and purging.', normal:'Closed (opens on low pressure)'},
+  relief:{name:'ASME pressure relief valve', kind:'Safety', how:'A spring-loaded safety valve that opens at a fixed pressure and dumps water until pressure falls. Residential boilers normally use 30 psi, below this boiler’s 50 psi MAWP. Its BTU/h capacity must at least match the boiler output. No valve may sit between it and the boiler. The discharge must be full size, must not be capped or threaded at the end, and must end near the floor (typically within 6 in.) where a release can’t scald anyone.', normal:'Closed (safety device)'},
+  tp:{name:'Temperature & pressure (T&P) relief valve', kind:'Safety', how:'Required on every water heater. It opens at 150 psi <i>or</i> 210°F, whichever comes first. The temperature probe sits in the hottest water at the top of the tank, so the water can’t get hot enough to flash to steam when a tap opens. The discharge rules match the boiler relief valve.', normal:'Closed (safety device)'},
+  tmv:{name:'Thermostatic mixing valve', kind:'Control', how:'Blends tank hot water with cold so fixtures get a steady, safe temperature (often about 120°F). That lets the tank be stored hotter, for more capacity and to control Legionella, without scalding. A wax thermostat moves a shuttle between the hot and cold ports. ASSE 1017 is the standard for a valve at the heater.', normal:'Modulating'},
+  aav:{name:'Automatic float air vent', kind:'Air removal', how:'A small chamber with a float. While it is full of water, the float holds a needle valve shut. When air collects, the float drops, the needle opens and the air leaves through the cap. Air in a hydronic loop makes noise, causes corrosion and blocks flow, so vents go at high points.', normal:'Closed (opens when air collects)'},
+  drain:{name:'Boiler drain (hose-thread drain valve)', kind:'Drain / purge', how:'A small valve with a garden-hose thread, used to drain equipment or to purge air while filling.', normal:'Closed'},
+  flange:{name:'Circulator isolation flange', kind:'Isolation', how:'A pump flange with a built-in shutoff. With one on each side, the circulator can be changed without draining the system.', normal:'Normally open'},
+  svc:{name:'Refrigerant service valve', kind:'Isolation', how:'Liquid and suction service valves on the condensing unit. They hold the factory charge until the line set is connected, and give gauge access through Schrader ports. Back-seated (open) in normal operation.', normal:'Open (back-seated)'},
+  txv:{name:'Metering device (TXV or fixed orifice)', kind:'Control', how:'Where high-pressure liquid refrigerant drops to low pressure and starts to boil in the evaporator coil. A thermostatic expansion valve (TXV) adjusts its opening from a bulb on the suction line to hold steady superheat; a fixed piston orifice doesn’t adjust. Which one this coil has is not recorded.', normal:'Modulating while cooling'},
+  osv:{name:'Oil safety valve (anti-siphon)', kind:'Safety', how:'The outdoor tank stands higher than the burner, so a broken oil line could drain the tank by gravity. An OSV stays shut until the burner’s fuel pump pulls a vacuum on it. Oil moves only when the burner is running.', normal:'Closed until the burner pump pulls'},
+  fire:{name:'Fusible fire-safety valve', kind:'Safety', how:'A spring-loaded oil valve held open by a fusible link (or a remote heat sensor) at the burner. In a fire the link melts and the valve snaps shut, cutting off the fuel.', normal:'Open'},
+  tankv:{name:'Oil tank shutoff valve', kind:'Isolation', how:'A manual valve at the tank outlet, so the oil line, filter and burner can be serviced without draining the tank.', normal:'Open'},
+  baro:{name:'Barometric draft regulator', kind:'Draft control', how:'A weighted, hinged gate on the flue connector. When the chimney pulls too hard (cold weather, wind), room air pushes the gate open and dilutes the draft, so the burner sees a steady draft. Oil appliances on a natural-draft chimney need one. The draft is set with a gauge during the combustion test.', normal:'Swings to modulate'},
+  capv:{name:'Isolation valve and cap', kind:'Isolation', how:'The schedule can’t tell whether the tankless coil is still piped to the domestic water. The disposition is: if it is unused, isolate it and cap it.', normal:'Unknown'},
+};
+
+/* =====================================================================
+   2. PIPES — every connection, points listed in the normal flow direction
+   ===================================================================== */
+const PIPES = [
+  {id:'flue',  sys:'flue', pts:[[725,600],[725,540],[634,540]], name:'Flue vent connector', from:'blr1', to:'chim', comps:['flue1','baro'], carries:'Hot combustion gases (about 350°F stack temperature at the 2008 combustion test).', note:'Galvanized connector with foil-taped joints (schedule note). To be extended per 23 51 00.'},
+  {id:'gas',   sys:'gas',  pts:[[595,540],[595,14]], name:'Chimney flue (gases rising)', from:'chim', to:'atm', comps:['chim'], carries:'Flue gases plus the room air the barometric damper lets in.'},
+  {id:'air1',  sys:'air',  pts:[[560,800],[628,800]], name:'Combustion air to burner', from:'room', to:'bnr1', comps:['bnr1'], carries:'Basement air drawn in by the burner fan.', note:'How the space gets its combustion air (unconfined basement, or openings to outdoors) is not recorded.'},
+  {id:'air2',  sys:'air',  pts:[[680,600],[680,566]], name:'Dilution air into barometric damper', from:'room', to:'baro', comps:['baro'], carries:'Room air drawn into the flue whenever the damper gate swings open.'},
+  {id:'oil',   sys:'oil',  pts:[[58,205],[58,935],[650,935],[650,828]], name:'Oil supply line, tank to burner', from:'fot1', to:'bnr1', comps:['vtank','osv','fof1','vfire'], carries:'No. 2 fuel oil, fed by gravity from the outdoor tank to the burner’s fuel pump.', note:'To be replaced, with new valves and a new filter, per 23 11 13. Underground and through-wall portions need a protective sleeve.'},
+  {id:'refs',  sys:'refs', pts:[[290,360],[268,360],[268,195],[190,195]], name:'Refrigerant suction line (RL-1)', from:'ahu1', to:'cu1', comps:['svs','rl1'], carries:'Cool, low-pressure R-454B vapour returning from the evaporator coil to the compressor.', note:'Line set to be replaced with new ACR tubing (RL-1).'},
+  {id:'refl',  sys:'refl', pts:[[190,215],[250,215],[250,395],[290,395]], name:'Refrigerant liquid line (RL-1)', from:'cu1', to:'ahu1', comps:['svl','txv','rl1'], carries:'Warm, high-pressure liquid R-454B from the condenser to the metering device at the coil.'},
+  {id:'cond',  sys:'cond', pts:[[290,432],[272,432],[272,958]], name:'Condensate drain, AHU-1 to sump', from:'ahu1', to:'sp1', comps:['trap'], carries:'Water condensed out of the air on the cooling coil.', note:'The schedule names the sump as the discharge point. Trap configuration not recorded.'},
+  {id:'sumpd', sys:'sump', pts:[[250,958],[250,792]], name:'Sump-pump discharge', from:'sp1', to:'grade', comps:['chk'], carries:'Groundwater and condensate pumped out of the pit.', note:'PVC with a check valve (schedule). Route to grade not recorded.'},
+  {id:'svc',   sys:'cw',   pts:[[1600,880],[1310,880],[1310,420]], name:'Water service, street to house', from:'street', to:'cwtee', comps:['cs1','vst','wm1','sov1'], carries:'Municipal water at street pressure.', note:'Meter is 5/8 in. (the only pipe size recorded in the schedule).'},
+  {id:'cwfix', sys:'cw',   pts:[[1310,420],[1310,112]], name:'Cold water to fixtures', from:'cwtee', to:'fix', comps:[], carries:'Cold water to sinks, toilets, showers and hose bibbs.'},
+  {id:'cwm1',  sys:'cw',   pts:[[1310,420],[1180,420]], name:'Cold-water main', from:'cwtee', to:'whtee', comps:[], carries:'Cold water toward the water heater and the boiler fill.'},
+  {id:'cwm2',  sys:'cw',   pts:[[1180,420],[990,420]], name:'Cold-water main, to boiler fill', from:'whtee', to:'mutee', comps:[], carries:'Cold water to the boiler make-up assembly.'},
+  {id:'whc',   sys:'cw',   pts:[[1180,420],[1180,560]], name:'Cold supply to WH-1', from:'whtee', to:'wh1', comps:['vwh'], carries:'Cold water into the tank. A dip tube carries it to the bottom.'},
+  {id:'et2s',  sys:'cw',   pts:[[1180,465],[1210,465],[1210,477]], name:'Thermal-expansion tank connection', from:'whc', to:'et2', comps:['et2'], carries:'Domestic water pushed out of the tank as it heats, and returned as it cools.'},
+  {id:'tmvc',  sys:'cw',   pts:[[1180,500],[1123,500]], name:'Cold port of mixing valve', from:'whc', to:'tmv', comps:['tmv'], carries:'Cold water used to temper the hot.'},
+  {id:'whh',   sys:'dhwt', pts:[[1110,560],[1110,513]], name:'Hot outlet of WH-1', from:'wh1', to:'tmv', comps:['tmv'], carries:'Stored hot water from the top of the tank.'},
+  {id:'dhw',   sys:'dhw',  pts:[[1110,487],[1110,112]], name:'Tempered hot water to fixtures', from:'tmv', to:'fix', comps:['tmv'], carries:'Mixed hot water at a safe delivery temperature.'},
+  {id:'tpd',   sys:'reld', pts:[[1235,598],[1235,936]], name:'T&P relief discharge', from:'tp', to:'floor', comps:['tp'], carries:'Nothing, unless the T&P valve opens.'},
+  {id:'mu',    sys:'mu',   pts:[[990,420],[990,560]], name:'Boiler make-up water', from:'cwm2', to:'ettee', comps:['vmu','bfp','prv1'], carries:'Cold water at reduced pressure into the closed heating loop, only when its pressure drops.'},
+  {id:'etl',   sys:'hwx',  pts:[[840,560],[990,560],[990,580]], name:'Expansion tank and fill connection', from:'sup', to:'et1', comps:['et1'], carries:'Water flows into ET-1 as the system heats and out as it cools. Make-up water enters the loop here.', note:'Where ET-1 and PRV-1 actually connect is not recorded. It is drawn on the supply ahead of the pump ("pumping away"), the arrangement a new installation should use.'},
+  {id:'sup',   sys:'hws',  pts:[[840,600],[840,250]], name:'Boiler supply riser', from:'blr1', to:'hdr', comps:['fl1','p1','fl2','fcv1','aav1'], carries:'Hot boiler water (operating limit 180°F on CTL-1).'},
+  {id:'hdr',   sys:'hws',  pts:[[840,250],[560,250]], name:'Supply header to zone-valve tee', from:'sup', to:'zvtee', comps:['aav1'], carries:'Hot water to whichever zone valve is open.'},
+  {id:'z1s',   sys:'hws',  pts:[[560,250],[500,250],[500,455],[440,455]], name:'Zone 1 supply: to AHU-1 heating coil', from:'zvtee', to:'ahu1', comps:['zv1','vz1s'], carries:'Hot water to the hydro-air coil (max coil temperature 180°F).'},
+  {id:'z2s',   sys:'hws',  pts:[[560,250],[560,190],[1050,190],[1050,620],[1080,620]], name:'Zone 2 supply: to WH-1 coil (priority)', from:'zvtee', to:'wh1', comps:['zv2','vz2s'], carries:'Hot boiler water into the coil inside the indirect tank.'},
+  {id:'z1r',   sys:'hwr',  pts:[[440,495],[530,495],[530,330],[600,330]], name:'Zone 1 return from AHU-1 coil', from:'ahu1', to:'rettee', comps:['vz1r'], carries:'Cooled water leaving the air-handler coil.'},
+  {id:'z2r',   sys:'hwr',  pts:[[1080,860],[1020,860],[1020,330],[600,330]], name:'Zone 2 return from WH-1 coil', from:'wh1', to:'rettee', comps:['vz2r'], carries:'Cooled boiler water leaving the tank coil.'},
+  {id:'ret1',  sys:'hwr',  pts:[[600,330],[600,770]], name:'Common return', from:'rettee', to:'purge', comps:['pdr'], carries:'Combined return water from both zones.'},
+  {id:'ret2',  sys:'hwr',  pts:[[600,770],[600,905],[690,905]], name:'Common return into boiler', from:'purge', to:'blr1', comps:['vpur'], carries:'Return water entering the boiler low, where it is heated again.'},
+  {id:'purged',sys:'hwr',  pts:[[600,770],[578,770],[578,782]], name:'Purge drain outlet', from:'ret1', to:'hose', comps:['pdr'], carries:'Nothing, except when purging air (with a hose run to a drain).'},
+  {id:'rvd',   sys:'relb', pts:[[880,585],[945,585],[945,936]], name:'Boiler relief discharge', from:'rv1', to:'floor', comps:['rv1'], carries:'Nothing, unless RV-1 lifts.'},
+  {id:'tci',   sys:'tc',   pts:[[880,722],[922,722]], name:'Tankless coil: cold-in tapping', from:'blr1a', to:'?', comps:['vtc1'], carries:'If connected: cold domestic water into the coil in the boiler water.'},
+  {id:'tco',   sys:'tc',   pts:[[880,768],[922,768]], name:'Tankless coil: hot-out tapping', from:'blr1a', to:'?', comps:['vtc2'], carries:'If connected: domestic hot water out of the coil.'},
+];
+const P = Object.fromEntries(PIPES.map(p=>[p.id,p]));
+
+/* control wiring — drawn as curves, layer off by default */
+const CTL = [
+  {id:'w1', a:[525,92], b:[530,234], name:'T-1 → ZV-1: heat call (24 V)', comps:['t1','zv1']},
+  {id:'w2', a:[541,238], b:[822,668], name:'ZV-1 end switch → CTL-1 (T–T)', comps:['zv1','ctl1']},
+  {id:'w3', a:[574,222], b:[828,668], name:'ZV-2 end switch → CTL-1 (T–T)', comps:['zv2','ctl1']},
+  {id:'w4', a:[1094,722], b:[576,214], name:'WH-1 aquastat → ZV-2: hot-water call', comps:['aqs','zv2']},
+  {id:'w5', a:[855,668], b:[853,470], name:'CTL-1 → P-1: circulator (120 V)', comps:['ctl1','p1']},
+  {id:'w6', a:[822,690], b:[672,758], name:'CTL-1 → CTL-2: burner demand', comps:['ctl1','ctl2']},
+  {id:'w7', a:[540,88], b:[442,610], name:'T-1 → AHU-1: blower (G)', comps:['t1','ahu1']},
+  {id:'w8', a:[512,80], b:[160,150], name:'T-1 → CU-1: cooling (Y)', comps:['t1','cu1']},
+  {id:'w9', a:[1180,290], b:[712,644], name:'Remote emergency switch → burner circuit', comps:['esw','sw1']},
+];
+
+/* =====================================================================
+   3. COMPONENTS — schedule data + teaching text
+   ===================================================================== */
+const COMPS = [
+  // ---------------- major equipment
+  {id:'blr1', mark:'BLR-1', name:'Heating boiler', cat:'equip', prov:'rec', disp:'remain', tag:[785,616],
+   sched:{'Manufacturer':'Weil-McLain','Model':'Gold Oil, P-WTGO-5, Series 3','Fuel':'No. 2 fuel oil','Firing rate':'1.45 gph (nameplate) — as serviced 1.25 gph','Output (DOE)':'175,000 Btu/h nameplate','Net I=B=R':'152,000 Btu/h nameplate','MAWP':'50 psi','Max temperature':'250°F','Relief capacity needed':'≥ 175,000 Btu/h','Location':'Basement','Spec section':'23 52 00'},
+   does:'The heat source for the whole plant: both the house heat and the domestic hot water. A cast-iron, three-pass oil boiler. The burner fires into the combustion chamber at the bottom; the hot gases pass up through flue passages in the iron sections and heat the water around them. Hot water leaves at the top (supply) and comes back in low (return). Gases leave through the flue outlet on top.',
+   notes:['Date is the burner build date (10/20/1998); boiler probably installed 1998–99.','Down-fired to 1.25 gph, so output is about 14% below nameplate: about 150 MBH DOE, about 130 MBH net (schedule estimate). Use the as-fired rate in the capacity check.','2008 combustion test: 84.5% efficiency, 350°F stack.'],
+   disposition:'Remain and reuse, after a verification report and a capacity check.'},
+  {id:'blr1a', mark:'BLR-1a', name:'Tankless coil (integral to BLR-1)', cat:'equip', prov:'unv', disp:'verify', tag:[930,745],
+   sched:{'Manufacturer':'Weil-McLain','Model':'WTGO tankless coil','Function':'Domestic hot-water coil in boiler water','Rating':'Not rated on nameplate','Location':'In BLR-1 side plate'},
+   does:'A copper coil bolted into the boiler water. Domestic cold water passing through it is heated on demand: an older way of making hot water that keeps the boiler hot all year. With WH-1 doing that job, the coil is probably unused.',
+   notes:['Not identifiable from the nameplate survey. Confirm whether the domestic piping is connected or capped.'], disposition:'Verify. Abandon and isolate if unused.'},
+  {id:'bnr1', mark:'BNR-1', name:'Oil burner', cat:'equip', prov:'rec', disp:'remain', tag:[666,846],
+   sched:{'Manufacturer':'R.W. Beckett Corp.','Model':'AFG','Range':'0.50–3.00 gph','Factory set for GO-5':'1.50 × 80°B nozzle, 100 psi, head F6','As serviced':'1.25 gph 80°B nozzle','Electrical':'120 V','Built':'10/20/1998'},
+   does:'A flame-retention, pressure-atomizing burner. Its fuel pump draws oil from the tank and pushes it at about 100 psi through a nozzle, which sprays a fine cone of oil. A transformer’s spark lights it, and the burner fan blows combustion air into the cone. A cad cell watches the flame and reports to the primary control (CTL-2).',
+   notes:['Fuel pump replaced 11/16/2018.'], disposition:'Service per 23 52 00 (nozzle, filter, strainer, electrodes, combustion test).'},
+  {id:'ahu1', mark:'AHU-1', name:'Hydro-air air handler', cat:'equip', prov:'rec', disp:'relocate', tag:[365,312],
+   sched:{'Manufacturer':'First Co.','Model number':'48HCXW3010BVB00AAF','ESP':'0.5 in. w.c.','Nominal':'4 tons','Refrigerant':'R-454B','Max coil temperature':'180°F','Blower':'0.75 hp, 120 V, 1 ph, 10.7 FLA, MCA 14, MOP 25','Installed':'06/2026','Spec section':'23 00 00'},
+   does:'"Hydro-air": one cabinet heats and cools. For heat, boiler water at up to 180°F runs through a water-to-air coil. For cooling, refrigerant from CU-1 boils inside the DX evaporator coil, which cools the air and wrings moisture out of it (condensate). One blower moves the air across both coils into the supply ducts.',
+   notes:['Cabinet is 4 tons nominal but CU-1 is 3 tons; the blower is to be set to the Manual D airflow for 3 tons.'], disposition:'Salvage and reinstall. Blower set to Manual D airflow for the 3-ton CU-1.'},
+  {id:'wh1', mark:'WH-1', name:'Indirect-fired water heater', cat:'equip', prov:'rec', disp:'replace', tag:[1150,580],
+   sched:{'Manufacturer':'Heat Transfer Products (HTP)','Model':'SuperStor SS-40','Heat source':'Boiler water (indirect)','Storage':'40 gal','Manufactured':'09/28/1999','Age':'27 years','Spec section':'22 35 00'},
+   does:'An "indirect" water heater: no burner and no flue. Boiler water runs through a coil inside the tank and heats the domestic water around it. To the boiler, WH-1 is just another zone (zone 2). Boiler water and drinking water never mix; they are two separate pressure systems sharing a heat-exchange wall.',
+   notes:['Date is the factory manufacture date on the label.'], disposition:'Replace. 22 35 00 specifies an indirect water heater on the boiler priority zone (50 gal, to confirm).'},
+  {id:'cu1', mark:'CU-1', name:'Outdoor condensing unit', cat:'equip', prov:'rec', disp:'relocate', tag:[148,138],
+   sched:{'Manufacturer':'Lennox','Model':'Merit ML14KC1-036-230A03','Nominal':'3 tons','Refrigerant':'R-454B, 7.38 lb charge','Electrical':'208/230 V, 1 ph, RLA 16.7, LRA 93.5, MCA 21.8, MOP 30','Location':'Exterior, rear patio by basement window well','Spec section':'23 81 26'},
+   does:'The outdoor half of the air-conditioning split system. Its compressor squeezes refrigerant vapour returning from AHU-1, and its fan blows outdoor air across the condenser coil to reject the heat the indoor coil picked up. It is the "exhaust" for cooling: the house’s heat leaves here.',
+   notes:['Reported to be deliberately oversized. Manual S check against the first-floor load (estimated about 2 tons) pending.','Confirm GFCI compatibility (NEC 210.8(F)).'], disposition:'Salvage, store, reinstall on a new pad at the new rear location with a new line set.'},
+  {id:'fot1', mark:'FOT-1', name:'Fuel-oil storage tank', cat:'equip', prov:'unv', disp:'remain', tag:[55,138],
+   sched:{'Type':'Oval steel tank on legs','Capacity':'TBD (shape typical of 275 gal)','Fuel':'No. 2 fuel oil','Location':'Exterior, side of house along rear patio','Spec section':'23 11 13'},
+   does:'Stores the boiler’s fuel. An above-ground outdoor tank needs a fill pipe (with cap) and a vent pipe (with a weatherproof cap, and usually a whistle that tells the delivery driver when it is full). The vent lets air in as oil is drawn out and out as oil is delivered.',
+   notes:['Protected by two steel bollards; sits on gravel. Record capacity and condition in the Existing Tank Report.'], disposition:'Remain and protect. New oil line, valves and filter from tank to burner.'},
+  {id:'chim', mark:null, name:'Masonry chimney', cat:'equip', prov:'unv', disp:'none', tag:[595,470], abbr:'CHIMNEY',
+   sched:{'Recorded as':'Destination of FLUE-1 ("boiler flue to chimney")'},
+   does:'A natural-draft chimney. Hot flue gas is lighter than outdoor air, so it rises and pulls more gas behind it; that pull is the draft. The boiler depends on it to clear its combustion products. Drawn faint because it sits in the wall behind the piping.',
+   notes:['Liner type and condition are not recorded; a chimney serving an oil appliance should be inspected and lined as the code requires.'], disposition:'Not scheduled (FLUE-1 is to be extended per 23 51 00).'},
+  {id:'sp1', mark:'SP-1', name:'Sump pump with battery backup', cat:'equip', prov:'rec', disp:'remain', tag:[285,985],
+   sched:{'Manufacturer':'Basement Watchdog','Model':'Battery Backup Sump Pump System','Function':'Groundwater removal; AHU-1 condensate discharge point','Electrical':'120 V + 12 V battery','Spec section':'22 14 29'},
+   does:'Collects groundwater and the air handler’s condensate in a pit and pumps it out when the float rises. The battery backup keeps it running in a power cut.',
+   notes:['PVC discharge with a check valve. The primary pump was not visible under the lid.'], disposition:'Keep operating through construction; reconnect on a new dedicated GFCI circuit.'},
+  // ---------------- water service
+  {id:'cs1', mark:'CS-1', name:'Curb stop (curb box)', cat:'valve', vt:'curb', sym:'curb', x:1520, y:880, rot:0, pipe:'svc', prov:'rec', disp:'remain', tag:[1520,850], def:'open',
+   sched:{'Manufacturer':'Mueller','Function':'Street-side water shutoff','Location':'Lawn (exact location TBD)','Spec section':'22 05 00'}, notes:['Locate on the site plan.'], disposition:'Protect during construction.'},
+  {id:'vst', mark:null, abbr:'MV', name:'Meter valve, street side', cat:'valve', vt:'meterv', sym:'gate', x:1420, y:880, rot:0, pipe:'svc', prov:'typ', disp:'none', tag:[1420,850], def:'open',
+   notes:['Only the house-side valve (SOV-1) is recorded.']},
+  {id:'wm1', mark:'WM-1', name:'Water meter', cat:'device', sym:'meter', x:1385, y:880, pipe:'svc', prov:'rec', disp:'nic', tag:[1385,914],
+   sched:{'Manufacturer':'Neptune','Model':'Trident','Size':'5/8 in.','Service':'Municipal water service','Spec section':'22 05 00'},
+   does:'Measures the water used. Town property. Many meters, or a check valve beside them, stop water flowing back to the street. That makes the house a "closed" system, which is why the water heater needs a thermal expansion tank (ET-2).',
+   notes:['Fire extinguisher mounted beside the meter.'], disposition:'Remains (Town property).'},
+  {id:'sov1', mark:'SOV-1', name:'Main water shutoff, house side', cat:'valve', vt:'ball', sym:'ball', x:1345, y:880, rot:0, pipe:'svc', prov:'rec', disp:'remain', tag:[1345,850], def:'open',
+   sched:{'Manufacturer':'Nibco','Model':'Ball valve','Location':'Basement, at the meter','Spec section':'22 05 00'}, notes:['The first valve to close in a leak: it shuts off the whole house.'], disposition:'Retain.'},
+  // ---------------- domestic hot water
+  {id:'vwh', mark:null, abbr:'BV', name:'WH-1 cold-inlet shutoff', cat:'valve', vt:'ball', sym:'ball', x:1180, y:442, rot:90, pipe:'whc', prov:'typ', disp:'none', tag:[1152,442], def:'open',
+   notes:['Code requires a shutoff on the cold supply to a water heater.']},
+  {id:'et2', mark:'ET-2', name:'Thermal expansion tank (domestic)', cat:'device', sym:'et2', x:1210, y:500, pipe:'et2s', prov:'unv', disp:'replace', tag:[1252,500],
+   sched:{'Manufacturer':'Amtrol','Model number':'ST-5','Function':'Domestic water thermal expansion at WH-1','Location':'Basement, overhead near WH-1','Spec section':'22 11 19'},
+   does:'Water expands about 2% when heated from cold to 140°F. In a closed domestic system (check valve at the meter), that extra volume has nowhere to go: house pressure spikes and the T&P valve drips. ET-2 holds an air cushion behind a diaphragm, precharged to the house water pressure, to absorb it.',
+   disposition:'Replace with the new water heater per 22 11 19.'},
+  {id:'tmv', mark:null, abbr:'TMV', name:'Thermostatic mixing valve', cat:'valve', vt:'tmv', sym:'tmv', x:1110, y:500, rot:0, pipe:'dhw', prov:'typ', disp:'none', tag:[1070,500], def:'open',
+   notes:['Not recorded. Recommended by indirect-tank manufacturers and often required with new heaters. Confirm.']},
+  {id:'tp', mark:null, abbr:'T&P', name:'WH-1 T&P relief valve', cat:'valve', vt:'tp', sym:'relief', x:1235, y:590, rot:90, pipe:'tpd', prov:'req', disp:'none', tag:[1272,585], def:'closed',
+   notes:['Required by code on every water heater; not listed in the schedule.']},
+  {id:'whd', mark:null, abbr:'DV', name:'WH-1 drain valve', cat:'valve', vt:'drain', sym:'drain', x:1080, y:912, rot:180, pipe:null, prov:'typ', disp:'none', tag:[1052,912], def:'closed'},
+  {id:'aqs', mark:null, abbr:'AQ', name:'WH-1 tank aquastat', cat:'device', sym:'aqs', x:1094, y:722, prov:'typ', disp:'none', tag:[1094,700],
+   does:'A thermostat in the tank’s sensor well. When the stored water cools below its setting, it calls for heat. Here that means opening ZV-2 (zone 2). Not recorded; indirect tanks have one.'},
+  // ---------------- hydronic
+  {id:'p1', mark:'P-1', name:'System circulator', cat:'device', sym:'pump', x:840, y:470, rot:-90, pipe:'sup', prov:'unv', disp:'verify', tag:[884,470],
+   sched:{'Manufacturer':'Taco','Service':'System circulator, boiler supply','Flow / head / hp':'TBD','Electrical':'120 V','Location':'Above BLR-1 on supply','Spec section':'23 21 13'},
+   does:'A wet-rotor pump that moves water around the loop. It doesn’t raise system pressure much; it overcomes friction. A single circulator with zone valves is a "zone-valve system": the pump runs whenever any zone valve is open.',
+   notes:['Single circulator with zone valves = zone-valve system.'], disposition:'Retain, or replace with an ECM circulator per 23 21 13.'},
+  {id:'fl1', mark:null, abbr:'IF', name:'Circulator isolation flange (inlet)', cat:'valve', vt:'flange', sym:'flange', x:840, y:502, rot:90, pipe:'sup', prov:'typ', disp:'none', tag:[808,502], def:'open', minor:true},
+  {id:'fl2', mark:null, abbr:'IF', name:'Circulator isolation flange (outlet)', cat:'valve', vt:'flange', sym:'flange', x:840, y:438, rot:90, pipe:'sup', prov:'typ', disp:'none', tag:[808,438], def:'open', minor:true},
+  {id:'fcv1', mark:'FCV-1', name:'Flow-control valve', cat:'valve', vt:'flowcheck', sym:'flowcheck', x:840, y:380, rot:-90, pipe:'sup', prov:'rec', disp:'remain', tag:[886,380], def:'closed',
+   sched:{'Manufacturer':'Bell & Gossett','Model':'Flo-Control','Function':'Prevents gravity (ghost) flow','Location':'Basement, vertical supply','Spec section':'23 21 13'},
+   notes:['With zone valves on every zone, a flow-check is a second line of defence. It matters most in summer, when the boiler may still be hot (for example from a tankless coil).'], disposition:'Retain if serviceable.'},
+  {id:'aav1', mark:'AAV-1', name:'Automatic air vent', cat:'valve', vt:'aav', sym:'aav', x:840, y:250, rot:0, pipe:'hdr', prov:'rec', disp:'verify', tag:[876,232], def:'closed',
+   sched:{'Model':'Brass float vent','Function':'Air removal','Location':'Top of BLR-1 supply','Installed':'08/11/2011','Spec section':'23 21 13'},
+   notes:['Replaced 8/11/2011. Drawn at the riser’s high point, where air gathers.'], disposition:'Retain or replace.'},
+  {id:'zv1', mark:'ZV-1', name:'Zone valve, zone 1 (AHU-1 coil)', cat:'valve', vt:'zone', sym:'zone', x:530, y:250, rot:0, pipe:'z1s', prov:'unv', disp:'remain', tag:[530,276], def:'closed',
+   sched:{'Actuator':'Silver actuator with manual lever','Function':'Zone 1, presumed AHU-1 coil','Electrical':'24 V','Location':'Left of BLR-1, at the supply tee','Spec section':'23 21 13'},
+   notes:['Two actuators visible at one tee. Confirm which zone each serves and that there are no others.'], disposition:'Reconnect to the reinstalled AHU-1.'},
+  {id:'zv2', mark:'ZV-2', name:'Zone valve, zone 2 (WH-1, priority)', cat:'valve', vt:'zone', sym:'zone', x:560, y:220, rot:-90, pipe:'z2s', prov:'unv', disp:'remain', tag:[532,206], def:'closed',
+   sched:{'Actuator':'Silver actuator with manual lever','Function':'Zone 2, presumed WH-1 priority','Electrical':'24 V','Location':'Left of BLR-1, at the supply tee','Spec section':'23 21 13'},
+   notes:['"Priority" means that while the water heater calls, the heating zone is held off, so all of the boiler goes to hot-water recovery. With zone valves that takes a priority relay or zone controller; none is recorded.'], disposition:'Reconnect to the new indirect water heater as the priority zone.'},
+  {id:'vz1s', mark:null, abbr:'BV', name:'AHU-1 coil supply shutoff', cat:'valve', vt:'ball', sym:'ball', x:470, y:455, rot:0, pipe:'z1s', prov:'typ', disp:'none', tag:[470,432], def:'open', minor:true},
+  {id:'vz1r', mark:null, abbr:'BV', name:'AHU-1 coil return shutoff', cat:'valve', vt:'ball', sym:'ball', x:470, y:495, rot:0, pipe:'z1r', prov:'typ', disp:'none', tag:[470,518], def:'open', minor:true},
+  {id:'vz2s', mark:null, abbr:'BV', name:'WH-1 coil supply shutoff', cat:'valve', vt:'ball', sym:'ball', x:1065, y:620, rot:0, pipe:'z2s', prov:'typ', disp:'none', tag:[1065,600], def:'open', minor:true},
+  {id:'vz2r', mark:null, abbr:'BV', name:'WH-1 coil return shutoff', cat:'valve', vt:'ball', sym:'ball', x:1050, y:860, rot:0, pipe:'z2r', prov:'typ', disp:'none', tag:[1050,838], def:'open', minor:true},
+  {id:'pdr', mark:null, abbr:'PD', name:'Purge drain (hose)', cat:'valve', vt:'drain', sym:'drain', x:578, y:784, rot:90, pipe:'purged', prov:'typ', disp:'none', tag:[548,770], def:'closed', minor:true},
+  {id:'vpur', mark:null, abbr:'PV', name:'Purge ball valve (return)', cat:'valve', vt:'ball', sym:'ball', x:600, y:812, rot:90, pipe:'ret2', prov:'typ', disp:'none', tag:[624,850], def:'open', minor:true},
+  {id:'et1', mark:'ET-1', name:'Expansion tank (boiler)', cat:'device', sym:'et1', x:990, y:625, pipe:'etl', prov:'rec', disp:'remain', tag:[990,684],
+   sched:{'Manufacturer':'Amtrol','Model':'Extrol EX-30','Precharge':'12 psig','Max':'100 psi, 240°F','Installed':'08/11/2011','Location':'Right of BLR-1','Spec section':'23 21 13'},
+   does:'A closed heating loop full of water would gain pressure fast as it warms, because water barely compresses. ET-1 holds a cushion of air (precharged to 12 psig, matching the fill pressure) behind a diaphragm. As the water expands it pushes into the tank and squeezes the air, so pressure rises only a few psi. The point where it connects is the "point of no pressure change": the circulator raises pressure downstream of it, which is why pumps should "pump away" from the tank.',
+   disposition:'Retain if sound and correctly sized.'},
+  {id:'vmu', mark:null, abbr:'BV', name:'Make-up water shutoff', cat:'valve', vt:'ball', sym:'ball', x:990, y:440, rot:90, pipe:'mu', prov:'typ', disp:'none', tag:[962,440], def:'open', minor:true},
+  {id:'bfp', mark:null, abbr:'BFP', name:'Backflow preventer, boiler make-up', cat:'valve', vt:'bfp', sym:'bfp', x:990, y:474, rot:90, pipe:'mu', prov:'req', disp:'add', tag:[956,474], def:'closed',
+   notes:['No separate backflow preventer identified in the photos. Verify.','PRV-1 disposition: "add backflow preventer if absent".']},
+  {id:'prv1', mark:'PRV-1', name:'Boiler fill valve', cat:'valve', vt:'prv', sym:'prv', x:990, y:520, rot:90, pipe:'mu', prov:'unv', disp:'remain', tag:[1034,520], def:'closed',
+   sched:{'Model':'Boiler fill valve with fast-fill lever','Function':'Automatic make-up / pressure reducing','Location':'Above ET-1','Spec section':'23 21 13'},
+   notes:['Size and setting TBD. Usually set to about 12 psi, the same as ET-1’s precharge.'], disposition:'Retain; add a backflow preventer if absent.'},
+  {id:'rv1', mark:'RV-1', name:'Boiler pressure relief valve', cat:'valve', vt:'relief', sym:'relief', x:868, y:585, rot:0, pipe:'rvd', prov:'rec', disp:'replace', tag:[914,608], def:'closed',
+   sched:{'Model':'Bronze relief valve with yellow tag','Required capacity':'≥ 175 MBH (BLR-1 nameplate)','Installed':'08/11/2011','Spec section':'23 52 00'},
+   notes:['Replaced 2/5/2008 and 8/11/2011.'], disposition:'Replace with a new ASME 30 psi valve, capacity ≥ boiler output.'},
+  {id:'tpg1', mark:'TPG-1', name:'Temperature–pressure gauge (tridicator)', cat:'device', sym:'gauge', x:760, y:640, prov:'rec', disp:'remain', tag:[760,666],
+   sched:{'Model':'Dial temperature-pressure gauge','Installed':'08/11/2011','Spec section':'23 52 00'},
+   does:'One dial showing boiler water temperature and pressure. Read it cold (about 12 psi) and hot (typically under about 25 psi). Pressure that climbs toward 30 psi points to a waterlogged expansion tank or a leaking fill valve.', disposition:'Retain if serviceable.'},
+  {id:'ctl1', mark:'CTL-1', name:'Boiler limit / operating control', cat:'device', sym:'box', x:838, y:672, prov:'rec', disp:'remain', tag:[838,698], label:'HydroStat',
+   sched:{'Manufacturer':'Hydrolevel','Model':'Fuel Smart HydroStat 3250','Function':'High limit / operating control for BLR-1','Reading':'180°F at time of photo','Electrical':'24 V / 120 V','Installed':'03/05/2020'},
+   does:'The plant’s brain. It takes the zone-valve end-switch calls (T–T), runs the circulator, and fires the burner to hold boiler water between its operating range and the 180°F high limit. Hydrolevel controls can also run a low-water-cutoff probe.',
+   notes:['Confirm whether a low-water-cutoff probe is installed (no separate LWCO seen).','180°F setting equals the AHU-1 coil maximum water temperature (180°F).'], disposition:'Retain if serviceable.'},
+  {id:'lwco', mark:null, abbr:'LWCO?', name:'Low-water cutoff', cat:'device', sym:'lwco', x:794, y:704, prov:'req', disp:'verify', tag:[794,728],
+   does:'Shuts the burner off if the boiler water level drops, before the iron is dry-fired and cracks. Code requires one on most hot-water boilers (above 400 MBH, or wherever the boiler sits above the radiation). Many local codes require it on all of them. Not seen in the photos.', notes:['Confirm whether CTL-1 has an LWCO probe.']},
+  {id:'ctl2', mark:'CTL-2', name:'Burner primary control', cat:'device', sym:'box', x:664, y:758, prov:'rec', disp:'remain', tag:[650,736], label:'GeniSys', small:true,
+   sched:{'Manufacturer':'Beckett','Model':'GeniSys 7505A','Function':'Ignition and flame safety for BNR-1','Electrical':'120 V','Installed':'11/13/2013'},
+   does:'Runs the burner’s light-off sequence and its flame safety. On demand from CTL-1 it starts the motor (pre-purge), sparks, and opens the oil valve. If the cad cell doesn’t see flame within the trial time, it locks out.', disposition:'Retain; test under 23 52 00.'},
+  {id:'sw1', mark:'SW-1', name:'Burner service switch', cat:'device', sym:'switch', x:712, y:648, prov:'unv', disp:'remain', tag:[712,626],
+   sched:{'Model':'Red-plate service switch','Function':'Local disconnect for burner','Electrical':'120 V','Location':'On BLR-1 jacket'},
+   does:'A local switch to kill burner power for service.', notes:['Only the switch at the boiler was photographed. NFPA 31 requires a remote emergency switch; confirm one exists at the basement stair.'], disposition:'Retain; add a remote emergency switch at the boiler-space entrance if none exists.'},
+  {id:'esw', mark:null, abbr:'E-SW', name:'Remote emergency burner switch', cat:'device', sym:'switch', x:1180, y:290, prov:'req', disp:'add', tag:[1180,268],
+   does:'NFPA 31 asks for a switch outside the boiler room (usually at the top of the basement stair, red plate) so anyone can kill the burner without walking up to a fire. Drawn here only as a symbol; its location is TBD.', notes:['Confirm whether one exists; add if not.']},
+  {id:'bdr', mark:null, abbr:'BD', name:'Boiler drain valve', cat:'valve', vt:'drain', sym:'drain', x:880, y:930, rot:0, pipe:null, prov:'typ', disp:'none', tag:[905,915], def:'closed', minor:true},
+  {id:'vtc1', mark:null, abbr:'?', name:'Tankless coil cold-in (connected or capped?)', cat:'valve', vt:'capv', sym:'ballcap', x:900, y:722, rot:0, pipe:'tci', prov:'unv', disp:'verify', tag:[900,704], def:'unknown', minor:true},
+  {id:'vtc2', mark:null, abbr:'?', name:'Tankless coil hot-out (connected or capped?)', cat:'valve', vt:'capv', sym:'ballcap', x:900, y:768, rot:0, pipe:'tco', prov:'unv', disp:'verify', tag:[900,786], def:'unknown', minor:true},
+  // ---------------- oil
+  {id:'vtank', mark:null, abbr:'TV', name:'Tank outlet shutoff', cat:'valve', vt:'tankv', sym:'ball', x:58, y:222, rot:90, pipe:'oil', prov:'typ', disp:'none', tag:[28,222], def:'open', minor:true},
+  {id:'osv', mark:null, abbr:'OSV', name:'Oil safety valve', cat:'valve', vt:'osv', sym:'osv', x:58, y:262, rot:90, pipe:'oil', prov:'typ', disp:'none', tag:[24,264], def:'closed',
+   notes:['Part of the new oil line, valves and filter per 23 11 13. Confirm what that section and local code call for.']},
+  {id:'fof1', mark:'FOF-1', name:'Oil filter', cat:'device', sym:'filter', x:520, y:935, pipe:'oil', prov:'rec', disp:'replace', tag:[520,906],
+   sched:{'Manufacturer':'General Filters Inc.','Model number':'2A-700A','Function':'Fuel filtration ahead of BNR-1','Location':'Basement floor at the burner','Spec section':'23 11 13'},
+   does:'A canister filter that catches sludge, rust and water before they reach the burner pump’s strainer and the nozzle.', notes:['A 2020 service note refers to an air filter, not this oil filter.'], disposition:'Replace with the new oil line per 23 11 13.'},
+  {id:'vfire', mark:null, abbr:'FV', name:'Fusible fire-safety valve', cat:'valve', vt:'fire', sym:'fire', x:650, y:880, rot:-90, pipe:'oil', prov:'typ', disp:'none', tag:[680,880], def:'open'},
+  // ---------------- flue
+  {id:'flue1', mark:'FLUE-1', name:'Flue vent connector', cat:'device', sym:null, prov:'unv', disp:'remain', tag:[760,524], pipe:'flue',
+   sched:{'Model':'Galvanized vent connector with barometric damper','Function':'Boiler flue to chimney','Location':'Basement, behind/above BLR-1','Spec section':'23 51 00'},
+   does:'Carries combustion gases from the boiler’s flue outlet to the chimney. It should rise toward the chimney (typically at least ¼ in. per foot), be as short as practical, and keep its clearance from combustibles.',
+   notes:['Connector joints wrapped in foil tape.','Damper identification is tentative; verify.'], disposition:'Extend per 23 51 00.'},
+  {id:'baro', mark:null, abbr:'BD', name:'Barometric draft regulator', cat:'valve', vt:'baro', sym:'baro', x:680, y:563, rot:0, pipe:'flue', prov:'unv', disp:'remain', tag:[655,580], def:'open',
+   notes:['Part of FLUE-1. Identification tentative; verify.']},
+  // ---------------- refrigerant & condensate
+  {id:'svs', mark:null, abbr:'SV', name:'Suction service valve (CU-1)', cat:'valve', vt:'svc', sym:'svc', x:198, y:195, rot:0, pipe:'refs', prov:'typ', disp:'none', tag:[205,178], def:'open', minor:true},
+  {id:'svl', mark:null, abbr:'SV', name:'Liquid service valve (CU-1)', cat:'valve', vt:'svc', sym:'svc', x:198, y:215, rot:0, pipe:'refl', prov:'typ', disp:'none', tag:[205,228], def:'open', minor:true},
+  {id:'txv', mark:null, abbr:'TXV', name:'Metering device at the DX coil', cat:'valve', vt:'txv', sym:'txv', x:274, y:395, rot:0, pipe:'refl', prov:'typ', disp:'none', tag:[262,416], def:'open'},
+  {id:'rl1', mark:'RL-1', name:'Refrigerant line set', cat:'device', sym:null, prov:'rec', disp:'replace', tag:[237,290], pipe:'refs',
+   sched:{'Route':'CU-1 to AHU-1','Size':'Per installer','Location':'Exterior wall / basement','Spec section':'23 81 26'},
+   does:'Two copper lines: a small liquid line (out to the indoor coil) and a larger insulated suction line (back to the compressor).', disposition:'Remove; not reused (new ACR line set).'},
+  {id:'trap', mark:null, abbr:'TRAP', name:'Condensate trap', cat:'device', sym:'trap', x:272, y:480, pipe:'cond', prov:'typ', disp:'none', tag:[300,480],
+   does:'A water seal in the drain line. On a blow-through or draw-through coil, the pressure difference between the cabinet and the room would otherwise push or pull air through the drain and keep the pan from emptying. Follow the AHU manufacturer’s trap depth.'},
+  {id:'chk', mark:null, abbr:'CK', name:'Sump discharge check valve', cat:'valve', vt:'check', sym:'check', x:250, y:860, rot:-90, pipe:'sumpd', prov:'rec', disp:'remain', tag:[222,860], def:'closed',
+   notes:['Recorded in the SP-1 notes: "PVC discharge with check valve".']},
+  // ---------------- house side
+  {id:'t1', mark:'T-1', name:'Thermostat', cat:'device', sym:'tstat', x:525, y:80, prov:'unv', disp:'replace', tag:[525,52],
+   sched:{'Function':'Controls the BLR-1 heating zone, AHU-1 blower and CU-1','Electrical':'24 V','Location':'First floor'},
+   does:'Calls for heat (W) by opening ZV-1, for cooling (Y) by starting CU-1, and for the fan (G) by starting the AHU-1 blower.', notes:['Confirm whether it is wired to a zone relay or to the AHU control board.'], disposition:'Replace with a new programmable heat/cool thermostat.'},
+  {id:'duct1', mark:'DUCT-1', name:'Supply ductwork and registers', cat:'equip', prov:'rec', disp:'replace', tag:[365,108],
+   sched:{'Type':'Insulated round flex duct in crawl space; floor registers; baseboard grille in powder room','Function':'First-floor air distribution from AHU-1','Spec section':'23 31 13'},
+   does:'Carries the heated or cooled air from AHU-1 to the rooms. The return path brings room air back to the filter.', disposition:'Remove; all first-floor ductwork replaced.'},
+];
+const CM = Object.fromEntries(COMPS.map(c=>[c.id,c]));
+
+/* =====================================================================
+   4. SCENARIOS — sequence of operation
+   ===================================================================== */
+const SCEN = [
+  {id:'idle', key:'1', name:'Standby', head:'Standby — nothing is calling',
+   pipes:{}, units:{}, valves:{},
+   intro:'All thermostats are satisfied. The loop sits full and pressurized (about 12 psi cold) with every control valve shut. This is the state to learn the static layout in.',
+   steps:[
+    {t:'Two separate water systems share the basement. The <b>domestic</b> side (teal and orange) is at street pressure, about 50–80 psi. The <b>heating loop</b> (red and blue) is a closed loop at about 12–25 psi. They touch only at the make-up assembly, which is why it needs a backflow preventer.', ids:['bfp','prv1','sov1']},
+    {t:'Normally-open isolation valves are white (open, no flow). Zone valves, FCV-1, PRV-1 and the safety valves are black (closed).', ids:['zv1','zv2','fcv1','prv1','rv1','tp']},
+    {t:'ET-1 holds the loop’s pressure steady. Its 12 psig air charge balances the 12 psi fill.', ids:['et1','prv1']},
+    {t:'The boiler has two exhaust paths: the flue (combustion gases) and the relief discharge (water, only in a fault). WH-1 is indirect, so it has no flue at all.', ids:['flue1','chim','rv1','wh1']},
+   ]},
+  {id:'heat', key:'2', name:'Heating call', head:'Space heating — zone 1 to the air handler',
+   pipes:{sup:1,hdr:1,z1s:1,z1r:1,ret1:1,ret2:1,oil:1,flue:1,gas:1,air1:1,air2:1}, units:{burner:1,pump:1,blower:'heat'},
+   valves:{zv1:'flow',fcv1:'flow',osv:'flow',baro:'flow'},
+   intro:'The first-floor thermostat calls for heat. Boiler water carries heat to the coil in AHU-1, and the blower carries it to the rooms.',
+   steps:[
+    {t:'T-1 closes its heat contacts (W, 24 V). ZV-1’s motor starts driving the valve open.', ids:['t1','zv1']},
+    {t:'At full open, ZV-1’s end switch closes. That is the "call" CTL-1 sees on its T–T terminals.', ids:['zv1','ctl1']},
+    {t:'CTL-1 starts P-1. If the boiler water is below its operating temperature, it also sends demand to CTL-2.', ids:['ctl1','p1','ctl2']},
+    {t:'CTL-2 runs the light-off: pre-purge, spark, then the oil valve opens. The burner pump pulls oil from FOT-1 through the OSV and FOF-1 and sprays it at about 100 psi. The cad cell proves flame.', ids:['ctl2','bnr1','osv','fof1','vfire','fot1']},
+    {t:'P-1’s push lifts FCV-1’s weighted disc. Hot water rises up the supply, past AAV-1 at the high point, along the header and through ZV-1 into the AHU-1 coil.', ids:['p1','fcv1','aav1','zv1','ahu1']},
+    {t:'The AHU-1 blower moves return air through the filter, across the hot coil (180°F maximum water) and up the supply ducts. Whether the fan is started by T-1 (G) or by a coil-temperature control is not recorded.', ids:['ahu1','duct1','t1']},
+    {t:'Cooler water returns from the coil, down the common return, through the purge valve and into the boiler low, to be heated again.', ids:['vz1r','vpur','blr1']},
+    {t:'Flue gases (about 350°F) leave the boiler top, pass the barometric damper (which lets in room air to steady the draft) and rise up the chimney. The burner draws its combustion air from the basement.', ids:['flue1','baro','chim','bnr1']},
+    {t:'When T-1 is satisfied, ZV-1 springs shut and its end switch opens. CTL-1 stops P-1 and the burner, and FCV-1 drops shut, so the coil doesn’t gravity-heat.', ids:['zv1','p1','fcv1']},
+   ]},
+  {id:'dhwcall', key:'3', name:'Hot-water call', head:'Hot-water recovery — zone 2, priority',
+   pipes:{sup:1,hdr:1,z2s:1,z2r:1,ret1:1,ret2:1,oil:1,flue:1,gas:1,air1:1,air2:1}, units:{burner:1,pump:1},
+   valves:{zv2:'flow',fcv1:'flow',osv:'flow',baro:'flow',zv1:'held'},
+   intro:'Someone has been using hot water, and the tank has cooled. The boiler is now the water heater’s burner.',
+   steps:[
+    {t:'WH-1’s tank aquastat senses the stored water has dropped below setpoint and calls zone 2.', ids:['aqs','wh1']},
+    {t:'ZV-2 opens; its end switch calls CTL-1, which runs P-1 and fires the burner, exactly as for heating.', ids:['zv2','ctl1','p1','bnr1']},
+    {t:'Priority: while ZV-2 is open, a priority relay holds ZV-1 closed even if T-1 calls. The whole boiler output goes into the tank, so recovery is fast; the house barely notices a short pause in heating. None is recorded; confirm how the existing wiring does this.', ids:['zv1','zv2']},
+    {t:'Boiler water runs through the coil inside WH-1 and heats the domestic water around it. The two waters never mix.', ids:['wh1','vz2s','vz2r']},
+    {t:'The cooled boiler water returns down the common return to the boiler. When the aquastat is satisfied, ZV-2 closes and the plant stops.', ids:['vpur','blr1','aqs']},
+   ]},
+  {id:'draw', key:'4', name:'Hot-water draw', head:'A tap opens — domestic water from street to fixture',
+   pipes:{svc:1,cwm1:1,whc:1,tmvc:1,whh:1,dhw:1,cwfix:1}, units:{}, valves:{tmv:'flow'},
+   intro:'A shower runs. Nothing in the heating loop moves: drawing hot water is purely a plumbing event, driven by street pressure.',
+   steps:[
+    {t:'Water enters from the street main through the curb stop (CS-1), the street-side meter valve, the meter (WM-1, 5/8 in.) and the house shutoff (SOV-1).', ids:['cs1','vst','wm1','sov1']},
+    {t:'It rises to the cold main. Some goes straight up to the fixtures as cold water.', ids:['sov1']},
+    {t:'The rest goes through the WH-1 cold shutoff into the tank. A dip tube delivers it to the bottom, so it pushes the hottest water out of the top.', ids:['vwh','wh1']},
+    {t:'Tank hot water meets cold at the mixing valve, which blends it to a safe delivery temperature before it goes up to the fixtures.', ids:['tmv']},
+    {t:'Enough cold water entering the bottom of the tank will eventually trip the aquastat. That is the Hot-water call scenario.', ids:['aqs']},
+   ]},
+  {id:'cool', key:'5', name:'Cooling call', head:'Cooling — split system with condensate to the sump',
+   pipes:{refs:1,refl:1,cond:1,sumpd:1}, units:{cu:1,blower:'cool',sump:1}, valves:{txv:'flow',chk:'flow'},
+   intro:'Summer. The boiler stays off. AHU-1 is now the indoor half of a 3-ton split air conditioner.',
+   steps:[
+    {t:'T-1 calls cooling (Y) and fan (G). CU-1’s compressor and fan start, and so does the AHU-1 blower.', ids:['t1','cu1','ahu1']},
+    {t:'Hot, high-pressure liquid R-454B runs through the liquid line into AHU-1. At the metering device it drops in pressure and boils inside the DX coil, absorbing heat from the air.', ids:['svl','txv','ahu1']},
+    {t:'The vapour returns through the insulated suction line to the compressor. CU-1 rejects the heat outdoors: this is cooling’s "exhaust".', ids:['svs','cu1','rl1']},
+    {t:'Air cooled below its dew point drops moisture on the coil. The condensate drains through a trap to the sump, and SP-1 pumps it out through its check valve.', ids:['trap','sp1','chk']},
+    {t:'The hot-water coil sits in the same airstream. ZV-1 (shut) and FCV-1 (shut) stop any warm boiler water from ghost-flowing into it and fighting the AC.', ids:['zv1','fcv1']},
+   ]},
+  {id:'fill', key:'6', name:'Make-up / fill', head:'Make-up water — the loop loses pressure',
+   pipes:{svc:1,cwm1:1,cwm2:1,mu:1,etl:-1}, units:{}, valves:{bfp:'flow',prv1:'flow',aav1:'flow'},
+   intro:'A little water was lost (a vent spat, a drip at a fitting) or the loop is being filled. The fill valve adds water automatically.',
+   steps:[
+    {t:'Pressure at the ET-1 tee falls below PRV-1’s setting (about 12 psi). The diaphragm moves and the valve opens.', ids:['prv1','et1','tpg1']},
+    {t:'Cold water flows from the main, through the make-up shutoff and the backflow preventer (required, not found in the photos), then through PRV-1, which drops street pressure to fill pressure.', ids:['vmu','bfp','prv1']},
+    {t:'It enters the loop at the expansion-tank tee, the "point of no pressure change". That is why the fill and ET-1 connect at the same spot.', ids:['et1']},
+    {t:'Fresh water brings dissolved air. AAV-1 at the high point vents it as it comes out of solution. Frequent make-up means a leak somewhere: fresh water means oxygen, and oxygen corrodes the iron boiler.', ids:['aav1']},
+    {t:'When pressure is restored, PRV-1 closes. The backflow preventer’s checks seat so that loop water can never run back into the drinking water.', ids:['prv1','bfp']},
+   ]},
+  {id:'expand', key:'7', name:'Warm-up & expansion', head:'Warming up — where the extra water goes',
+   pipes:{sup:1,hdr:1,z2s:1,z2r:1,ret1:1,ret2:1,oil:1,flue:1,gas:1,air1:1,air2:1,etl:1,et2s:1}, units:{burner:1,pump:1},
+   valves:{zv2:'flow',fcv1:'flow',osv:'flow',baro:'flow'},
+   intro:'Water expands as it heats: about 3–4% from cold fill to 180°F in the heating loop, and about 2% in the domestic tank. Both systems need somewhere to put it.',
+   steps:[
+    {t:'Heating loop: as the boiler water warms, the extra volume pushes into ET-1 and compresses its air charge. Gauge pressure rises from about 12 to about 18–25 psi, well below RV-1’s 30 psi.', ids:['et1','tpg1','rv1']},
+    {t:'If ET-1 is waterlogged (lost its air), there’s no cushion. Pressure climbs straight to 30 psi and RV-1 lifts every cycle. That is the classic symptom.', ids:['et1','rv1']},
+    {t:'Domestic: while the tank heats with no tap open, the heated water has nowhere to go if a check valve at the meter blocks the street. ET-2 absorbs it.', ids:['et2','wm1','wh1']},
+    {t:'Without ET-2, house pressure spikes and WH-1’s T&P drips. The ST-5 is to be replaced with the new heater, its precharge set to house pressure.', ids:['et2','tp']},
+   ]},
+  {id:'purge', key:'8', name:'Purging air', head:'Service — purging air from zone 1',
+   pipes:{svc:1,cwm1:1,cwm2:1,mu:1,etl:-1,sup:1,hdr:1,z1s:1,z1r:1,ret1:1,purged:1}, units:{}, valves:{bfp:'flow',prv1:'flow',zv1:'manual',fcv1:'manual',vpur:'closed',pdr:'flow'},
+   intro:'After service work or a refill, air trapped in a zone blocks circulation. Purging pushes fresh water through one zone at a time and out of a hose, instead of round the loop.',
+   steps:[
+    {t:'Close the purge ball valve on the return, so water can’t go back into the boiler.', ids:['vpur']},
+    {t:'Attach a hose to the purge drain, run it to the sump or a bucket, and open the drain.', ids:['pdr','sp1']},
+    {t:'Open ZV-1 with its manual lever (and lift FCV-1’s lever) so the zone is open without power.', ids:['zv1','fcv1']},
+    {t:'Lift PRV-1’s fast-fill lever. Street-pressure water through the backflow preventer drives through the zone and out of the hose, carrying the air. When the hose runs clear with no spitting, close the drain.', ids:['prv1','bfp']},
+    {t:'Repeat for zone 2 (ZV-2), reopen the purge valve, release the levers and check the cold pressure on TPG-1.', ids:['zv2','tpg1']},
+   ]},
+  {id:'relief', key:'9', name:'Relief (fault)', fault:true, head:'Fault — relief valves lift',
+   pipes:{rvd:1,tpd:1,sup:1,hdr:1,z1s:1,z1r:1,ret1:1,ret2:1}, units:{pump:1}, valves:{rv1:'lift',tp:'lift',zv1:'flow',fcv1:'flow'},
+   intro:'Not a normal sequence. Both safety valves are shown lifting together only so you can see where their discharge goes. Each one is the last line of defence for its own system.',
+   steps:[
+    {t:'Boiler side: if pressure reaches 30 psi (a fill valve failing open, or a waterlogged ET-1), RV-1 opens and dumps water down its discharge pipe to within about 6 in. of the floor.', ids:['rv1','prv1','et1']},
+    {t:'RV-1 must be rated for at least the boiler output (175 MBH nameplate). The schedule calls for a new ASME 30 psi valve.', ids:['rv1','blr1']},
+    {t:'Domestic side: if the tank reaches 150 psi or 210°F, WH-1’s T&P opens. Its discharge also runs full size to near the floor.', ids:['tp','wh1']},
+    {t:'Never cap, thread or valve a relief discharge. A dripping relief is telling you something: check ET-1, ET-2 and PRV-1 first.', ids:['rv1','tp','et1','et2']},
+   ]},
+];
+const SM = Object.fromEntries(SCEN.map(s=>[s.id,s]));
+
+/* =====================================================================
+   5. SVG HELPERS & SYMBOLS
+   ===================================================================== */
+const NS = 'http://www.w3.org/2000/svg';
+const d = pts => 'M'+pts.map(p=>p[0]+','+p[1]).join('L');
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function bow(w=9,h=6){return `<path class="vb" d="M${-w},${-h}L${w},${h}L${w},${-h}L${-w},${h}Z"/>`;}
+const SYM = {
+  ball:()=>bow()+`<circle r="2.4" class="vkf"/>`,
+  gate:()=>bow()+`<path class="vk" d="M0,0V-11M-5,-11H5"/>`,
+  curb:()=>bow()+`<path class="vk" d="M0,0V-12M-4,-12H4"/>`,
+  zone:()=>bow()+`<path class="vk" d="M0,0V-7"/><rect class="vb" x="-9" y="-21" width="18" height="14" rx="2" style="fill:#d9dde0"/><text x="0" y="-11" style="font-size:9px;text-anchor:middle;fill:var(--ink)">M</text>`,
+  check:()=>bow()+`<path class="vk" d="M-6,-11H5M2,-14L6,-11L2,-8"/>`,
+  flowcheck:()=>bow()+`<path class="vk" d="M-6,-11H5M2,-14L6,-11L2,-8"/><rect class="vkf" x="-3" y="5" width="6" height="7"/>`,
+  bfp:()=>`<rect class="vb" x="-17" y="-8" width="34" height="16" rx="2"/><path class="vk" d="M-12,-5L-6,0L-12,5M2,-5L8,0L2,5M-2,8V13M-5,13H1"/>`,
+  prv:()=>bow()+`<path class="vk" d="M0,0V-8"/><path class="vb" d="M-8,-8A8,8 0 0 1 8,-8Z"/><path class="vk" d="M-12,10L11,-15M6,-15H11V-10"/>`,
+  relief:()=>`<path class="vb" d="M0,0L-6,12L6,12Z"/><path class="vb" d="M0,0L12,-6L12,6Z"/><path class="vk" d="M0,0V-4L-4,-6L4,-9L-4,-12L4,-15L0,-17V-20M-5,-20H5"/><path class="liftmark" d="M-10,-24L10,-24" stroke="#8b1d1d" stroke-width="2"/>`,
+  tmv:()=>`<path class="vb" d="M0,0L-6,13L6,13Z"/><path class="vb" d="M0,0L-6,-13L6,-13Z"/><path class="vb" d="M0,0L13,-6L13,6Z"/><circle cx="-13" cy="0" r="6" class="vb" style="fill:#eee"/><path class="vk" d="M-13,-3V3M-7,0H-3"/>`,
+  aav:()=>`<path class="vk" d="M0,0V-7"/><rect class="vb" x="-5" y="-20" width="10" height="13" rx="2"/><rect class="vkf" x="-2.5" y="-24" width="5" height="4"/>`,
+  drain:()=>bow(6,4)+`<path class="vk" d="M6,0H13M9,-3V3M11.5,-3V3"/>`,
+  flange:()=>`<path d="M-4,-7V7M4,-7V7" stroke="var(--ink)" stroke-width="2.6"/>`,
+  svc:()=>bow(6,4)+`<path class="vk" d="M0,0V-6M-3,-6H3"/>`,
+  txv:()=>bow(7,5)+`<path class="vk" d="M0,0V-7"/><path class="vb" d="M-6,-7A6,6 0 0 1 6,-7Z"/><path class="vk" d="M3,-12Q10,-22 2,-26" stroke-dasharray="2 1.5"/><circle cx="2" cy="-27" r="2.4" class="vkf"/>`,
+  osv:()=>bow()+`<path class="vk" d="M0,0V-6"/><path class="vb" d="M-8,-6A8,8 0 0 1 8,-6Z"/><path class="vk" d="M-4,-9H4"/>`,
+  fire:()=>bow()+`<path class="vk" d="M0,0V-8"/><rect class="vb" x="-4" y="-15" width="8" height="7" style="fill:#e7c9a9"/>`,
+  ballcap:()=>bow(7,5)+`<circle r="2" class="vkf"/><path d="M22,-6V6" stroke="var(--ink)" stroke-width="3"/>`,
+  baro:()=>`<circle r="9" class="vb" style="fill:#e8e4dc"/><path class="vk" d="M-6,-3L6,3"/><circle cx="7" cy="-6" r="2.4" class="vkf"/>`,
+};
+
+/* =====================================================================
+   6. BUILD THE PLATE
+   ===================================================================== */
+const svg = document.getElementById('plate');
+let H = '';
+H += `<defs>
+ <pattern id="soil" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#efe8da"/><path d="M0,10L10,0" stroke="#d9cfbc" stroke-width=".8"/></pattern>
+ <pattern id="conc" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#e6e0d3"/><circle cx="2" cy="3" r=".7" fill="#bdb4a3"/><circle cx="6" cy="6" r=".6" fill="#c7beae"/></pattern>
+ <pattern id="brick" width="16" height="8" patternUnits="userSpaceOnUse"><rect width="16" height="8" fill="#ead9cc"/><path d="M0,0H16M0,4H16M4,0V4M12,4V8" stroke="#d5bba8" stroke-width=".8"/></pattern>
+ <pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#fff"/><path d="M0,0V4" stroke="#999" stroke-width="1.6"/></pattern>
+ <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--ink-3)"/></marker>
+ <marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--blue-2)"/></marker>
+ <marker id="arrT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="var(--terra-2)"/></marker>
+</defs>`;
+
+/* ---------- building section (background) */
+H += `<g class="bg">
+ <rect x="0" y="235" width="210" height="765" fill="url(#soil)"/>
+ <rect x="1460" y="235" width="140" height="765" fill="url(#soil)"/>
+ <path d="M0,235H210M1460,235H1600" stroke="var(--ink-3)" stroke-width="1.5"/>
+ <rect x="210" y="150" width="20" height="830" fill="url(#conc)" stroke="var(--ink-4)" stroke-width=".8"/>
+ <rect x="1440" y="150" width="20" height="830" fill="url(#conc)" stroke="var(--ink-4)" stroke-width=".8"/>
+ <rect x="210" y="950" width="1250" height="22" fill="url(#conc)" stroke="var(--ink-4)" stroke-width=".8"/>
+ <rect x="210" y="132" width="1250" height="18" fill="#e9e1d1" stroke="var(--ink-4)" stroke-width=".8"/>
+ <path d="M210,132V30M1460,132V30" stroke="var(--ink-4)" stroke-width="6"/>
+ <path d="M206,30H1464" stroke="var(--ink-4)" stroke-width="1" stroke-dasharray="6 4"/>
+ <text x="238" y="48" class="t-zone">First floor</text>
+ <text x="238" y="170" class="t-zone">Basement</text>
+ <text x="8" y="22" class="t-zone">Exterior · rear patio</text>
+ <text x="1468" y="22" class="t-zone">Exterior · lawn</text>
+ <text x="1592" y="872" class="t-sm" text-anchor="end">street main →</text>
+ <text x="8" y="252" class="t-sm">grade</text><text x="1592" y="252" class="t-sm" text-anchor="end">grade</text>
+ <text x="1410" y="944" class="t-sm" text-anchor="end">basement floor</text>
+</g>`;
+
+/* ---------- chimney (behind piping) */
+H += `<g class="comp bg-dim" data-id="chim">
+ <rect x="560" y="8" width="70" height="942" fill="url(#brick)" opacity=".55" stroke="var(--ink-4)" stroke-dasharray="5 3"/>
+ <rect x="572" y="8" width="46" height="942" fill="#f3ece4" opacity=".6"/>
+ <rect x="552" y="0" width="86" height="9" fill="#cdbfb0" stroke="var(--ink-4)"/>
+ <rect x="580" y="905" width="30" height="26" fill="#bcb2a3" stroke="var(--ink-3)"/><text x="595" y="944" class="t-sm" text-anchor="middle">clean-out</text>
+ <text x="645" y="20" class="t-sm">flue gases to atmosphere ↑</text>
+ <rect class="hit" x="560" y="8" width="70" height="942"/>
+ <rect class="hovring" x="557" y="5" width="76" height="948"/><rect class="selring" x="554" y="2" width="82" height="954"/>
+</g>`;
+
+/* ---------- ducts & air handler */
+H += `<g class="comp" data-id="duct1">
+ <rect x="305" y="132" width="120" height="198" fill="#f1ece2" stroke="var(--ink-3)"/>
+ <rect x="320" y="122" width="90" height="10" fill="#fff" stroke="var(--ink-3)"/>
+ <path d="M335,120v-14M365,120v-18M395,120v-14" class="airarrow-sup" stroke="var(--ink-4)" stroke-width="1.6" marker-end="url(#arr)"/>
+ <text x="365" y="70" class="t-sm" text-anchor="middle">supply register(s)</text>
+ <path d="M448,132V700H440V775H485V132Z" fill="#ece6da" stroke="var(--ink-3)"/>
+ <rect x="446" y="122" width="41" height="10" fill="#fff" stroke="var(--ink-3)"/>
+ <path d="M466,96v20" stroke="var(--ink-4)" stroke-width="1.6" marker-end="url(#arr)"/>
+ <text x="466" y="90" class="t-sm" text-anchor="middle">return grille</text>
+ <text x="472" y="400" class="t-sm" transform="rotate(-90 472 400)" text-anchor="middle">return air duct</text>
+ <rect class="hit" x="305" y="100" width="185" height="230"/>
+ <rect class="hovring" x="300" y="98" width="190" height="236"/><rect class="selring" x="297" y="95" width="196" height="242"/>
+</g>`;
+H += `<g class="comp" data-id="ahu1" id="ahuG">
+ <rect x="290" y="330" width="150" height="460" fill="#f6f2ea" stroke="var(--ink-2)" stroke-width="1.4"/>
+ <path d="M290,430H440M290,520H440M290,690H440" stroke="var(--ink-3)"/>
+ <path d="M300,425L365,340L430,425" fill="none" stroke="var(--ref)" stroke-width="3"/>
+ <path d="M308,425L365,352L422,425" fill="none" stroke="var(--ref)" stroke-width="1" stroke-dasharray="2 3"/>
+ <rect x="296" y="425" width="138" height="7" fill="#dbe7f0" stroke="var(--cnd)"/>
+ <text x="365" y="400" text-anchor="middle" class="t-sm">DX evaporator (A-coil)</text>
+ <g>${Array.from({length:12},(_,i)=>`<path d="M${300+i*11.5},446V512" stroke="var(--hws)" stroke-width="1" opacity=".55"/>`).join('')}<path d="M296,455H434M296,495H434" stroke="var(--hws)" stroke-width="3" opacity=".8"/></g>
+ <text x="365" y="477" text-anchor="middle" class="t-sm" style="fill:var(--hws)">hot-water coil</text>
+ <circle cx="365" cy="605" r="44" fill="#efe9de" stroke="var(--ink-3)"/>
+ <g class="spinner" id="blowerWheel"><g>${Array.from({length:16},(_,i)=>{const a=i*Math.PI/8;return `<path d="M${365+18*Math.cos(a)},${605+18*Math.sin(a)}L${365+38*Math.cos(a+.35)},${605+38*Math.sin(a+.35)}" stroke="var(--ink-3)" stroke-width="2"/>`}).join('')}<circle cx="365" cy="605" r="9" fill="var(--ink-3)"/></g></g>
+ <text x="365" y="672" text-anchor="middle" class="t-sm">blower 0.75 hp</text>
+ <path d="M300,700V780M312,700V780M324,700V780M336,700V780M348,700V780M360,700V780M372,700V780M384,700V780M396,700V780M408,700V780M420,700V780M432,700V780" stroke="#cfc6b4"/>
+ <text x="365" y="745" text-anchor="middle" class="t-sm" style="fill:var(--ink-2)">filter / return</text>
+ <path d="M290,790V950M440,790V950M286,790H444" stroke="var(--ink-3)" stroke-width="2"/>
+ <g class="airarrow"><path d="M436,738H406" stroke="var(--blue-2)" stroke-width="3" marker-end="url(#arrB)" fill="none"/><path d="M365,557V537" stroke="var(--blue-2)" stroke-width="3" marker-end="url(#arrB)" fill="none"/>
+  <path class="heatair" d="M345,330V250M385,330V250" stroke="var(--terra-2)" stroke-width="3" marker-end="url(#arrT)"/>
+  <path class="coolair" d="M345,330V250M385,330V250" stroke="var(--blue-2)" stroke-width="3" marker-end="url(#arrB)"/></g>
+ <rect class="hit" x="290" y="330" width="150" height="460"/>
+ <rect class="hovring" x="286" y="326" width="158" height="468"/><rect class="selring" x="283" y="323" width="164" height="474"/>
+</g>`;
+
+/* ---------- sump */
+H += `<g class="comp" data-id="sp1" id="sumpG">
+ <rect x="236" y="950" width="86" height="48" fill="#dfe8ee" stroke="var(--ink-3)"/>
+ <rect x="236" y="972" width="86" height="26" fill="#b9d0de" opacity=".8"/>
+ <rect x="244" y="962" width="18" height="30" rx="3" fill="#8aa3b3" stroke="var(--ink-3)"/>
+ <rect x="290" y="964" width="22" height="26" rx="3" fill="#9aa8a2" stroke="var(--ink-3)"/><text x="301" y="981" class="t-sm" text-anchor="middle" style="font-size:7px">BATT</text>
+ <rect class="hit" x="236" y="946" width="86" height="54"/>
+ <rect class="hovring" x="233" y="944" width="92" height="56"/><rect class="selring" x="230" y="941" width="98" height="59"/>
+</g>`;
+
+/* ---------- outdoor: oil tank & condensing unit */
+H += `<g class="comp" data-id="fot1">
+ <rect x="8" y="152" width="96" height="58" rx="26" fill="#d7d0c2" stroke="var(--ink-2)" stroke-width="1.3"/>
+ <path d="M22,210V235M90,210V235" stroke="var(--ink-2)" stroke-width="3"/>
+ <path d="M30,152V112M24,112H36" stroke="var(--ink-2)" stroke-width="4"/><text x="30" y="106" class="t-sm" text-anchor="middle">fill</text>
+ <path d="M84,152V92" stroke="var(--ink-2)" stroke-width="3"/><path d="M76,92Q84,80 92,92Z" fill="var(--ink-3)"/><text x="98" y="88" class="t-sm">vent</text>
+ <path d="M84,78v-14" stroke="var(--ink-4)" stroke-width="1.2" stroke-dasharray="2 2" marker-end="url(#arr)"/>
+ <rect x="-2" y="196" width="6" height="40" fill="#e4b100" stroke="var(--ink-3)"/><rect x="108" y="196" width="6" height="40" fill="#e4b100" stroke="var(--ink-3)"/>
+ <text x="56" y="186" class="t-sm" text-anchor="middle">No. 2 oil</text>
+ <rect class="hit" x="0" y="60" width="112" height="176"/>
+ <rect class="hovring" x="4" y="148" width="104" height="66"/><rect class="selring" x="1" y="145" width="110" height="72"/>
+</g>`;
+H += `<g class="comp" data-id="cu1" id="cuG">
+ <rect x="112" y="152" width="80" height="83" fill="#eceae4" stroke="var(--ink-2)" stroke-width="1.3"/>
+ <path d="M116,160H188M116,226H188" stroke="#bbb4a6"/>
+ ${Array.from({length:7},(_,i)=>`<path d="M${118+i*11},164V222" stroke="#cfc8ba"/>`).join('')}
+ <circle cx="152" cy="193" r="22" fill="#f6f4ef" stroke="var(--ink-3)"/>
+ <g class="spinner" id="cuFan"><g><path d="M152,193L152,174M152,193L170,200M152,193L134,200" stroke="var(--ink-3)" stroke-width="4" stroke-linecap="round"/></g></g>
+ <path id="cuHeat" d="M142,150q-6,-10 0,-20q6,-10 0,-20M162,150q-6,-10 0,-20q6,-10 0,-20" fill="none" stroke="var(--terra-2)" stroke-width="1.6" opacity="0"/>
+ <rect x="192" y="102" width="14" height="22" fill="#d6d2c8" stroke="var(--ink-3)"/><text x="186" y="98" class="t-sm" text-anchor="end">DS-1</text>
+ <path d="M199,124V152" stroke="var(--ink-4)" stroke-dasharray="2 2"/>
+ <rect class="hit" x="112" y="100" width="96" height="135"/>
+ <rect class="hovring" x="108" y="148" width="88" height="91"/><rect class="selring" x="105" y="145" width="94" height="97"/>
+</g>`;
+
+/* ---------- curb box (CS-1 sits on the service line) */
+H += `<g class="bg"><rect x="1513" y="232" width="14" height="636" fill="#ddd6c8" stroke="var(--ink-4)" stroke-dasharray="4 3"/><rect x="1506" y="228" width="28" height="7" fill="var(--ink-3)"/><text x="1540" y="226" class="t-sm">curb box lid</text></g>`;
+
+/* ---------- first floor fixtures & thermostat */
+H += `<g class="bg">
+ <rect x="1080" y="44" width="260" height="68" fill="#f3efe7" stroke="var(--ink-4)" rx="3"/>
+ <text x="1210" y="62" text-anchor="middle" class="t-sm" style="fill:var(--ink-2)">Fixtures: sinks, showers, toilets</text>
+ <path d="M1150,96Q1150,78 1170,78H1200" fill="none" stroke="var(--ink-3)" stroke-width="3"/><path d="M1200,78v8" stroke="var(--ink-3)" stroke-width="3"/>
+ <path d="M1150,100H1250" stroke="var(--ink-4)" stroke-width="1"/>
+ <text x="1110" y="108" class="t-sm" text-anchor="middle" style="fill:var(--dhw)">H</text><text x="1310" y="108" class="t-sm" text-anchor="middle" style="fill:var(--cw)">C</text>
+</g>`;
+
+/* ---------- boiler */
+H += `<g class="comp" data-id="blr1" id="blrG">
+ <rect x="690" y="600" width="190" height="345" fill="#efe6d6" stroke="var(--ink-2)" stroke-width="1.6"/>
+ <rect x="680" y="945" width="210" height="6" fill="#cfc6b4"/>
+ ${Array.from({length:5},(_,i)=>`<path d="M${712+i*34},612V748" stroke="#d6c9b2" stroke-width="10"/>`).join('')}
+ <rect x="705" y="760" width="160" height="110" fill="#3b332c" stroke="var(--ink-2)"/>
+ <g class="flame"><path class="flick" d="M705,815Q760,778 800,800Q830,790 852,815Q822,845 790,832Q750,850 705,815Z" fill="#f2a33a" opacity=".9"/><path class="flick" d="M705,815Q750,800 790,812Q815,808 830,815Q805,830 780,826Q740,832 705,815Z" fill="#ffe08a"/></g>
+ <text x="785" y="862" text-anchor="middle" class="t-sm" style="fill:#d8cfc0">combustion chamber</text>
+ <text x="785" y="905" text-anchor="middle" class="t-title" style="font-size:15px">BLR-1</text>
+ <text x="785" y="922" text-anchor="middle" class="t-sm">cast-iron oil boiler · 175 MBH nameplate</text>
+ <rect class="hit" x="690" y="600" width="190" height="345"/>
+ <rect class="hovring" x="686" y="596" width="198" height="353"/><rect class="selring" x="683" y="593" width="204" height="359"/>
+</g>`;
+H += `<g class="comp" data-id="blr1a"><rect x="874" y="705" width="12" height="80" fill="#cbb89a" stroke="var(--ink-3)"/>
+ <path d="M878,712c8,4 -8,8 0,12s-8,8 0,12s-8,8 0,12s-8,8 0,12s-8,8 0,12" fill="none" stroke="#a26a35" stroke-width="1.5"/>
+ <rect class="hit" x="870" y="700" width="20" height="90"/><rect class="hovring" x="870" y="701" width="20" height="88"/><rect class="selring" x="867" y="698" width="26" height="94"/></g>`;
+H += `<g class="comp" data-id="bnr1" id="bnrG">
+ <path d="M640,768H690V826H640Z" fill="#c9533d" stroke="var(--ink-2)"/>
+ <circle cx="653" cy="800" r="10" fill="#b0442f" stroke="var(--ink-2)"/>
+ <path d="M640,800H628" stroke="var(--ink-2)" stroke-width="5"/>
+ <rect class="hit" x="626" y="766" width="66" height="62"/>
+ <rect class="hovring" x="624" y="764" width="70" height="66"/><rect class="selring" x="621" y="761" width="76" height="72"/>
+</g>`;
+
+/* ---------- water heater */
+H += `<g class="comp" data-id="wh1" id="whG">
+ <rect x="1080" y="560" width="140" height="372" rx="18" fill="#efe8dc" stroke="var(--ink-2)" stroke-width="1.6"/>
+ <rect x="1090" y="572" width="120" height="350" rx="12" fill="url(#whgrad)" />
+ <path d="M1100,620H1170c14,0 14,18 0,18H1110c-14,0 -14,18 0,18H1170c14,0 14,18 0,18H1110c-14,0 -14,18 0,18H1170c14,0 14,18 0,18H1110c-14,0 -14,18 0,18H1170c14,0 14,18 0,18H1110c-14,0 -14,18 0,18H1170c14,0 14,18 0,18H1110c-14,0 -14,18 0,18H1170c14,0 14,10 0,14H1080" fill="none" stroke="var(--hws)" stroke-width="2.4" opacity=".75"/>
+ <path d="M1180,560V900" stroke="var(--cw)" stroke-width="2" stroke-dasharray="4 3"/><text x="1190" y="905" class="t-sm" style="fill:var(--cw)">dip tube</text>
+ <text x="1150" y="895" text-anchor="middle" class="t-title" style="font-size:15px">WH-1</text>
+ <text x="1150" y="912" text-anchor="middle" class="t-sm">indirect · 40 gal · no flue</text>
+ <rect x="1080" y="932" width="140" height="18" fill="#d5ccbb"/>
+ <rect class="hit" x="1080" y="560" width="140" height="390"/>
+ <rect class="hovring" x="1076" y="556" width="148" height="380"/><rect class="selring" x="1073" y="553" width="154" height="386"/>
+</g>`;
+H = H.replace('</defs>', `<linearGradient id="whgrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6d7b8"/><stop offset=".55" stop-color="#f3e6d6"/><stop offset="1" stop-color="#d7e9e4"/></linearGradient></defs>`);
+
+/* ---------- pipes */
+const PIPE_ORDER = ['gas','air1','air2','flue','oil','cond','sumpd','refs','refl','tci','tco','rvd','tpd','svc','cwfix','cwm1','cwm2','whc','et2s','tmvc','whh','dhw','mu','etl','ret2','ret1','purged','z1r','z2r','sup','hdr','z1s','z2s'];
+for(const id of PIPE_ORDER){
+  const p=P[id], s=SYS[p.sys], dd=d(p.pts), w=s.w;
+  const dash = s.dash?` stroke-dasharray="${s.dash}"`:'';
+  let g = `<g class="pipe${s.gas?' gasp':''}" data-pipe="${id}"><title>${esc(p.name)}</title>`;
+  if(s.gas){
+    g += `<path class="body" d="${dd}" stroke="#e2dcd2" stroke-width="${w}" opacity=".0"/>`;
+  } else if(s.flue){
+    g += `<path class="halo" d="${dd}" stroke-width="${w+5}"/><path class="body" d="${dd}" stroke="var(--ink-3)" stroke-width="${w}" stroke-linecap="butt"/><path d="${dd}" stroke="#d6d2ca" stroke-width="${w-4}" fill="none" stroke-linecap="butt"/>`;
+  } else if(s.insul){
+    g += `<path class="halo" d="${dd}" stroke-width="${w+8}"/><path d="${dd}" stroke="#3a3530" stroke-width="${w+4}" fill="none" stroke-linejoin="round"/><path class="body" d="${dd}" stroke="${s.color}" stroke-width="${w-1}"/>`;
+  } else if(s.sys==='air'){
+    g += `<path class="body" d="${dd}" stroke="${s.color}" stroke-width="${w}"${dash} marker-end="url(#arr)"/>`;
+  } else {
+    g += `<path class="halo" d="${dd}" stroke-width="${w+5}"/><path class="body" d="${dd}" stroke="${s.color}" stroke-width="${w}"${dash}/>`;
+  }
+  const fw = s.flue? 6 : s.gas? 7 : Math.max(1.6,w-2.6);
+  g += `<path class="flow" d="${dd}" stroke-width="${fw}"/><path class="phit" d="${dd}"/></g>`;
+  H += g;
+}
+/* terminal marks: relief discharge ends, hose end, arrows to fixtures/grade */
+H += `<g class="bg">
+ <path d="M940,940H950M1230,940H1240" stroke="var(--ink-2)" stroke-width="1.4"/>
+ <text x="950" y="926" class="t-sm">6 in. max</text><text x="1240" y="926" class="t-sm">6 in. max</text>
+ <path d="M250,792v-22" stroke="var(--sump)" stroke-width="2" marker-end="url(#arr)"/><text x="236" y="762" class="t-sm" text-anchor="middle">to grade</text>
+ <text x="578" y="808" class="t-sm" text-anchor="middle">to hose</text>
+ <path d="M58,935H230" stroke="var(--ink-4)" stroke-width="9" opacity=".25"/><text x="118" y="926" class="t-sm" text-anchor="middle">sleeved oil line</text>
+</g>`;
+/* tees / junction dots */
+const TEES=[[1310,420],[1180,420],[990,420],[1180,465],[1180,500],[990,560],[840,560],[840,250],[560,250],[600,330],[600,770],[680,540]];
+H += `<g class="bg">${TEES.map(t=>`<circle cx="${t[0]}" cy="${t[1]}" r="3.6" fill="var(--ink)"/>`).join('')}</g>`;
+
+/* ---------- inline components (valves & devices) */
+function compSVG(c){
+  let inner='';
+  const rot = c.rot||0, col = c.pipe? SYS[P[c.pipe].sys].color : 'var(--ink)';
+  if(c.sym && SYM[c.sym]) inner = `<g transform="translate(${c.x},${c.y}) rotate(${rot})">${SYM[c.sym]()}</g>`;
+  else if(c.sym==='meter') inner = `<circle cx="${c.x}" cy="${c.y}" r="13" class="vb" style="fill:#e7eef0"/><text x="${c.x}" y="${c.y+3.5}" text-anchor="middle" style="font-size:11px;font-family:var(--mono);fill:var(--ink)">M</text>`;
+  else if(c.sym==='pump') inner = `<g transform="translate(${c.x},${c.y}) rotate(${rot})"><circle r="14" class="vb" id="pumpBody"/><path d="M-6,-8L9,0L-6,8Z" class="vkf"/></g><g class="spinner" id="pumpImp"><g><path d="M${c.x-10},${c.y}H${c.x+10}M${c.x},${c.y-10}V${c.y+10}" stroke="#fff" stroke-width="1.4" opacity=".7"/></g></g><rect x="${c.x+14}" y="${c.y-7}" width="12" height="14" fill="#d9dde0" stroke="var(--ink-3)"/>`;
+  else if(c.sym==='et1') inner = `<path d="M${c.x},${c.y-45}V${c.y-38}" stroke="var(--hws)" stroke-width="4"/><rect x="${c.x-19}" y="${c.y-38}" width="38" height="84" rx="17" fill="#e7e1ef" stroke="var(--ink-2)" stroke-width="1.3"/><path d="M${c.x-19},${c.y+4}Q${c.x},${c.y-6} ${c.x+19},${c.y+4}" fill="none" stroke="var(--ink-3)" stroke-width="1.2"/><text x="${c.x}" y="${c.y-14}" text-anchor="middle" class="t-sm" style="fill:var(--hws)">water</text><text x="${c.x}" y="${c.y+26}" text-anchor="middle" class="t-sm">air 12 psig</text>`;
+  else if(c.sym==='et2') inner = `<rect x="${c.x-11}" y="${c.y-23}" width="22" height="48" rx="10" fill="#e7e1ef" stroke="var(--ink-2)"/><path d="M${c.x-11},${c.y}Q${c.x},${c.y-5} ${c.x+11},${c.y}" fill="none" stroke="var(--ink-3)"/>`;
+  else if(c.sym==='gauge') inner = `<path d="M${c.x},${c.y+9}V${c.y+16}" stroke="var(--ink-3)" stroke-width="2"/><circle cx="${c.x}" cy="${c.y}" r="10" fill="#fff" stroke="var(--ink-2)" stroke-width="1.3"/><path d="M${c.x},${c.y}L${c.x+6},${c.y-5}" stroke="var(--terra)" stroke-width="1.4"/><circle cx="${c.x}" cy="${c.y}" r="1.6" fill="var(--ink)"/>`;
+  else if(c.sym==='box') { const w=c.small?30:36, h=c.small?16:22; inner = `<rect x="${c.x-w/2}" y="${c.y-h/2}" width="${w}" height="${h}" rx="2" fill="#30353a" stroke="var(--ink)"/><text x="${c.x}" y="${c.y+3}" text-anchor="middle" style="font-size:${c.small?6.5:7.5}px;fill:#e9f0d8;font-family:var(--cond)">${c.label}</text>`; }
+  else if(c.sym==='lwco') inner = `<rect x="${c.x-9}" y="${c.y-7}" width="18" height="14" rx="2" fill="#fff" stroke="var(--terra)" stroke-dasharray="2 2"/><path d="M${c.x},${c.y+7}V${c.y+14}" stroke="var(--terra)" stroke-dasharray="2 2"/>`;
+  else if(c.sym==='switch') inner = `<rect x="${c.x-8}" y="${c.y-9}" width="16" height="18" fill="#c0392b" stroke="var(--ink-2)"/><rect x="${c.x-2.5}" y="${c.y-5}" width="5" height="10" fill="#fff"/>`;
+  else if(c.sym==='filter') inner = `<rect x="${c.x-9}" y="${c.y-30}" width="18" height="26" rx="3" fill="#d1c39e" stroke="var(--ink-2)"/><path d="M${c.x},${c.y-4}V${c.y}" stroke="var(--oil)" stroke-width="3"/>`;
+  else if(c.sym==='trap') inner = `<path d="M${c.x},${c.y-12}V${c.y}a8,8 0 0 0 16,0V${c.y-6}a4,4 0 0 0 -8,0" fill="none" stroke="var(--cnd)" stroke-width="3"/>`;
+  else if(c.sym==='aqs') inner = `<rect x="${c.x-7}" y="${c.y-6}" width="14" height="12" rx="2" fill="#30353a"/><path d="M${c.x+7},${c.y}H${c.x+40}" stroke="var(--ink-3)" stroke-width="2"/>`;
+  else if(c.sym==='tstat') inner = `<rect x="${c.x-14}" y="${c.y-14}" width="28" height="28" rx="4" fill="#fff" stroke="var(--ink-2)" stroke-width="1.3"/><circle cx="${c.x}" cy="${c.y}" r="8" fill="none" stroke="var(--ink-3)"/><text x="${c.x}" y="${c.y+3}" text-anchor="middle" style="font-size:7px;fill:var(--ink)">68°</text>`;
+  if(!inner) return '';
+  const r = c.sym==='et1'? [c.x-24,c.y-50,48,102] : c.sym==='bfp'? [c.x-12,c.y-21,24,42] : c.sym==='zone'? (rot? [c.x-24,c.y-12,32,24]:[c.x-12,c.y-24,24,32]) : [c.x-14,c.y-16,28,32];
+  return `<g class="comp ${c.cat==='valve'?'valve':''} ${c.prov==='typ'||c.prov==='req'?'typonly':''}" data-id="${c.id}" style="color:${col}"><title>${esc((c.mark?c.mark+' · ':'')+c.name)}</title>${inner}<rect class="hit" x="${r[0]}" y="${r[1]}" width="${r[2]}" height="${r[3]}"/><rect class="hovring" x="${r[0]-2}" y="${r[1]-2}" width="${r[2]+4}" height="${r[3]+4}" rx="3"/><rect class="selring" x="${r[0]-5}" y="${r[1]-5}" width="${r[2]+10}" height="${r[3]+10}" rx="4"/></g>`;
+}
+for(const c of COMPS) H += compSVG(c);
+/* the flue connector & line-set are pipes; give them clickable tags only */
+
+/* ---------- control wiring layer */
+H += `<g class="ctl-layer">`;
+for(const w of CTL){
+  const [ax,ay]=w.a,[bx,by]=w.b, dx=bx-ax, dy=by-ay, k=.14, mx=(ax+bx)/2-dy*k, my=(ay+by)/2+dx*k;
+  H += `<g class="pipe ctlp" data-ctl="${w.id}"><title>${esc(w.name)}</title><path class="body" d="M${ax},${ay}Q${mx},${my} ${bx},${by}" stroke="var(--ctl)" stroke-width="1.4" stroke-dasharray="5 3" fill="none"/><path class="flow" d="M${ax},${ay}Q${mx},${my} ${bx},${by}" stroke-width="1.4"/><path class="phit" d="M${ax},${ay}Q${mx},${my} ${bx},${by}" style="stroke-width:8"/></g>`;
+}
+H += `</g>`;
+
+/* ---------- tags */
+for(const c of COMPS){
+  if(!c.tag) continue;
+  const txt = c.mark || c.abbr || '';
+  const w = Math.max(24, txt.length*6.1+10);
+  const cls = ['tag', 'p-'+c.prov, 'd-'+(c.disp||'none'), c.mark?'':(c.prov==='req'?'req':'typ'), c.minor?'minor':'', (c.prov==='typ'||c.prov==='req')?'typonly':''].join(' ');
+  H += `<g class="${cls}" data-tag="${c.id}" style="cursor:pointer"><rect x="${c.tag[0]-w/2}" y="${c.tag[1]-8}" width="${w}" height="16" rx="2"/><text x="${c.tag[0]}" y="${c.tag[1]+.5}">${esc(txt)}</text></g>`;
+}
+svg.innerHTML = H;
+
+/* =====================================================================
+   7. STATE & INTERACTION
+   ===================================================================== */
+const ST = {scen:'idle', sel:null, selPipe:null, step:-1};
+const $ = s=>document.querySelector(s), $$ = s=>[...document.querySelectorAll(s)];
+const pipeEls = Object.fromEntries($$('#plate [data-pipe]').map(g=>[g.dataset.pipe,g]));
+const compEls = {}; $$('#plate .comp').forEach(g=>{ (compEls[g.dataset.id] ||= []).push(g); });
+const tagEls = {}; $$('#plate .tag').forEach(g=>{ tagEls[g.dataset.tag]=g; });
+
+function valveState(c, sc){
+  if(sc.valves && sc.valves[c.id]) return sc.valves[c.id];
+  if(c.def==='open' && c.pipe && sc.pipes[c.pipe]) return 'flow';
+  return c.def;
+}
+const STATE_TXT = {open:'Open — no flow',closed:'Closed',flow:'Open — flowing',held:'Held closed (priority)',manual:'Opened by hand (manual lever)',lift:'LIFTED — discharging',unknown:'Unknown'};
+const STATE_CLS = {open:'v-open',closed:'v-closed',flow:'v-flow',held:'v-closed',manual:'v-flow',lift:'v-lift',unknown:'v-unknown'};
+
+function applyScenario(){
+  const sc = SM[ST.scen];
+  for(const id in pipeEls){
+    const on = sc.pipes[id];
+    pipeEls[id].classList.toggle('on', !!on);
+    pipeEls[id].classList.toggle('rev', on===-1);
+  }
+  // gas visible only when firing
+  const gasBody = pipeEls.gas.querySelector('.body'); gasBody.setAttribute('opacity', sc.pipes.gas? '.9':'0');
+  for(const c of COMPS){
+    if(c.cat!=='valve') continue;
+    const s = valveState(c, sc);
+    (compEls[c.id]||[]).forEach(g=>{ g.classList.remove('v-open','v-closed','v-flow','v-lift','v-unknown'); g.classList.add(STATE_CLS[s]||'v-open'); });
+  }
+  const u = sc.units||{};
+  $('#blrG').classList.toggle('burner-on', !!u.burner);
+  const ahu = $('#ahuG'); ahu.classList.toggle('blower-on', !!u.blower); ahu.classList.toggle('heat', u.blower==='heat'); ahu.classList.toggle('cool', u.blower==='cool');
+  $('#blowerWheel').firstElementChild.classList.toggle('spin', !!u.blower);
+  $('#cuFan').firstElementChild.classList.toggle('spin', !!u.cu);
+  $('#cuHeat').setAttribute('opacity', u.cu? '.9':'0');
+  $('#pumpImp').firstElementChild.classList.toggle('spin', !!u.pump);
+  const pb = document.getElementById('pumpBody'); pb.style.fill = u.pump? 'var(--hws)':'';
+  // control wiring animates for scenarios that use it
+  const live = {heat:['w1','w2','w5','w6','w7'], dhwcall:['w3','w4','w5','w6'], expand:['w3','w4','w5','w6'], cool:['w7','w8'], relief:['w5']}[sc.id]||[];
+  $$('#plate [data-ctl]').forEach(g=>g.classList.toggle('on', live.includes(g.dataset.ctl)));
+  // status line
+  const runs = []; if(u.burner) runs.push('burner firing'); if(u.pump) runs.push('P-1 running'); if(u.blower) runs.push('AHU-1 blower ('+u.blower+')'); if(u.cu) runs.push('CU-1 compressor'); if(u.sump) runs.push('SP-1 cycling');
+  $('#status').innerHTML = `<span>${esc(sc.head)}</span>${sc.fault?'<span class="badge fault">Fault demonstration</span>':''}<small>${runs.length?runs.join(' · '):'All equipment idle'}</small>`;
+  $$('#scenBar .tbtn').forEach(b=>b.classList.toggle('on', b.dataset.s===sc.id));
+  renderSeq();
+  if(ST.sel) renderInspector(ST.sel); else if(ST.selPipe) renderPipe(ST.selPipe); else renderHome();
+}
+
+function clearFocus(){ svg.classList.remove('focus'); $$('#plate .hl').forEach(e=>e.classList.remove('hl')); $$('#plate .sel').forEach(e=>e.classList.remove('sel')); }
+function focusIds(ids, pipeIds=[]){
+  clearFocus(); if(!ids.length && !pipeIds.length) return;
+  svg.classList.add('focus');
+  ids.forEach(id=>{ (compEls[id]||[]).forEach(g=>g.classList.add('hl')); tagEls[id]&&tagEls[id].classList.add('hl');
+    const c=CM[id]; if(c&&c.pipe&&!c.sym&&pipeEls[c.pipe]) pipeEls[c.pipe].classList.add('hl'); });
+  pipeIds.forEach(id=>pipeEls[id]&&pipeEls[id].classList.add('hl'));
+}
+function pipesOf(id){ return PIPES.filter(p=>p.comps.includes(id)||p.from===id||p.to===id).map(p=>p.id); }
+
+function select(id){
+  ST.sel=id; ST.selPipe=null; ST.step=-1;
+  const ps = pipesOf(id);
+  focusIds([id], ps);
+  (compEls[id]||[]).forEach(g=>g.classList.add('sel'));
+  showTab('inspect'); renderInspector(id);
+}
+function selectPipe(id){
+  ST.selPipe=id; ST.sel=null; ST.step=-1;
+  const p=P[id]; focusIds(p.comps.filter(x=>CM[x]), [id]);
+  pipeEls[id].classList.add('sel');
+  showTab('inspect'); renderPipe(id);
+}
+function clearSel(){ ST.sel=null; ST.selPipe=null; ST.step=-1; clearFocus(); renderHome(); renderSeq(); }
+
+svg.addEventListener('click', e=>{
+  const t = e.target.closest('[data-id],[data-pipe],[data-tag],[data-ctl]');
+  if(!t){ clearSel(); return; }
+  if(t.dataset.id) select(t.dataset.id);
+  else if(t.dataset.tag) select(t.dataset.tag);
+  else if(t.dataset.pipe) selectPipe(t.dataset.pipe);
+  else if(t.dataset.ctl){ const w=CTL.find(x=>x.id===t.dataset.ctl); focusIds(w.comps); showTab('inspect');
+    $('#p-inspect').innerHTML = `<div class="cap">Control wiring</div><h2>${esc(w.name)}</h2><p>Low-voltage (24 V) and line-voltage (120 V) signals tie the plant together. None of the wiring is traced in the schedule. T-1 may land on a zone relay or on the AHU-1 board, and how DHW priority is done is unknown. Treat this layer as the typical logic, not the as-built wiring.</p>${chips(w.comps)}`; bindChips($('#p-inspect')); }
+});
+
+/* =====================================================================
+   8. PANELS
+   ===================================================================== */
+function showTab(p){ $$('.tab').forEach(t=>t.classList.toggle('on', t.dataset.p===p)); $$('.panel').forEach(x=>x.classList.toggle('on', x.id==='p-'+p)); }
+$$('.tab').forEach(t=>t.addEventListener('click',()=>showTab(t.dataset.p)));
+const label = id => { const c=CM[id]; return c? (c.mark||c.abbr||'')+(c.mark||c.abbr?' · ':'')+c.name : (P[id]?P[id].name:id); };
+const chips = ids => `<div class="chips">${ids.filter(Boolean).map(id=>`<span class="chip" data-go="${id}">${esc(CM[id]?(CM[id].mark||CM[id].abbr||CM[id].name):(P[id]?P[id].name:id))}</span>`).join('')}</div>`;
+function bindChips(root){ root.querySelectorAll('[data-go]').forEach(ch=>ch.addEventListener('click',()=>{ const id=ch.dataset.go; CM[id]?select(id):P[id]?selectPipe(id):null; })); }
+const ENDPOINT = {street:'Street water main', cwtee:'Cold-water tee at the service riser', fix:'First-floor fixtures', whtee:'Tee to the water heater', mutee:'Make-up tee', ettee:'Expansion-tank tee', zvtee:'Zone-valve tee', rettee:'Return tee', purge:'Purge valve set', hose:'Hose to a drain', floor:'Open end near the floor', grade:'Outdoors (route not recorded)', atm:'Atmosphere, above the roof', room:'Basement room air', '?':'Not known: connected or capped?', hdr:'Supply header', sup:'Supply riser', whc:'WH-1 cold supply', cwm2:'Cold main', ret1:'Common return'};
+const epName = id => CM[id]? (CM[id].mark? CM[id].mark+' '+CM[id].name : CM[id].name) : (P[id]? P[id].name : ENDPOINT[id]||id);
+
+function renderHome(){
+  const sc=SM[ST.scen];
+  $('#p-inspect').innerHTML = `
+  <div class="cap">How to read this plate</div>
+  <h2>One boiler, three jobs</h2>
+  <p class="lede">The oil boiler is the only fire in the house. It heats the house through the air handler’s hot-water coil, and it heats the domestic water through the coil in the indirect tank. The air handler also does cooling, with the outdoor condensing unit.</p>
+  <h3>The four "fluids" to follow</h3>
+  <ul>
+   <li><b style="color:var(--hws)">Boiler water</b> (red out, <b style="color:var(--hwr)">blue</b> back): a closed loop at about 12–25 psi, moved by P-1 and steered by zone valves ZV-1 and ZV-2.</li>
+   <li><b style="color:var(--cw)">Domestic water</b>: arrives from the street at street pressure, is heated in WH-1 (<b style="color:var(--dhw)">orange</b>), and leaves at the fixtures.</li>
+   <li><b style="color:var(--oil)">Oil</b> from the outdoor tank to the burner; <b style="color:var(--flue)">flue gas</b> from the boiler to the chimney.</li>
+   <li><b style="color:var(--ref)">Refrigerant</b> between CU-1 and AHU-1; <b style="color:var(--cnd)">condensate</b> from AHU-1 to the sump.</li>
+  </ul>
+  <h3>Now showing: ${esc(sc.name)}</h3>
+  <p>${sc.intro}</p>
+  <p>Open the <b>Sequence</b> tab to step through it, or press keys <span class="mono">1–9</span> for the scenarios.</p>
+  <h3>How sure is each part?</h3>
+  <p>Tags with a solid border are in the schedule. <i>Italic tags with a dashed border</i> are not: they are typical or required parts drawn so the system is complete. Switch "Colour tags by" to <b>Where the information comes from</b> to see the difference, or to <b>Proposed disposition</b> to see what stays and what gets replaced.</p>
+  <div class="box warnbox"><p>Pipe routes, tee locations and valve order are diagrammatic. The schedule records equipment, not piping, and says the zone count is read from photos, not traced. Check the <b>Field checks</b> tab before relying on any connection shown here.</p></div>`;
+}
+
+function provPill(c){ return `<span class="pill p-${c.prov}">${PROV[c.prov].name}</span>`; }
+function dispPill(c){ return c.disp && c.disp!=='none' ? `<span class="pill d-${c.disp}">${DISP[c.disp]}</span>` : ''; }
+function symPreview(c){
+  if(!c.sym || !SYM[c.sym]) return '';
+  return `<svg width="64" height="56" viewBox="-32 -30 64 56"><path d="M-30,0H30" stroke="${c.pipe?SYS[P[c.pipe].sys].color:'var(--ink-3)'}" stroke-width="4"/><g class="v-open">${SYM[c.sym]()}</g></svg>`;
+}
+function scenariosUsing(c){
+  return SCEN.filter(s=>{ if(s.valves&&s.valves[c.id]&&s.valves[c.id]!=='closed') return true; if(c.pipe&&s.pipes[c.pipe]) return true; return false; }).map(s=>s.name);
+}
+function renderInspector(id){
+  const c = CM[id]; if(!c) return;
+  const sc = SM[ST.scen];
+  let h = `<div class="cap">${c.cat==='valve'?'Valve':c.cat==='equip'?'Equipment':'Device'}${c.mark?'':' · not in schedule'}</div>
+  <h2>${c.mark?esc(c.mark)+' — ':''}${esc(c.name)}</h2><div class="chips">${provPill(c)} ${dispPill(c)}</div>`;
+  if(c.cat==='valve'){
+    const vt=VT[c.vt], s=valveState(c,sc);
+    h += `<div class="box typebox"><div class="symbox">${symPreview(c)}<div><div class="cap">Valve type · ${esc(vt.kind)}</div><h4>${esc(vt.name)}</h4><div style="font-size:11.5px;color:var(--ink-3)">${esc(vt.normal)}</div></div></div><p style="margin-top:6px">${vt.how}</p></div>
+    <table class="kv"><tr><td>State in “${esc(sc.name)}”</td><td><span class="pill st">${STATE_TXT[s]||s}</span></td></tr>
+    <tr><td>On</td><td>${c.pipe?`<span class="chip" data-go="${c.pipe}">${esc(P[c.pipe].name)}</span>`:'Equipment tapping'}</td></tr>
+    <tr><td>Changes state in</td><td>${scenariosUsing(c).join(', ')||'—'}</td></tr></table>`;
+  }
+  if(c.does) h += `<h3>What it does</h3><p>${c.does}</p>`;
+  if(c.sched){ h += `<h3>From the schedule</h3><table class="kv">${Object.entries(c.sched).map(([k,v])=>`<tr><td>${esc(k)}</td><td class="v">${esc(v)}</td></tr>`).join('')}</table>`; }
+  else if(!c.mark) h += `<div class="box"><p><b>${PROV[c.prov].name}.</b> ${PROV[c.prov].long}</p></div>`;
+  if(c.disposition) h += `<h3>Proposed disposition</h3><p>${esc(c.disposition)}</p>`;
+  if(c.notes&&c.notes.length) h += `<h3>Notes</h3><ul>${c.notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul>`;
+  const ps = pipesOf(id);
+  if(ps.length) h += `<h3>Connections</h3><table class="tbl">${ps.map(pid=>{const p=P[pid];return `<tr class="row" data-go="${pid}"><td><span style="display:inline-block;width:14px;height:4px;background:${SYS[p.sys].color};vertical-align:middle"></span></td><td>${esc(p.name)}<br><small style="color:var(--ink-3)">${esc(epName(p.from))} → ${esc(epName(p.to))}</small></td></tr>`}).join('')}</table>`;
+  $('#p-inspect').innerHTML = h; bindChips($('#p-inspect'));
+}
+function renderPipe(id){
+  const p=P[id], s=SYS[p.sys];
+  const used = SCEN.filter(x=>x.pipes[id]).map(x=>x.name);
+  let h = `<div class="cap">Connection</div><h2>${esc(p.name)}</h2>
+  <div class="chips"><span class="pill" style="color:${s.color}">${esc(s.name)}</span></div>
+  <table class="kv"><tr><td>From</td><td>${CM[p.from]?`<span class="chip" data-go="${p.from}">${esc(epName(p.from))}</span>`:esc(epName(p.from))}</td></tr>
+  <tr><td>To</td><td>${CM[p.to]?`<span class="chip" data-go="${p.to}">${esc(epName(p.to))}</span>`:esc(epName(p.to))}</td></tr>
+  <tr><td>Carries</td><td>${esc(p.carries||'')}</td></tr><tr><td>Flows in</td><td>${used.join(', ')||'—'}</td></tr></table>`;
+  if(p.note) h += `<div class="box"><p>${esc(p.note)}</p></div>`;
+  const inl = p.comps.filter(x=>CM[x]);
+  if(inl.length) h += `<h3>Valves and devices on this run (in flow order)</h3>${chips(inl)}`;
+  $('#p-inspect').innerHTML = h; bindChips($('#p-inspect'));
+}
+
+function renderSeq(){
+  const sc = SM[ST.scen];
+  $('#p-seq').innerHTML = `<div class="cap">Sequence of operation${sc.fault?' · fault demonstration':''}</div><h2>${esc(sc.head)}</h2><p class="lede">${sc.intro}</p>
+  <ol class="steps">${sc.steps.map((s,i)=>`<li data-i="${i}" class="${ST.step===i?'on':''}">${s.t}</li>`).join('')}</ol>
+  <div class="btnrow" style="display:flex;gap:6px;margin-top:8px"><button class="tbtn" id="stPrev">← Previous step</button><button class="tbtn" id="stNext">Next step →</button></div>
+  <p class="note">Click a step to highlight the parts involved. Valve bodies show this scenario’s state; open the Inspector for any part.</p>`;
+  $$('#p-seq .steps li').forEach(li=>li.addEventListener('click',()=>goStep(+li.dataset.i)));
+  $('#stPrev').onclick=()=>goStep(Math.max(0,ST.step-1));
+  $('#stNext').onclick=()=>goStep(Math.min(sc.steps.length-1,ST.step+1));
+}
+function goStep(i){
+  const sc=SM[ST.scen]; ST.step=i; ST.sel=null; ST.selPipe=null;
+  const ids = sc.steps[i].ids;
+  focusIds(ids, Object.keys(sc.pipes).filter(pid=>P[pid].comps.some(x=>ids.includes(x))||ids.includes(P[pid].from)||ids.includes(P[pid].to)));
+  $$('#p-seq .steps li').forEach(li=>li.classList.toggle('on', +li.dataset.i===i));
+}
+
+function renderValves(){
+  const groups = [
+    ['Water service (street to house)', ['cs1','vst','sov1']],
+    ['Domestic hot water (WH-1)', ['vwh','tmv','tp','whd']],
+    ['Boiler make-up (where the two waters meet)', ['vmu','bfp','prv1']],
+    ['Heating loop: supply side', ['fl1','fl2','fcv1','aav1','zv1','zv2','vz1s','vz2s']],
+    ['Heating loop: return side', ['vz1r','vz2r','pdr','vpur']],
+    ['Boiler safety and trim', ['rv1','bdr','vtc1','vtc2']],
+    ['Fuel oil', ['vtank','osv','vfire']],
+    ['Flue', ['baro']],
+    ['Refrigerant', ['svs','svl','txv']],
+    ['Condensate and sump', ['chk']],
+  ];
+  const types = [...new Set(COMPS.filter(c=>c.cat==='valve').map(c=>c.vt))];
+  let h = `<div class="cap">Valve schedule</div><h2>Every valve, and what kind it is</h2>
+  <p class="lede">${COMPS.filter(c=>c.cat==='valve').length} valves and dampers in ${types.length} types. ${COMPS.filter(c=>c.cat==='valve'&&c.mark).length} are tagged in the schedule; the rest are typical or required parts it doesn’t list.</p>
+  <table class="tbl"><tr><th>Tag</th><th>Valve</th><th>Type</th><th>Normal</th></tr>`;
+  for(const [g,ids] of groups){
+    h += `<tr class="grp"><td colspan="4">${esc(g)}</td></tr>`;
+    for(const id of ids){ const c=CM[id], vt=VT[c.vt];
+      h += `<tr class="row" data-go="${id}" tabindex="0"><td class="tg">${c.mark?esc(c.mark):`<i style="color:var(--ink-3)">${esc(c.abbr||'—')}</i>`}</td><td>${esc(c.name)}<br><span class="pill p-${c.prov}">${PROV[c.prov].name}</span></td><td>${esc(vt.name)}</td><td>${esc(vt.normal)}</td></tr>`; }
+  }
+  h += `</table><h3>The valve types, side by side</h3>`;
+  for(const t of types){ const ex = COMPS.find(c=>c.vt===t); const vt=VT[t];
+    h += `<div class="box"><div class="symbox">${symPreview(ex)}<div><div class="cap">${esc(vt.kind)}</div><h4>${esc(vt.name)}</h4><div style="font-size:11px;color:var(--ink-3)">Used for: ${COMPS.filter(c=>c.vt===t).map(c=>esc(c.mark||c.name)).join(', ')}</div></div></div><p style="margin-top:6px">${vt.how}</p></div>`; }
+  $('#p-valves').innerHTML = h;
+  $$('#p-valves [data-go]').forEach(r=>{ r.addEventListener('click',()=>select(r.dataset.go)); r.addEventListener('keydown',e=>{if(e.key==='Enter')select(r.dataset.go)}); });
+}
+
+function renderConn(){
+  const groups = [
+    ['Incoming water', ['svc','cwm1','cwm2','cwfix']],
+    ['Domestic hot water', ['whc','et2s','tmvc','whh','dhw']],
+    ['Boiler fill and expansion', ['mu','etl']],
+    ['Heating loop', ['sup','hdr','z1s','z1r','z2s','z2r','ret1','ret2','purged']],
+    ['Tankless coil (status unknown)', ['tci','tco']],
+    ['Fuel', ['oil']],
+    ['Exhaust and discharges', ['flue','gas','air1','air2','rvd','tpd','cond','sumpd']],
+    ['Refrigerant', ['refl','refs']],
+  ];
+  let h = `<div class="cap">Connections</div><h2>Every run, end to end</h2><p class="lede">Each row is a pipe on the plate. Click one to light it up and see what’s on it.</p><table class="tbl"><tr><th></th><th>Run</th><th>From → to</th><th>On it</th></tr>`;
+  for(const [g,ids] of groups){
+    h += `<tr class="grp"><td colspan="4">${esc(g)}</td></tr>`;
+    for(const id of ids){ const p=P[id];
+      h += `<tr class="row" data-go="${id}" tabindex="0"><td><span style="display:inline-block;width:14px;height:5px;background:${SYS[p.sys].color}"></span></td><td>${esc(p.name)}</td><td>${esc(epName(p.from))} → ${esc(epName(p.to))}</td><td class="tg" style="font-size:10px">${p.comps.filter(x=>CM[x]).map(x=>esc(CM[x].mark||CM[x].abbr)).join(' · ')||'—'}</td></tr>`; }
+  }
+  h += `</table><h3>Control connections (not pipes)</h3><ul>${CTL.map(w=>`<li>${esc(w.name)}</li>`).join('')}</ul><p class="note">The wiring isn’t traced in the schedule. These are the typical connections for a zone-valve hydro-air system.</p>`;
+  $('#p-conn').innerHTML = h;
+  $$('#p-conn [data-go]').forEach(r=>{ r.addEventListener('click',()=>selectPipe(r.dataset.go)); r.addEventListener('keydown',e=>{if(e.key==='Enter')selectPipe(r.dataset.go)}); });
+}
+
+function renderVent(){
+  $('#p-vent').innerHTML = `<div class="cap">What comes in, what must go out</div><h2>Water in · Exhaust out</h2>
+  <h3>Incoming water: one service, two destinations</h3>
+  <p>All the water in the house comes in through a single 5/8 in. metered service. Inside, it splits into two systems that must never mix:</p>
+  <ol>
+   <li><b>Domestic water</b>, to the fixtures directly as cold, and through WH-1 as hot. Path: street main → <span class="chip" data-go="cs1">CS-1</span> → <span class="chip" data-go="vst">MV</span> → <span class="chip" data-go="wm1">WM-1</span> → <span class="chip" data-go="sov1">SOV-1</span> → cold main → <span class="chip" data-go="vwh">BV</span> → <span class="chip" data-go="wh1">WH-1</span> → <span class="chip" data-go="tmv">TMV</span> → fixtures. <span class="chip" data-go="et2">ET-2</span> and <span class="chip" data-go="tp">T&amp;P</span> protect it.</li>
+   <li><b>Boiler make-up</b>: a small branch that tops up the closed heating loop. Path: cold main → <span class="chip" data-go="vmu">BV</span> → <span class="chip" data-go="bfp">BFP</span> (required; not found) → <span class="chip" data-go="prv1">PRV-1</span> → ET-1 tee. The backflow preventer is the wall between drinking water and boiler water.</li>
+   <li><b>Tankless coil BLR-1a</b>, if still connected, would be a third domestic branch through the boiler. The schedule says to confirm, and to isolate it if unused. <span class="chip" data-go="blr1a">BLR-1a</span></li>
+  </ol>
+  <h3>Exhaust and discharges, by unit</h3>
+  <table class="tbl"><tr><th>Unit</th><th>Must get rid of</th><th>How</th></tr>
+   <tr class="row" data-go="flue1"><td class="tg">BLR-1</td><td>Combustion gases (CO₂, water vapour, some SO₂ and CO), about 350°F</td><td>Flue outlet → FLUE-1 galvanized connector, rising to the chimney → barometric damper → masonry chimney → above the roof. Natural draft, so the chimney must be sound and lined.</td></tr>
+   <tr class="row" data-go="bnr1"><td class="tg">BNR-1</td><td>(needs <b>in</b>: combustion air)</td><td>Drawn from the basement. The flame needs about 1,500 ft³ of air per gallon of oil. Add the damper’s dilution air, and the room needs a real supply of air; whether it is "unconfined" or needs outdoor-air openings is not recorded.</td></tr>
+   <tr class="row" data-go="rv1"><td class="tg">RV-1</td><td>Boiler water at 30 psi (fault only)</td><td>Full-size discharge to within about 6 in. of the floor. No valve, cap or thread at the end.</td></tr>
+   <tr class="row" data-go="aav1"><td class="tg">AAV-1</td><td>Air from the heating loop</td><td>Vents to the room through its cap.</td></tr>
+   <tr class="row" data-go="wh1"><td class="tg">WH-1</td><td>Nothing from combustion. It is indirect, so it has <b>no flue</b>.</td><td>Its only discharge is the T&amp;P relief, piped to near the floor.</td></tr>
+   <tr class="row" data-go="ahu1"><td class="tg">AHU-1</td><td>Condensate from the cooling coil</td><td>Drain pan → trap → drain line → SP-1 sump → pumped out through a check valve to grade.</td></tr>
+   <tr class="row" data-go="cu1"><td class="tg">CU-1</td><td>The house’s heat, in cooling mode</td><td>Rejected to outdoor air by the condenser fan. It needs clear airflow around the unit at its new pad.</td></tr>
+   <tr class="row" data-go="fot1"><td class="tg">FOT-1</td><td>Air and vapour displaced during delivery</td><td>The tank vent pipe with a weatherproof cap (and a fill whistle), on the tank outdoors.</td></tr>
+  </table>
+  <div class="box warnbox"><p><b>Note on propane.</b> The schedule also lists LPT-1, a 100 lb propane cylinder outdoors. Which appliance it serves is TBD, and nothing shows it connected to these three units, so it isn’t drawn.</p></div>`;
+  bindChips($('#p-vent'));
+  $$('#p-vent tr[data-go]').forEach(r=>r.addEventListener('click',()=>select(r.dataset.go)));
+}
+
+function renderField(){
+  $('#p-field').innerHTML = `<div class="cap">Before you trust a line on this plate</div><h2>Field checks</h2>
+  <p class="lede">Items the schedule marks unverified, plus gaps found while drawing the system complete.</p>
+  <h3>Flagged in the schedule</h3><ul class="fc">
+   <li>Zone count and assignments (ZV-1 to AHU-1, ZV-2 to WH-1) were read from photos, not traced. Confirm there are only two zones. ${chips(['zv1','zv2'])}</li>
+   <li>Low-water cutoff: none seen. Confirm whether CTL-1 has a probe. ${chips(['ctl1','lwco'])}</li>
+   <li>No backflow preventer on the boiler fill identified; add one if absent. ${chips(['prv1','bfp'])}</li>
+   <li>Tankless coil BLR-1a: connected or capped? Isolate if unused. ${chips(['blr1a'])}</li>
+   <li>Barometric damper identification is tentative; connector joints are foil-taped. ${chips(['flue1','baro'])}</li>
+   <li>Remote emergency burner switch (NFPA 31): confirm at the basement stair. ${chips(['sw1','esw'])}</li>
+   <li>T-1 wiring: zone relay or AHU control board? ${chips(['t1'])}</li>
+   <li>RV-1 must be rated at or above the boiler output; replace with a new ASME 30 psi valve. ${chips(['rv1'])}</li>
+   <li>Boiler down-fired to 1.25 gph (about 150 MBH DOE): use the as-fired rate in the capacity check. ${chips(['blr1','bnr1'])}</li>
+   <li>AHU-1 is a 4-ton cabinet on a 3-ton CU-1; the first-floor load is estimated at about 2 tons. ${chips(['ahu1','cu1'])}</li>
+   <li>FOT-1 capacity (about 275 gal?) and condition. ${chips(['fot1'])}</li>
+   <li>New indirect water heater size: 50 gal [to confirm]. ${chips(['wh1'])}</li>
+   <li>P-1 flow, head and model are TBD. ${chips(['p1'])}</li>
+  </ul>
+  <h3>Not in the schedule at all: look for them</h3><ul class="fc">
+   <li>WH-1 T&amp;P relief valve and its discharge pipe. ${chips(['tp'])}</li>
+   <li>A mixing valve on the hot outlet, and the WH-1 cold-inlet shutoff. ${chips(['tmv','vwh'])}</li>
+   <li>A check valve or backflow device at the meter. That is what makes ET-2 necessary. ${chips(['wm1','et2'])}</li>
+   <li>Where ET-1 and PRV-1 actually connect (pump suction side?), and whether there is an air separator. ${chips(['et1','p1'])}</li>
+   <li>DHW priority relay or zone controller. ${chips(['zv2'])}</li>
+   <li>Isolation and purge valves on each zone, and circulator flanges. ${chips(['vpur','pdr','fl1'])}</li>
+   <li>Oil line: tank valve, OSV, fire-safety valve, sleeve. ${chips(['vtank','osv','vfire'])}</li>
+   <li>Combustion-air provisions for the boiler space, and the chimney liner. ${chips(['bnr1','chim'])}</li>
+   <li>AHU-1 metering device, condensate trap, and the route of the sump discharge. ${chips(['txv','trap','chk'])}</li>
+   <li>Street pressure. If it is above about 80 psi, the house needs its own pressure-reducing valve after the meter.</li>
+  </ul>`;
+  bindChips($('#p-field'));
+}
+
+/* legend */
+function renderLegend(){
+  const sw = (s)=>{ const S=SYS[s]; if(S.flue) return `<svg width="34" height="12"><path d="M2,6H32" stroke="var(--ink-3)" stroke-width="10"/><path d="M2,6H32" stroke="#d6d2ca" stroke-width="6"/></svg>`;
+    if(S.insul) return `<svg width="34" height="12"><path d="M2,6H32" stroke="#3a3530" stroke-width="8"/><path d="M2,6H32" stroke="${S.color}" stroke-width="3"/></svg>`;
+    return `<svg width="34" height="12"><path d="M2,6H32" stroke="${S.color}" stroke-width="${Math.min(S.w,6)}" ${S.dash?`stroke-dasharray="${S.dash}"`:''}/></svg>`; };
+  const it = (s)=>`<div class="it">${sw(s)}${esc(SYS[s].name)}</div>`;
+  const vt = (t,id)=>{ const c=CM[id]; return `<div class="it click" data-go="${id}"><svg width="34" height="30" viewBox="-17 -18 34 30"><path d="M-16,0H16" stroke="var(--ink-4)" stroke-width="3"/><g class="v-open">${SYM[c.sym]()}</g></svg>${esc(VT[t].name)}</div>`; };
+  $('#legend').innerHTML = `
+   <div class="lg"><h4>Piping systems</h4>${['hws','hwr','cw','dhwt','dhw','oil','refl','refs','cond','sump','relb','flue','ctl'].map(it).join('')}</div>
+   <div class="lg"><h4>Valve symbols</h4>${[['ball','sov1'],['curb','cs1'],['zone','zv1'],['flowcheck','fcv1'],['check','chk'],['bfp','bfp'],['prv','prv1'],['relief','rv1'],['tmv','tmv'],['aav','aav1'],['drain','pdr'],['osv','osv'],['fire','vfire'],['txv','txv'],['baro','baro']].map(([t,id])=>vt(t,id)).join('')}</div>
+   <div class="lg"><h4>Valve states</h4>
+     <div class="it"><svg width="34" height="20" viewBox="-17 -10 34 20"><g class="v-open">${bow()}</g></svg>Open, no flow</div>
+     <div class="it"><svg width="34" height="20" viewBox="-17 -10 34 20"><g class="v-closed">${bow()}</g></svg>Closed</div>
+     <div class="it"><svg width="34" height="20" viewBox="-17 -10 34 20"><g class="v-flow" style="color:var(--cw)">${bow()}</g></svg>Open and flowing (pipe colour)</div>
+     <div class="it"><svg width="34" height="20" viewBox="-17 -10 34 20"><g class="v-lift">${bow()}</g></svg>Relief valve lifted</div>
+     <div class="it"><svg width="34" height="20" viewBox="-17 -10 34 20"><g class="v-unknown">${bow()}</g></svg>Unknown (verify)</div>
+     <h4 style="margin-top:8px">Tags</h4>
+     <div class="it"><svg width="34" height="18"><rect x="2" y="2" width="30" height="14" rx="2" fill="var(--sheet)" stroke="var(--ink-3)"/></svg>In the schedule (its mark)</div>
+     <div class="it"><svg width="34" height="18"><rect x="2" y="2" width="30" height="14" rx="2" fill="var(--sheet)" stroke="var(--ink-3)" stroke-dasharray="2.5 2"/></svg><i>Typical, not scheduled</i></div>
+     <div class="it"><svg width="34" height="18"><rect x="2" y="2" width="30" height="14" rx="2" fill="var(--sheet)" stroke="var(--terra)" stroke-dasharray="2.5 2"/></svg><i style="color:var(--terra)">Required, not scheduled</i></div>
+   </div>`;
+  $$('#legend [data-go]').forEach(e=>e.addEventListener('click',()=>select(e.dataset.go)));
+}
+
+/* scenario bar */
+for(const s of SCEN){
+  const b=document.createElement('button'); b.className='tbtn'+(s.fault?' fault':''); b.dataset.s=s.id;
+  b.innerHTML=`<span class="k">${s.key}</span>${esc(s.name)}`; b.title=s.head;
+  b.onclick=()=>{ ST.scen=s.id; ST.step=-1; if(!ST.sel&&!ST.selPipe) clearFocus(); applyScenario(); showTab('seq'); };
+  $('#scenBar').appendChild(b);
+}
+
+/* toolbar */
+$('#colorBy').onchange=e=>{ svg.classList.remove('by-prov','by-disp'); if(e.target.value!=='none') svg.classList.add('by-'+e.target.value); };
+$('#chkTyp').onchange=e=>svg.classList.toggle('notyp', !e.target.checked);
+$('#chkCtl').onchange=e=>svg.classList.toggle('noctl', !e.target.checked);
+$('#chkLbl').onchange=e=>svg.classList.toggle('nolabels', !e.target.checked);
+svg.classList.add('noctl');
+let paused=false;
+function togglePause(){ paused=!paused; svg.classList.toggle('paused',paused); $('#pauseBtn').textContent = paused?'▶ Play':'❚❚ Pause'; }
+$('#pauseBtn').onclick=togglePause;
+$('#printBtn').onclick=()=>window.print();
+document.addEventListener('keydown',e=>{
+  if(e.target.closest('input,select,textarea')) return;
+  if(e.key==='Escape') clearSel();
+  else if(e.key===' '){ e.preventDefault(); togglePause(); }
+  else { const s=SCEN.find(x=>x.key===e.key); if(s){ ST.scen=s.id; ST.step=-1; applyScenario(); showTab('seq'); } }
+});
+
+renderLegend(); renderValves(); renderConn(); renderVent(); renderField();
+applyScenario();
+
+/* sanity checks (console) */
+(function selfTest(){
+  const errs=[];
+  for(const p of PIPES) for(const c of p.comps) if(!CM[c]) errs.push('pipe '+p.id+' lists unknown comp '+c);
+  for(const c of COMPS){ if(c.pipe && !P[c.pipe]) errs.push('comp '+c.id+' on unknown pipe '+c.pipe); if(c.cat==='valve' && !VT[c.vt]) errs.push('valve '+c.id+' has unknown type'); }
+  for(const s of SCEN){ for(const k in s.pipes) if(!P[k]) errs.push('scenario '+s.id+' unknown pipe '+k); for(const k in s.valves) if(!CM[k]) errs.push('scenario '+s.id+' unknown valve '+k); s.steps.forEach(st=>st.ids.forEach(i=>{ if(!CM[i]) errs.push('scenario '+s.id+' step id '+i); })); }
+  for(const w of CTL) w.comps.forEach(i=>{ if(!CM[i]) errs.push('ctl '+w.id+' '+i); });
+  if(errs.length) console.warn('Self-test problems:\n'+errs.join('\n')); else console.info('Self-test: all references resolve ('+PIPES.length+' runs, '+COMPS.length+' components, '+SCEN.length+' scenarios).');
+})();
+</script>
+</body>
+</html>
