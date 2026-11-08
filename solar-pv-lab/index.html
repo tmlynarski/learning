@@ -195,6 +195,17 @@ label.chk input{accent-color:var(--ink)}
 .calc{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;font-size:12px;margin:6px 0}
 .calc input{width:76px;border:1px solid var(--rule);background:var(--sheet);padding:2px 5px;border-radius:2px;font-family:var(--mono);font-size:12px}
 .verdict{font-family:var(--serif);font-size:14px;padding:6px 8px;border:1px solid var(--rule-2);margin-top:6px}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+.gsearch{width:100%;border:1px solid var(--rule);background:var(--sheet);padding:5px 8px;border-radius:2px;font-size:13px;margin:6px 0 2px}
+.gcats .tbtn{font-size:11px;padding:2px 7px}
+.gcats .tbtn.on{border-color:var(--ink-3);color:var(--ink);background:var(--paper-2)}
+.gletter{font-family:var(--serif);font-size:18px;color:var(--terra);border-bottom:1px solid var(--rule-2);margin:12px 0 6px}
+.gentry{margin:0 0 9px}
+.gentry .gt{font-family:var(--serif);font-size:15px;color:var(--ink)}
+.gentry .gx{font-family:var(--sans);font-size:11.5px;font-style:italic;color:var(--ink-3)}
+.gentry .gcat{font-family:var(--cond);text-transform:uppercase;letter-spacing:.09em;font-size:9px;color:var(--ink-4);margin-left:4px}
+.gentry p{margin:1px 0 2px}
+.gentry .chips{margin:2px 0 0}
 .verdict.ok{border-left:3px solid var(--s-bat)}.verdict.bad{border-left:3px solid #8b1d1d;background:#f8e9e6}
 /* day chart */
 .chart{position:relative;max-width:560px}
@@ -314,6 +325,8 @@ label.chk input{accent-color:var(--ink)}
       <button class="tab" data-p="day">Day</button>
       <button class="tab" data-p="loads">Loads</button>
       <button class="tab" data-p="code">Code &amp; Florida</button>
+      <button class="tab" data-p="out">Outages</button>
+      <button class="tab" data-p="gloss">Glossary</button>
     </div>
     <div class="panels">
       <div class="panel on" id="p-inspect"></div>
@@ -322,6 +335,8 @@ label.chk input{accent-color:var(--ink)}
       <div class="panel" id="p-day"></div>
       <div class="panel" id="p-loads"></div>
       <div class="panel" id="p-code"></div>
+      <div class="panel" id="p-out"></div>
+      <div class="panel" id="p-gloss"></div>
     </div>
   </aside>
 </main>
@@ -1026,6 +1041,7 @@ function fmtTime(t){ const h=Math.floor(t), m=Math.floor((t-h)*60+1e-6); const h
 
 function update(){
   const r = model(SIM); LAST = r;
+  if($('#p-out').classList.contains('on')) outNow();
   const c = cfg();
   // runs
   for(const id in runEls){
@@ -1184,7 +1200,7 @@ svg.addEventListener('pointerleave', hideTip); svg.addEventListener('pointerdown
 /* =====================================================================
    8. PANELS
    ===================================================================== */
-function showTab(p){ $$('.tab').forEach(t=>t.classList.toggle('on',t.dataset.p===p)); $$('.panel').forEach(x=>x.classList.toggle('on',x.id==='p-'+p)); if(p==='day') renderDay(); }
+function showTab(p){ $$('.tab').forEach(t=>t.classList.toggle('on',t.dataset.p===p)); $$('.panel').forEach(x=>x.classList.toggle('on',x.id==='p-'+p)); if(p==='day') renderDay(); if(p==='out') renderOutage(); if(p==='gloss') renderGlossary(); }
 $$('.tab').forEach(t=>t.addEventListener('click',()=>showTab(t.dataset.p)));
 const chipName = id => RM[id]? RM[id].name : CM[id]? (CM[id].mark+' · '+compName(id,cfg())) : id;
 const chips = ids => `<div class="chips">${ids.filter(id=>RM[id]||compEls[id]).map(id=>`<span class="chip" data-go="${id}">${esc(chipName(id))}</span>`).join('')}</div>`;
@@ -1205,9 +1221,10 @@ function renderHome(){
    <h3>Try this</h3>
    <ul>
     <li>Press <b>▶ Play the day</b> and watch the arrows reverse through the meter around 9 am and again before sunset.</li>
-    <li>Run <b>Hurricane outage</b> with Battery set to None, then with the battery. This is the most common Florida surprise.</li>
+    <li>Run <b>Hurricane outage</b> with Battery set to None, then with the battery. This is the most common Florida surprise; the <b>Outages</b> tab explains why solar alone goes dark and where a generator fits.</li>
     <li>Switch Inverter between string and microinverters: the roof wiring changes from a series loop of DC to parallel AC.</li>
     <li>Hover any wire to see what its conductors are. Click it for sizes and live volts and amps.</li>
+    <li>New to the terms (PV, MPPT, kWh, islanding)? The <b>Glossary</b> tab explains each one and shows where it is on the plate.</li>
    </ul>
    <div class="box warn"><h4>A teaching model</h4><p>Wire sizes, breaker sizes and equipment are typical for this example (a 2,000 sq ft Florida home with a 200 A service). A real system is designed and permitted for the site by a licensed contractor.</p></div>`;
 }
@@ -1369,7 +1386,7 @@ function renderCode(){
     <li><b>Code edition.</b> Florida’s 8th-edition building code (2023) adopts the 2020 NEC. Articles 690 (PV), 705 (interconnection), 706 (storage) and 230.67 (surge protection) are the ones on this plate.</li>
     <li><b>Wind.</b> Racking is engineered to the Florida Building Code’s design wind speeds (roughly 130–180 mph by county) and roof zones. In Miami-Dade and Broward (HVHZ) components need Miami-Dade NOA or Florida product approval.</li>
     <li><b>Net metering.</b> PSC Rule 25-6.065 covers FPL, Duke Energy Florida, TECO and FPUC: Tier 1 is up to 10 kW, Tier 2 is 10–100 kW. Monthly 1:1 crediting, with surplus paid once a year at avoided cost. Co-ops and municipal utilities have their own policies. Confirm the current tariff.</li>
-    <li><b>Hurricanes.</b> Grid-tied solar without storage shuts off in an outage by design. Backup needs a battery and an islanding gateway (or a hybrid inverter with a backup port and transfer switch).</li>
+    <li><b>Hurricanes.</b> Grid-tied solar without storage shuts off in an outage by design (see the <b>Outages</b> tab). Backup needs a battery and an islanding gateway (or a hybrid inverter with a backup port and transfer switch), a generator with transfer equipment, or both.</li>
     <li><b>Lightning.</b> Florida leads the US in cloud-to-ground strikes. Surge protection at the service (required) and at the inverter, plus a solid grounding electrode system.</li>
     <li><b>Flood &amp; salt.</b> Mount inverters, batteries and disconnects above the design flood elevation; use corrosion-rated equipment within a few miles of the coast.</li>
     <li><b>Your rights.</b> Florida’s Solar Rights Act (F.S. 163.04) keeps HOAs from banning solar, though they can have a say on placement if it doesn’t hurt production. Solar equipment is exempt from state sales tax, and the added value is exempt from property tax.</li>
@@ -1461,6 +1478,256 @@ const FIG = {
 };
 FIG.ct = ()=>fig(340,110,`<path d="M10,55H330" stroke="#22201c" stroke-width="3"/><ellipse cx="170" cy="55" rx="16" ry="34" fill="none" stroke="#47433c" stroke-width="5"/><path d="M170,21V8H260" stroke="#7a4f9c" stroke-dasharray="4 3" fill="none"/><text x="264" y="12" class="fs" text-anchor="start">to gateway</text><text x="170" y="104" class="fs">service conductor passes through; a coil senses its magnetic field</text>`);
 
+/* ---- Outages: why grid-tied solar goes dark, and what keeps the lights on */
+const hm = t=>{ const h=Math.floor(t)%24, m=Math.round((t-Math.floor(t))*60)%60, ap=h<12?'am':'pm'; return `${(h%12)||12}:${String(m).padStart(2,'0')} ${ap}`; };
+let outCache = null;
+function outHours(){
+  const key = SIM.arch+JSON.stringify(SIM.mode);
+  if(outCache && outCache.key===key) return outCache;
+  const base = {...SIM, grid:true, batt:false, rsd:false, mode:{...SIM.mode}};
+  const hrs = sky=>{ let n=0; for(let i=0;i<96;i++){ const m=model({...base, t:i/4+0.125, sky}); if(m.pvACa>0 && m.pvACa>=sum(m.raw)) n+=0.25; } return n; };
+  const peak = sky=>{ let p=0; for(let i=0;i<96;i++) p=Math.max(p, model({...base, t:i/4+0.125, sky}).pvACa); return p; };
+  outCache = {key, clear:hrs('clear'), storm:hrs('overcast'), stormPeak:peak('overcast')};
+  return outCache;
+}
+function outNow(){
+  const el = $('#outNow'); if(!el) return;
+  const m = model({...SIM, grid:true, batt:false, rsd:false, mode:{...SIM.mode}}), load = sum(m.raw), h = outHours();
+  const gap = m.pvACa - load;
+  el.innerHTML = `<table class="kv">
+    <tr><td>Clear summer day</td><td class="v">solar ≥ house for ${h.clear.toFixed(1).replace('.0','')} h of 24</td></tr>
+    <tr><td>Overcast / storm day</td><td class="v">${h.storm? h.storm.toFixed(1).replace('.0','')+' h of 24' : 'never'} (peak ≈ ${h.stormPeak.toFixed(1)} kW)</td></tr>
+    <tr><td>Right now, ${hm(SIM.t)}</td><td class="v">solar ${m.pvACa.toFixed(1)} kW · house ${load.toFixed(1)} kW → ${gap>=0? 'covered, but nowhere for the extra '+gap.toFixed(1)+' kW to go' : 'short by '+(-gap).toFixed(1)+' kW'}</td></tr>
+   </table>`;
+}
+const sinePts = (x0,w,y0,a,cyc)=>{ const p=[]; for(let i=0;i<=60;i++){ const x=x0+w*i/60; p.push([x, y0-a*Math.sin(2*Math.PI*cyc*i/60)]); } return p; };
+const OFIG = {
+  backfeed:()=>fig(340,150,`${B(6,44,66,46,'your inverter','240 V')}${A([[72,67],[100,67]],'#c23b22')}
+    <rect x="100" y="40" width="80" height="54" rx="3" fill="#ece7dc" stroke="#47433c"/><text x="140" y="56" class="ft">utility transformer</text>
+    ${[0,1,2].map(i=>`<path d="M${112+i*10},76a5,5 0 0 1 10,0" fill="none" stroke="#47433c" stroke-width="1.6"/>`).join('')}
+    ${[0,1,2,3,4].map(i=>`<path d="M${144+i*6},76a3,3 0 0 1 6,0" fill="none" stroke="#47433c" stroke-width="1.2"/>`).join('')}
+    <text x="140" y="88" class="fs">240 V ↔ 7,200 V</text>
+    <path d="M180,67H296" stroke="#c23b22" stroke-width="2.4" stroke-dasharray="6 3"/><text x="236" y="60" class="ft">7,200 V</text><text x="236" y="84" class="fs">on a line crews think is dead</text>
+    <path d="M316,24V140M298,34H334" stroke="#7d776c" stroke-width="3"/><path d="M296,67H316" stroke="#c23b22" stroke-width="2.4"/>
+    <circle cx="326" cy="52" r="5" fill="#fbf9f4" stroke="#47433c" stroke-width="1.4"/><path d="M326,57V78M326,63L317,68M326,78L321,92M326,78L331,92" stroke="#47433c" stroke-width="1.6" fill="none"/>
+    <text x="170" y="122" class="fs">a transformer works in both directions: 240 V × 30 = 7,200 V</text>
+    <text x="170" y="136" class="fs">so the inverter must stop within 2 s of losing the grid</text>`),
+  follow:()=>fig(340,140,`<text x="85" y="16" class="ft">grid up</text><text x="255" y="16" class="ft">grid down</text>
+    <path d="M170,8V108" stroke="#d3cab8"/>
+    <path d="${d(sinePts(12,146,60,30,2))}" stroke="#7d776c" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>
+    <path d="${d(sinePts(12,146,60,18,2))}" stroke="#ad543a" stroke-width="2.2" fill="none"/>
+    <path d="M182,60H328" stroke="#7d776c" stroke-width="1.6" stroke-dasharray="4 3"/><text x="255" y="48" class="ft">?</text>
+    <text x="85" y="104" class="fs">dashed: grid voltage · solid: inverter current</text>
+    <text x="255" y="104" class="fs">0 V: no wave to lock onto</text>
+    <text x="170" y="128" class="fs">a grid-tied inverter follows the grid’s 60 Hz wave; it cannot make one</text>`),
+};
+function renderOutage(){
+  $('#p-out').innerHTML = `<div class="cap">The most common Florida surprise</div><h2>Why solar goes dark when the grid does</h2>
+   <p class="lede">The sun is out, the street has no power, and neither does your house. That is not a fault. A grid-tied solar system is built to shut off when the grid is down, for one safety reason and one physics reason.</p>
+   <div class="btnrow"><button class="tbtn out" data-og="0:outday">See it: outage, no battery</button><button class="tbtn" data-og="1:outday">Same outage, with a battery</button><button class="tbtn" data-og="1:outnight">Outage at night, with a battery</button></div>
+   <h3>1 · It must not back-feed a dead line</h3>
+   ${OFIG.backfeed()}
+   <p>The utility’s transformer (on a pole, or the green pad-mount box) steps 7,200 V down to your 240 V, and it works just as well in reverse. If the inverter kept pushing power into the service during an outage, the transformer would put thousands of volts on wires that line crews have been told are dead.</p>
+   <p>So every grid-tied inverter is certified (UL 1741, to IEEE 1547) to sense the loss of the grid and stop exporting within <b>2 seconds</b>, then wait for <b>5 minutes</b> of steady utility power before it starts again. This is <b>anti-islanding</b>. It also protects your equipment and the utility’s when power is restored: an out-of-step source on the line would slam into the returning grid.</p>
+   <h3>2 · It can’t run the house by itself</h3>
+   ${OFIG.follow()}
+   <ul>
+    <li><b>It follows; it doesn’t lead.</b> A grid-tied inverter is a <i>current source</i>. It measures the grid’s voltage wave and pushes current in step with it. With no grid there is no wave to lock onto, so it has nothing to make. Switching the main breaker off doesn’t change that: the inverter still sees 0 V and stays off.</li>
+    <li><b>Power has to balance every instant.</b> On the grid, the utility absorbs the difference between what the roof makes and what the house uses. Alone, a passing cloud that halves the output or a compressor starting would make the voltage collapse in a fraction of a second, and there’s nothing to fill the gap or to take the surplus.</li>
+    <li><b>Starting surges.</b> A 3-ton AC compressor draws roughly 80–100 A for a moment when it starts, about five times its running current. This 7.6 kW inverter tops out near 32 A.</li>
+    <li><b>Night and storms.</b> The array makes nothing after about 7:30 pm, and under hurricane cloud it makes a small fraction of its rating.</li>
+   </ul>
+   <div class="box live"><h4>Could the roof carry this house alone? (from the plate’s model)</h4><div id="outNow"></div><p class="note">Uses the setup, time of day and load settings you have chosen. Even in the hours when solar exceeds the load, it can’t follow every swing on its own.</p></div>
+   <div class="box warn"><h4>The roof is still live</h4><p>In daylight the modules make DC even when the house is dark. Rapid shutdown holds the wiring outside the array to 30 V or less, but the modules themselves are energized. After a storm, don’t touch damaged modules or loose wiring; call the installer.</p></div>
+   <h3>What does keep the lights on</h3>
+   <table class="tbl">
+    <tr><th>Option</th><th>How it works</th><th>At night?</th></tr>
+    <tr><td><b>Battery + backup gateway</b><br>(this plate, Battery: 13.5 kWh)</td><td>The gateway opens an islanding contactor so the house is cut off from the street. The battery’s inverter is <i>grid-forming</i>: it makes the 60 Hz wave, solar follows it and recharges the battery, and the gateway sheds big loads. Switches over in under a second.</td><td>Yes, until the battery is empty</td></tr>
+    <tr><td><b>Daytime-only solar backup</b></td><td>Some microinverters can form a small grid in the sun without a battery (for example Enphase IQ8 with its system controller), and a few string inverters have a ~2 kW daytime outlet (for example SMA’s Secure Power Supply). It drops out when clouds pass. Not drawn on this plate.</td><td>No</td></tr>
+    <tr><td><b>Generator</b></td><td>A portable unit through an inlet and an interlock on the main breaker, or a standby unit with an automatic transfer switch.</td><td>Yes, while the fuel lasts</td></tr>
+   </table>
+   <h3>Why you may still want a generator</h3>
+   <ul>
+    <li><b>No battery, no backup.</b> Without storage, a generator is the only way to have power in an outage.</li>
+    <li><b>A battery holds a day, not a week.</b> 13.5 kWh runs a fridge, lights, fans and internet (about 0.5–1 kW) for a day or more. Add central AC, about 3–4 kW while it runs, and it lasts roughly 4–8 hours. Sun refills it, but skies often stay overcast for days after a hurricane, and restoring the grid can take days to weeks.</li>
+    <li><b>They work well together.</b> A generator wired to recharge the battery (through a hybrid inverter’s or gateway’s generator input) runs a couple of hours a day instead of all night, and solar covers the sunny hours.</li>
+   </ul>
+   <h3>Generator wiring rules (and solar)</h3>
+   <ul>
+    <li><b>Transfer equipment is required</b> (NEC 702): an interlock or a transfer switch, so the generator can never back-feed the utility, for the same reason as above. Never use a “suicide cord” (a double-male cord into a dryer outlet): its exposed pins are live and it back-feeds the street.</li>
+    <li><b>Watch the back-fed solar breaker.</b> Without a battery, the solar lands in the load panel. If a generator powers that panel, the inverter may take it for the grid, wait 5 minutes and start exporting. When solar exceeds the house load, the extra flows back into the generator, which can trip or damage it. Unless the system is designed for a generator, <b>open the PV AC disconnect</b> while it runs. (Many portable generators wander outside the inverter’s voltage and frequency limits, so it keeps tripping off anyway.)</li>
+    <li><b>Designed for it:</b> hybrid inverters and some backup gateways have a generator input. The controller charges the battery from the generator and keeps solar from pushing power back into it.</li>
+    <li><b>Carbon monoxide.</b> Run a generator outdoors, at least 20 ft from doors and windows, never in a garage, with a CO alarm inside. CO poisoning is one of the main causes of death after Florida hurricanes.</li>
+   </ul>
+   <h3>Myths</h3>
+   <table class="tbl">
+    <tr><td><b>“Turn off the main and the solar will run the house.”</b></td><td>No. The inverter needs a voltage to follow; with the main open it still sees 0 V.</td></tr>
+    <tr><td><b>“With a battery, everything keeps running.”</b></td><td>Only what the battery inverter can supply (5 kW continuous here). The EV charger, pool pump and water heater are shed first.</td></tr>
+    <tr><td><b>“The panels are in sun, so the system is broken.”</b></td><td>It is working as designed. Power returns about 5 minutes after the grid does.</td></tr>
+   </table>
+   <p class="note">Code: NEC 705.40 (loss of the utility: the inverter must disconnect automatically) and 690.12 (rapid shutdown); UL 1741 and IEEE 1547 (anti-islanding, 2 s trip, 5 min reconnect); NEC 702 (optional standby generators and transfer equipment); NEC 706 and UL 9540 (batteries).</p>`;
+  $('#p-out').querySelectorAll('[data-og]').forEach(b=>b.addEventListener('click',()=>{
+    const [bt,id]=b.dataset.og.split(':');
+    if($('#battSel').value!==bt){ $('#battSel').value=bt; reconfigure(); }
+    applyScenario(id); showTab('out');
+  }));
+  outNow();
+}
+
+/* ---- Glossary */
+const GGROUP = {basics:"Solar basics", elec:"Electricity & wiring", equip:"Equipment", safety:"Safety & grounding", batt:"Battery & backup", code:"Code, utility & Florida"};
+const G = (t,x,g,d,ids)=>({t,x,g,d,ids:ids||[]});
+const GLOSS = [
+ // solar basics
+ G("PV","photovoltaic","basics","Making electricity directly from light: sunlight knocks electrons loose in a silicon cell and the cell pushes them out as DC current. “PV” is the usual shorthand for a solar-electric system, as opposed to solar water heating.",["mod"]),
+ G("Solar cell","","basics","The basic light-to-electricity unit, a thin silicon wafer making about 0.6 V. Cells are wired in series inside a module to reach a useful voltage.",["mod"]),
+ G("Module","solar panel","basics","A framed, glass-covered group of cells with a junction box and two leads (+ and −). “Panel” is the everyday word; installers and the code say “module”. Here: 20 modules of 400 W.",["mod"]),
+ G("Array","","basics","All the modules of the system together. This one is 20 × 400 W = 8.0 kW DC.",["mod","rail"]),
+ G("String","","basics","Modules wired in series, + of one to − of the next, so their voltages add up while the current stays the same. Here, two strings of ten modules at about 340 V each.",["s1","s2"]),
+ G("Series / parallel","","basics","In series, voltages add (a string). In parallel, currents add at the same voltage (two strings into one inverter, or microinverters on a trunk cable).",["s1","b1"]),
+ G("Irradiance","","basics","How much sunlight power lands on a surface, in watts per square metre. Full midday sun is about 1,000 W/m²; heavy overcast can be under 200.",[]),
+ G("Peak sun hours","","basics","A day’s sunlight expressed as hours of full 1,000 W/m² sun. Florida averages about 5 to 5.5, which is why an 8 kW array makes roughly 30–35 kWh on a typical day.",[]),
+ G("STC","standard test conditions","basics","The lab conditions behind a module’s label rating: 1,000 W/m² of light and a 25 °C cell. A Florida roof runs much hotter than that, so real output is lower.",["mod"]),
+ G("kW DC vs. kW AC","","basics","The array’s size is its DC rating (8.0 kW here, the modules’ labels added up). The inverter’s rating is its AC output (7.6 kW). The DC/AC ratio here is 1.05.",["mod","inv"]),
+ G("Derate","","basics","The losses between the label rating and what actually comes out: heat, dirt, wiring and mismatch. This plate’s model uses 16%.",[]),
+ G("Clipping","","basics","When the array could make more than the inverter’s AC rating, the inverter caps its output at that rating and the rest is simply not collected. A little clipping at noon is normal and cheap.",["inv"]),
+ G("Voc","open-circuit voltage","basics","A module’s voltage with nothing connected and no current flowing; its highest voltage, and highest on cold mornings. String length is limited so Voc stays under the inverter’s 600 V maximum.",["mod"]),
+ G("Vmp / Imp","voltage / current at maximum power","basics","The voltage and current at which a module makes the most power. The inverter steers each string to this point.",["mod"]),
+ G("Isc","short-circuit current","basics","The current a module pushes with its leads shorted together, only a little above its working current. Solar can’t make a big fault current, which is why PV circuits are sized at 125% × 125% of Isc.",["mod"]),
+ G("MPPT","maximum power point tracking","basics","The inverter’s (or microinverter’s) constant adjustment of the load it puts on the modules to get the most power out of them as light and temperature change.",["inv","micro"]),
+ G("Bypass diode","","basics","A diode across each third of a module. If part of the module is shaded, current skips around that section instead of being blocked by it.",["mod"]),
+ G("Self-consumption","","basics","Solar used in the house at the moment it’s made. It never reaches the meter and is worth the full retail price of the power it replaces.",[]),
+ G("Export","","basics","Solar the house doesn’t use, flowing out through the meter to the grid.",["svc","mm"]),
+ G("Net metering","NEM","basics","Billing where exported energy is credited against energy you buy. Under Florida’s rule, investor-owned utilities credit exports 1:1 against purchases each month and pay out any surplus once a year at avoided cost.",["mm"]),
+
+ // electricity & wiring
+ G("DC","direct current","elec","Current that flows one way, as from a battery or a solar module.",["s1","bdc"]),
+ G("AC","alternating current","elec","Current that reverses direction 60 times a second (60 Hz) in the US. The grid, your outlets and everything in the house run on it.",["iac","gmp"]),
+ G("Volt (V)","","elec","Electrical pressure, the push behind current. A house outlet is 120 V; a dryer or AC unit is 240 V.",[]),
+ G("Amp (A)","","elec","Electrical flow, how much current is moving. Wire and breakers are sized in amps.",[]),
+ G("Watt (W) / kilowatt (kW)","","elec","Power, the rate of using or making energy: volts × amps. 1 kW = 1,000 W. A 7.6 kW inverter at 240 V delivers about 32 A.",[]),
+ G("Kilowatt-hour (kWh)","","elec","Energy: 1 kW for one hour. Your bill counts kWh, and battery size is given in kWh (13.5 here). kW is how fast; kWh is how much.",["bat","mm"]),
+ G("Hz","hertz","elec","Cycles per second. US power is 60 Hz; the AC-coupled battery nudges it up toward 61 Hz to tell microinverters to back off.",[]),
+ G("Split-phase","120/240 V","elec","The standard US home service: the transformer’s centre-tapped winding gives two hot legs (L1 and L2) that are 120 V each to neutral and 240 V to each other.",["xf","svc"]),
+ G("L1, L2","hot legs","elec","The two hot conductors of a split-phase service, black and red. 120 V loads use one of them plus neutral; 240 V loads use both.",["svc","fdr"]),
+ G("Neutral (N)","","elec","The white, grounded current-carrying conductor that returns current from 120 V loads to the transformer’s centre tap.",["svc"]),
+ G("Load","","elec","Anything that uses power: the AC, water heater, lights. Also used for how much power is being used at a moment.",[]),
+ G("Circuit / branch circuit","","elec","The wiring from one breaker to the loads it feeds.",["br-ac","br-kit"]),
+ G("Feeder","","elec","A larger cable from one panel to another, such as from the meter-main to the load panel.",["fdr","fgw"]),
+ G("Service","","elec","The utility’s conductors, meter and main disconnect where power enters the building.",["svc","mm"]),
+ G("Breaker","OCPD, overcurrent protective device","elec","An automatic switch that trips open when its circuit carries too much current, protecting the wire. A 2-pole breaker switches L1 and L2 together.",["mp","pvb"]),
+ G("Busbar","","elec","The thick copper or aluminum bars inside a panel that breakers clip onto. Its current rating limits how much solar can be back-fed (the 120% rule).",["mp"]),
+ G("Main breaker","service disconnect","elec","The breaker that shuts off the whole house, here 200 A in the meter-main.",["mm"]),
+ G("Back-fed breaker","","elec","A breaker that feeds power into the panel’s busbar instead of out to a load, as the solar breaker does. It goes at the opposite end of the bus from the main.",["pvb","amp"]),
+ G("Continuous load / 125%","","elec","A load that runs 3 hours or more, like an inverter or EV charger. Its wire and breaker must be sized for 125% of its current.",["pvb"]),
+ G("AWG","American Wire Gauge","elec","Wire size numbers: the smaller the number, the thicker the wire. #10 copper carries about 30 A; #6 about 55–65 A; 2/0 aluminum about 150–175 A.",[]),
+ G("THWN-2","","elec","A common building wire insulation rated for wet locations and 90 °C, used in conduit.",[]),
+ G("PV wire / USE-2","","elec","Sunlight-resistant, double-insulated single conductors allowed to run exposed under the array.",["s1"]),
+ G("Conduit","","elec","Metal or PVC pipe that protects wires. On roofs it must sit high enough off the surface (or be derated) because the air under the sun is very hot.",["dch"]),
+ G("MC4","","elec","The standard snap-together, weatherproof connector on module leads.",["mod"]),
+ G("Inrush / LRA","locked-rotor amps","elec","The brief surge a motor draws as it starts, often five or more times its running current. An AC compressor is the big one in a Florida house.",["br-ac"]),
+
+ // equipment
+ G("Inverter","","equip","Converts DC from the modules (or battery) into 240 V, 60 Hz AC synchronized with the grid.",["inv","micro"]),
+ G("String inverter","","equip","One central inverter fed by one or more strings of modules.",["inv"]),
+ G("Microinverter","MI","equip","A small inverter under each module, so the roof wiring is already 240 V AC. Shade on one module only affects that module.",["micro","b1"]),
+ G("Hybrid inverter","","equip","An inverter with a battery port as well as solar inputs (DC-coupled), able to form a grid when the utility is down.",["inv","bdc"]),
+ G("MLPE","module-level power electronics","equip","Any electronics mounted at each module: microinverters, optimizers or rapid-shutdown devices.",["rsd","micro"]),
+ G("Optimizer","","equip","A DC-to-DC converter at each module that tracks that module’s best operating point and works with a central inverter. Also satisfies rapid shutdown.",["rsd"]),
+ G("Rapid-shutdown device","RSD","equip","A switch at each module that opens unless it hears a keep-alive signal from the inverter, cutting the string into safe, low-voltage pieces.",["rsd","rsig"]),
+ G("Junction box","J-box","equip","A weatherproof box on the roof where module wiring transitions to conduit wiring.",["jb"]),
+ G("AC combiner","","equip","A small panel that combines microinverter branch circuits onto one output, usually with a monitoring gateway.",["cmb"]),
+ G("AC disconnect","","equip","A lockable, visible-blade switch that isolates the solar from the house; often required by the utility so crews can lock it off.",["acd"]),
+ G("Racking","","equip","The rails, flashed roof attachments (L-feet) and clamps holding the modules, engineered for Florida’s wind loads.",["rail"]),
+ G("Meter-main","","equip","A single enclosure with the utility meter and the main breaker, typical on Florida homes.",["mm"]),
+ G("Load panel","panelboard","equip","The breaker box that feeds the house circuits.",["mp"]),
+ G("Transformer","","equip","Utility equipment (on a pole or in a green pad-mount box) that steps distribution voltage, about 7,200 V, down to 120/240 V.",["xf"]),
+ G("CT","current transformer","equip","A clamp-on ring around a conductor that measures its current by sensing the magnetic field, so the gateway knows what the house is importing or exporting.",["ct","ctl"]),
+ G("Equipment tags","PV-1, INV-1, ACD-1…","equip","The short marks on this plate (and on real permit drawings) that label each piece of equipment so the drawings, labels and wire schedule refer to it the same way.",[]),
+
+ // safety & grounding
+ G("Ground / EGC","equipment grounding conductor","safety","The green or bare wire bonding every metal enclosure and frame together and back to the service, so a fault trips the breaker instead of leaving metal live.",["egc"]),
+ G("GEC","grounding electrode conductor","safety","The bare copper wire from the service to the grounding electrodes.",["gec","gnd"]),
+ G("Grounding electrode","ground rod, Ufer","safety","The connection to the earth: driven 8 ft rods and/or a concrete-encased electrode (“Ufer”) in the slab’s rebar. It gives lightning and utility surges a path to earth.",["gnd"]),
+ G("Bonding / MBJ","main bonding jumper","safety","Bonding joins metal parts so they stay at the same voltage. The MBJ ties neutral to ground at the service, and only there.",["mm"]),
+ G("Rapid shutdown","","safety","The NEC 690.12 requirement that wiring outside the array drop to 30 V or less within 30 s, so firefighters can work on the roof.",["rsd","rsi"]),
+ G("RSI","rapid-shutdown initiator","safety","The labelled switch near the meter that triggers rapid shutdown.",["rsi"]),
+ G("AFCI","arc-fault circuit interrupter","safety","Electronics that detect the signature of an arc (a loose or damaged connection) and shut the circuit off. Required on PV DC circuits.",["inv"]),
+ G("GFDI / GFCI","ground-fault detection or interruption","safety","Protection that detects current leaking to ground. On PV, the inverter detects DC ground faults; in the house, GFCI outlets protect people in wet areas.",["inv"]),
+ G("SPD","surge protective device","safety","Diverts surges (lightning, utility switching) to ground. Required on Florida home services.",["spd"]),
+ G("Anti-islanding","","safety","The inverter’s required ability to detect a dead grid and stop exporting within 2 seconds, so it can’t energize lines crews are working on.",["inv","micro"]),
+ G("Lockout","","safety","Locking a disconnect open so nobody can re-energize equipment while it is worked on.",["acd"]),
+
+ // battery & backup
+ G("ESS / BESS","(battery) energy storage system","batt","The battery and its controls, inverter and wiring as one listed system.",["bat"]),
+ G("LFP","lithium iron phosphate","batt","A lithium battery chemistry used in most home batteries: long-lived and much less prone to thermal runaway than other lithium types.",["bat"]),
+ G("BMS","battery management system","batt","The battery’s own electronics, watching every cell’s voltage and temperature and opening its contactor if anything is out of range.",["bat"]),
+ G("SOC","state of charge","batt","How full the battery is, in percent.",["bat"]),
+ G("Backup reserve","","batt","The share of the battery held back for outages (20% here) while it otherwise cycles every day.",["bat"]),
+ G("Capacity vs. power","kWh vs. kW","batt","Capacity (13.5 kWh) is how much energy the battery holds; power (5 kW continuous, 7 kW peak) is how fast it can deliver it. Power limits what can run at once; capacity limits for how long.",["bat"]),
+ G("Round-trip efficiency","","batt","The share of energy you get back out of a battery after putting it in, typically about 90%.",["bat"]),
+ G("DC-coupled","","batt","The battery shares the hybrid inverter’s DC side with the solar, so solar can charge it without converting to AC and back.",["bdc","inv"]),
+ G("AC-coupled","","batt","The battery has its own inverter and connects on the AC side, alongside separate solar inverters.",["bac","bat"]),
+ G("Gateway","backup gateway","batt","The box between the grid, the house, the solar and the battery. It senses outages, opens to island the house, and manages loads.",["gw"]),
+ G("Island / islanding","","batt","Running the house cut off from the grid on its own sources. Done deliberately and safely by a gateway; forbidden for a plain grid-tied inverter.",["gw"]),
+ G("Microgrid","","batt","A small grid with its own sources that can run islanded, such as a house with solar, a battery and a gateway during an outage.",["gw"]),
+ G("Grid-forming","","batt","An inverter that creates the 60 Hz voltage itself, like a battery inverter in backup. Others can sync to it.",["bat","inv"]),
+ G("Grid-following","","batt","An inverter that can only sync to an existing voltage wave and push current in step with it. Ordinary grid-tied solar inverters are grid-following.",["inv","micro"]),
+ G("Load shedding","","batt","Switching off big loads (EV charger, pool pump, water heater, then AC) so a battery isn’t overloaded in an outage.",["gw"]),
+ G("Curtailment","","batt","Deliberately reducing solar output because there’s nowhere for it to go, such as a full battery during an outage.",["inv","micro"]),
+ G("Frequency shift","","batt","How an AC-coupled battery tells microinverters to back off: it raises the frequency slightly (toward 61 Hz) and they reduce output in response.",["bat","micro"]),
+ G("Self-powered mode","","batt","The battery charges from extra solar and runs the house in the evening, down to its reserve.",["bat"]),
+ G("Backup-only mode","","batt","The battery stays full and only discharges in an outage.",["bat"]),
+ G("Transfer switch / ATS","automatic transfer switch","batt","Equipment that moves the house between the utility and a backup source and never connects both at once.",[]),
+ G("Interlock","","batt","A sliding plate on a panel that physically prevents the main breaker and the generator breaker from being on together.",[]),
+ G("Standby generator","","batt","A permanently installed natural-gas or propane generator that starts on its own through an ATS.",[]),
+
+ // code, utility & Florida
+ G("NEC","National Electrical Code (NFPA 70)","code","The US electrical installation code. Florida’s 8th-edition building code (2023) adopts the 2020 NEC; Article 690 covers PV, 705 interconnection and 706 batteries.",[]),
+ G("120% rule","","code","NEC 705.12: busbar rating × 120% must be at least the main breaker plus 125% of the inverter’s current. The calculator is in the Code & Florida tab.",["pvb","mp"]),
+ G("Supply-side tap","line-side tap","code","Connecting solar between the meter and the main breaker instead of to a back-fed breaker; the fix when the 120% rule fails.",[]),
+ G("AHJ","authority having jurisdiction","code","The building department that issues the permit and inspects the work.",[]),
+ G("Interconnection agreement","","code","The utility’s approval to connect a generating system to its grid.",[]),
+ G("PTO","permission to operate","code","The utility’s final OK to turn the system on, usually after the inspection and the net-meter swap.",["mm"]),
+ G("UL 1741","","code","The safety standard for inverters. Its SA/SB versions certify grid-support behaviour and anti-islanding to IEEE 1547.",["inv","micro"]),
+ G("IEEE 1547","","code","The standard for how inverters behave on the grid, including the 2-second anti-islanding trip and the 5-minute reconnect wait.",["inv","micro"]),
+ G("UL 9540 / NFPA 855","","code","The safety standard for a complete energy storage system, and the fire code that sets where and how batteries may be installed.",["bat"]),
+ G("FBC","Florida Building Code","code","Florida’s statewide building code, including the wind design rules for roofs and solar racking.",["rail"]),
+ G("HVHZ","high-velocity hurricane zone","code","Miami-Dade and Broward counties, where components need specific product approval (NOA or Florida approval) and stricter wind design.",["rail"]),
+ G("NOA","notice of acceptance","code","Miami-Dade County’s product approval, required for roof-mounted products in the HVHZ.",["rail"]),
+ G("PSC","Florida Public Service Commission","code","The state regulator of investor-owned utilities. Its Rule 25-6.065 sets net metering for FPL, Duke, TECO and FPUC.",[]),
+ G("IOU","investor-owned utility","code","A privately owned utility (FPL, Duke Energy Florida, TECO, FPUC). Co-ops and city utilities set their own solar rules.",[]),
+ G("Avoided cost","","code","The utility’s cost of producing energy itself, much lower than the retail rate; the rate at which Florida IOUs pay for a year’s leftover credits.",[]),
+ G("Tier 1 / Tier 2","","code","Florida’s net-metering size classes: Tier 1 up to 10 kW, Tier 2 from 10 to 100 kW (with an application fee).",[]),
+ G("Solar Rights Act","F.S. 163.04","code","The Florida law that bars HOAs and deed restrictions from prohibiting solar, though they can set placement rules that don’t hurt production.",[]),
+];
+let gState = {q:"", g:"all"};
+function renderGlossary(){
+  $('#p-gloss').innerHTML = `<div class="cap">Words on this plate</div><h2>Glossary</h2>
+   <p class="lede">${GLOSS.length} terms and abbreviations, in plain language. Click a chip to see that part on the plate.</p>
+   <input id="gq" class="gsearch" type="search" placeholder="Search, e.g. PV, kWh, rapid shutdown" aria-label="Search the glossary" value="${esc(gState.q)}">
+   <div class="btnrow gcats">${[['all','All'],...Object.entries(GGROUP)].map(([k,n])=>`<button class="tbtn${gState.g===k?' on':''}" data-gg="${k}">${esc(n)}</button>`).join('')}</div>
+   <div id="glist"></div>`;
+  $('#gq').addEventListener('input',e=>{ gState.q=e.target.value; renderGlist(); });
+  $$('#p-gloss [data-gg]').forEach(b=>b.addEventListener('click',()=>{ gState.g=b.dataset.gg; $$('#p-gloss [data-gg]').forEach(x=>x.classList.toggle('on',x===b)); renderGlist(); }));
+  renderGlist();
+}
+function renderGlist(){
+  const q = gState.q.trim().toLowerCase();
+  const hit = e => (gState.g==='all' || e.g===gState.g) && (!q || (e.t+' '+e.x+' '+e.d).toLowerCase().includes(q));
+  const exact = e => e.t.toLowerCase()===q || e.t.toLowerCase().split(/\s*[\/(),]\s*|\s+/).includes(q) || e.x.toLowerCase()===q;
+  const rank = e => !q ? 0 : exact(e) ? -1 : e.t.toLowerCase().startsWith(q) || e.x.toLowerCase().startsWith(q) ? 0 : (e.t+' '+e.x).toLowerCase().includes(q) ? 1 : 2;
+  const list = GLOSS.filter(hit).sort((a,b)=> rank(a)-rank(b) || a.t.localeCompare(b.t,'en',{sensitivity:'base'}));
+  let html = '', last = '';
+  list.forEach(e=>{
+    const L = q ? '' : e.t[0].toUpperCase();
+    if(L && L!==last){ html += `<div class="gletter">${L}</div>`; last = L; }
+    html += `<div class="gentry"><div class="gt">${esc(e.t)}${e.x?` <span class="gx">${esc(e.x)}</span>`:''}${gState.g==='all'?` <span class="gcat">${GGROUP[e.g]}</span>`:''}</div><p>${e.d}</p>${e.ids.length?chips(e.ids):''}</div>`;
+  });
+  $('#glist').innerHTML = html || `<p class="note">No matches. Try a shorter word.</p>`;
+  bindChips($('#glist'));
+}
+
 /* =====================================================================
    9. LEGEND, CONTROLS, STARTUP
    ===================================================================== */
@@ -1491,6 +1758,7 @@ function reconfigure(){
   buildPlate(); update(); renderWires(); renderSeq(); renderLoads();
   if(keep && (CM[keep]? compEls[keep] : RM[keep])) go(keep); else { ST.sel=ST.selRun=null; renderHome(); }
   if($('#p-day').classList.contains('on')) renderDay();
+  if($('#p-gloss').classList.contains('on')) renderGlist();
 }
 SCEN.forEach((s,i)=>{ const b=document.createElement('button'); b.className='tbtn'+(s.out?' out':''); b.dataset.s=s.id; b.innerHTML=`<span class="k">${i+1}</span>${esc(s.name)}`; b.addEventListener('click',()=>applyScenario(s.id)); $('#scenBar').appendChild(b); });
 ['#archSel','#battSel','#bmodeSel'].forEach(s=>$(s).addEventListener('change',reconfigure));
