@@ -1,0 +1,1815 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Batter &amp; Drain — Retaining Walls</title>
+<meta name="description" content="An interactive primer on retaining walls for houses and light commercial sites in the Northeast: parts of a wall, failure modes, earth and water pressure, a stability calculator for block, geogrid, stone and concrete walls, wall types, segmental block walls and geogrid, concrete cantilever walls, drainage and frost, tiers and surcharges, construction and estimating, codes and permits, troubleshooting, a glossary and a quiz.">
+<style>
+/* =====================================================================
+   VISUAL SYSTEM — Plate XI (shares its palette with the other plates)
+   ===================================================================== */
+:root{
+  --paper:#f7f3ea; --paper-2:#f1ebdf; --paper-3:#e9e1d1; --sheet:#fbf9f4;
+  --ink:#1f1d1a; --ink-2:#47433c; --ink-3:#7d776c; --ink-4:#a69f92; --rule:#d3cab8; --rule-2:#e2dbcc;
+  --blue:#4c6f93; --blue-2:#7f9dbb; --blue-3:#c9d7e4; --blue-4:#e4ebf1;
+  --terra:#ad543a; --terra-2:#cf8a71; --terra-3:#ecd2c4; --terra-4:#f6e7df;
+  --olive:#5f7444; --olive-4:#e7ecdd; --amber:#a7792b; --amber-4:#f5ecd9; --bad:#8b1d1d; --bad-4:#f6e2df;
+  --glow:#f0b43c;
+  /* conductors */
+  --c-blk:#22201c; --c-red:#c23b22; --c-blu:#2563a8; --c-wht:#ffffff; --c-grn:#3d8b45; --c-cu:#b8743d;
+  --c-brn:#7a4a24; --c-org:#d9771f; --c-yel:#c9a400; --c-gry:#8d8a83; --wire-edge:#47433c;
+  --water:#4f86b8;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","URW Palladio L",Georgia,serif;
+  --sans:"Avenir Next","Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --cond:"Avenir Next Condensed","Arial Narrow","Helvetica Neue","Segoe UI",sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#16191d; --paper-2:#1c2025; --paper-3:#262b31; --sheet:#1a1e23;
+    --ink:#ece6da; --ink-2:#c9c2b5; --ink-3:#9a9387; --ink-4:#6f6a61; --rule:#3a3f46; --rule-2:#2c3137;
+    --blue:#8fb3d6; --blue-2:#6f93b8; --blue-3:#34485c; --blue-4:#1e2933;
+    --terra:#e3906f; --terra-2:#b86a52; --terra-3:#5a3428; --terra-4:#2d201b;
+    --olive:#a3bd80; --olive-4:#222a1c; --amber:#d6a95a; --amber-4:#2c2518; --bad:#e57373; --bad-4:#3a1f1f;
+    --glow:#f0b43c;
+    --c-blk:#d9d3c7; --c-red:#e0654b; --c-blu:#6ea3df; --c-wht:#f4f1ea; --c-grn:#6cbf74; --c-cu:#d29a62;
+    --c-brn:#b07a4d; --c-org:#eb9447; --c-yel:#e2c23d; --c-gry:#a5a29b; --wire-edge:#0e1012;
+    --water:#6fa6d6;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#16191d; --paper-2:#1c2025; --paper-3:#262b31; --sheet:#1a1e23;
+  --ink:#ece6da; --ink-2:#c9c2b5; --ink-3:#9a9387; --ink-4:#6f6a61; --rule:#3a3f46; --rule-2:#2c3137;
+  --blue:#8fb3d6; --blue-2:#6f93b8; --blue-3:#34485c; --blue-4:#1e2933;
+  --terra:#e3906f; --terra-2:#b86a52; --terra-3:#5a3428; --terra-4:#2d201b;
+  --olive:#a3bd80; --olive-4:#222a1c; --amber:#d6a95a; --amber-4:#2c2518; --bad:#e57373; --bad-4:#3a1f1f;
+  --glow:#f0b43c;
+  --c-blk:#d9d3c7; --c-red:#e0654b; --c-blu:#6ea3df; --c-wht:#f4f1ea; --c-grn:#6cbf74; --c-cu:#d29a62;
+  --c-brn:#b07a4d; --c-org:#eb9447; --c-yel:#e2c23d; --c-gry:#a5a29b; --wire-edge:#0e1012;
+  --water:#6fa6d6;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;overflow-x:hidden}
+button,input,select{font:inherit;color:inherit}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:normal;margin:0;color:var(--ink)}
+a{color:var(--blue)}
+.cap{font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:10.5px;color:var(--ink-3)}
+.mono,.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--blue-2);outline-offset:2px}
+sub,sup{font-size:.72em;line-height:0}
+
+/* ---------- masthead ---------- */
+.masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px 20px;padding:16px 24px 10px;flex-wrap:wrap;border-bottom:1px solid var(--rule)}
+.title-block h1{font-size:28px;line-height:1.08}
+.title-block h1 em{color:var(--ink-2)}
+.title-block .cap{margin-bottom:6px}
+.title-block .cap a{color:var(--ink-3)}
+.mast-tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tbtn{border:1px solid var(--rule);background:var(--sheet);padding:3px 10px;border-radius:2px;cursor:pointer;font-size:12px;line-height:18px;color:var(--ink-2);white-space:nowrap}
+.tbtn:hover{border-color:var(--ink-3);color:var(--ink)}
+.tbtn.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.tbtn.warn.on{background:var(--bad);border-color:var(--bad);color:#fff}
+.tbtn:disabled{opacity:.4;cursor:default}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:2px;overflow:hidden;flex-wrap:wrap}
+.seg .tbtn{border:0;border-radius:0;border-right:1px solid var(--rule)}
+.seg .tbtn:last-child{border-right:0}
+
+/* ---------- module nav ---------- */
+.modnav{display:flex;gap:0;overflow-x:auto;padding:0 18px;border-bottom:1px solid var(--rule);background:var(--paper);position:sticky;top:0;z-index:20;scrollbar-width:thin}
+.modnav button{flex:none;border:0;background:none;padding:10px 9px 8px;font-family:var(--cond);text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:var(--ink-3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.modnav button b{font-family:var(--serif);font-weight:normal;font-size:13px;letter-spacing:0;margin-right:5px;color:var(--ink-4)}
+.modnav button:hover{color:var(--ink)}
+.modnav button.on{color:var(--ink);border-bottom-color:var(--terra)}
+.modnav button.on b{color:var(--terra)}
+
+main{padding:18px 24px 60px;max-width:1500px;margin:0 auto}
+.mod{display:none}
+.mod.on{display:block;animation:fadein .25s ease-out}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.mod-head{display:flex;justify-content:space-between;align-items:flex-end;gap:10px 20px;flex-wrap:wrap;margin-bottom:12px}
+.mod-head h2{font-size:25px;line-height:1.15}
+.mod-head h2 .fn{font-family:var(--cond);font-size:11px;letter-spacing:.14em;color:var(--terra);text-transform:uppercase;display:block;margin-bottom:3px}
+.lede{font-family:var(--serif);font-size:15.5px;color:var(--ink-2);font-style:italic;max-width:820px;margin:4px 0 0}
+.nextprev{display:flex;gap:6px}
+
+/* split: figure + side panel */
+.split{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px;align-items:start;margin-bottom:22px}
+.figure{background:var(--sheet);border:1px solid var(--rule);box-shadow:inset 0 0 0 6px var(--sheet),inset 0 0 0 7px var(--rule-2);padding:10px;min-width:0}
+.figure svg{display:block;width:100%;height:auto}
+.figcap{display:flex;justify-content:space-between;align-items:center;gap:8px 14px;flex-wrap:wrap;padding:6px 2px 0;font-size:11.5px;color:var(--ink-3)}
+.side{background:var(--paper);border:1px solid var(--rule-2);padding:14px 16px;min-width:0;position:sticky;top:52px;max-height:calc(100vh - 70px);overflow:auto}
+.side h3,.card h3{font-size:19px;line-height:1.2;margin-bottom:4px}
+.side h4,.card h4{font-size:14.5px;margin:14px 0 4px;padding-top:9px;border-top:1px solid var(--rule-2)}
+.side p,.prose p,.card p{margin:0 0 9px;color:var(--ink-2)}
+.side ul,.prose ul,.card ul,.card ol{margin:0 0 9px;padding-left:18px;color:var(--ink-2)}
+.side li,.prose li,.card li{margin-bottom:3px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:20px}
+.card{background:var(--sheet);border:1px solid var(--rule-2);padding:14px 16px;min-width:0}
+.card.wide{grid-column:1/-1}
+.card .figure{padding:6px;box-shadow:none;border-color:var(--rule-2);background:var(--paper)}
+
+/* controls */
+.ctls{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:8px 2px 2px}
+.ctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctl input[type=range]{width:180px;accent-color:var(--terra)}
+.ctl output{font-family:var(--mono);font-size:12px;min-width:64px;color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}
+.chip{font-size:11.5px;border:1px solid var(--rule);background:var(--sheet);padding:2px 8px;border-radius:2px;cursor:pointer;color:var(--ink-2);line-height:18px}
+.chip:hover{border-color:var(--ink-3);color:var(--ink)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.chip small{font-family:var(--mono);font-size:10px;opacity:.7;margin-left:4px}
+select.sel,input.inp{border:1px solid var(--rule);background:var(--sheet);padding:3px 6px;border-radius:2px;font-size:12.5px}
+select.sel{max-width:100%}
+.form > span{min-width:0}
+input.inp{font-family:var(--mono);width:90px}
+input.inp.w60{width:64px}
+label.chk{display:inline-flex;gap:5px;align-items:center;font-size:12.5px;color:var(--ink-2);cursor:pointer}
+label.chk input{accent-color:var(--terra)}
+.form{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 12px;align-items:center;font-size:12.5px;margin:6px 0 10px}
+.form > span{color:var(--ink-3)}
+
+/* readouts */
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:6px 0 10px}
+.tile{border:1px solid var(--rule-2);background:var(--sheet);padding:7px 10px;border-top:3px solid var(--tc,var(--ink-3))}
+.tile .cap{display:block}
+.tile .big{font-family:var(--serif);font-size:24px;line-height:1.1;color:var(--ink)}
+.tile .big small{font-size:14px;color:var(--ink-3)}
+.tile .sub{font-size:11px;color:var(--ink-3)}
+.result{font-family:var(--serif);font-size:30px;line-height:1.1;color:var(--ink);margin:4px 0}
+.result small{font-size:15px;color:var(--ink-3)}
+.eq{font-family:var(--mono);font-size:12px;color:var(--ink-2);background:var(--paper-2);border:1px solid var(--rule-2);padding:6px 9px;margin:6px 0 9px;line-height:1.6;overflow-x:auto;white-space:nowrap}
+.eq b{color:var(--terra);font-weight:normal}
+.kv{width:100%;border-collapse:collapse;font-size:12.5px;margin:6px 0 10px}
+.kv td,.kv th{border-bottom:1px dotted var(--rule);padding:4px 6px 4px 0;vertical-align:top;text-align:left}
+.kv th{font-family:var(--cond);font-weight:normal;text-transform:uppercase;letter-spacing:.1em;font-size:10px;color:var(--ink-3);border-bottom:1px solid var(--rule)}
+.kv td:first-child{color:var(--ink-3)}
+.kv td.n,.kv th.n{font-family:var(--mono);text-align:right;white-space:nowrap}
+.kv tr.tot td{border-top:1px solid var(--ink-3);border-bottom:0;color:var(--ink);font-weight:600}
+.kv tr.hl td{background:var(--terra-4)}
+.kv tr.row{cursor:pointer}
+.kv tr.row:hover td{background:var(--paper-2)}
+.kv.data td:first-child{color:var(--ink)}
+.tblwrap{overflow-x:auto}
+.pill{display:inline-block;font-family:var(--cond);font-size:10px;letter-spacing:.1em;text-transform:uppercase;border:1px solid currentColor;padding:0 6px;border-radius:2px;color:var(--ink-3);vertical-align:1px;white-space:nowrap}
+.pill.ok{color:var(--olive)}.pill.bad{color:var(--bad)}.pill.warn{color:var(--amber)}.pill.live{color:var(--olive)}.pill.dead{color:var(--ink-4)}.pill.em{color:var(--terra)}
+.note{font-size:12px;color:var(--ink-3);border-top:1px solid var(--rule-2);padding-top:7px;margin-top:10px}
+.callout{border-left:3px solid var(--blue-2);background:var(--blue-4);padding:7px 10px;margin:8px 0 10px;font-size:13px;color:var(--ink-2)}
+.callout.warn{border-color:var(--terra-2);background:var(--terra-4)}
+.callout.ok{border-color:var(--olive);background:var(--olive-4)}
+.callout.bad{border-color:var(--bad);background:var(--bad-4)}
+.callout b{color:var(--ink)}
+.callout p:last-child{margin-bottom:0}
+.linkbtn{border:0;background:none;padding:0;color:var(--blue);cursor:pointer;text-decoration:underline;text-underline-offset:2px;font-size:inherit}
+.status{font-family:var(--serif);font-size:15px;color:var(--ink);padding:2px 2px 8px;min-height:28px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.status .badge{font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:10px;padding:2px 7px;border:1px solid currentColor;border-radius:2px}
+.status .badge.ok{color:var(--olive)}.status .badge.bad{color:var(--bad);background:var(--bad-4)}.status .badge.warn{color:var(--amber)}
+.status small{font-family:var(--sans);font-size:12px;color:var(--ink-3)}
+.bar{height:8px;background:var(--paper-3);border-radius:1px;overflow:hidden;position:relative}
+.bar i{display:block;height:100%;background:var(--terra)}
+
+/* ---------- SVG drawing classes ---------- */
+svg text{font-family:var(--cond);fill:var(--ink-2)}
+.t-sm{font-size:10px;fill:var(--ink-3)}
+.t-xs{font-size:8.5px;fill:var(--ink-3)}
+.t-md{font-size:12px;fill:var(--ink-2)}
+.t-lg{font-family:var(--serif);font-size:16px;fill:var(--ink)}
+.t-xl{font-family:var(--serif);font-size:24px;fill:var(--ink)}
+.t-mono{font-family:var(--mono);font-size:11px;fill:var(--ink)}
+.t-zone{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;fill:var(--ink-4)}
+.t-mid{text-anchor:middle}
+.t-end{text-anchor:end}
+.t-terra{fill:var(--terra)}
+.s-ink{stroke:var(--ink-2);fill:none}
+.s-rule{stroke:var(--rule);fill:none}
+.f-sheet{fill:var(--sheet)}
+.f-paper{fill:var(--paper)}
+.f-paper2{fill:var(--paper-2)}
+.eq-box{fill:var(--sheet);stroke:var(--ink-2);stroke-width:1.2}
+.grid-l{stroke:var(--rule-2);stroke-width:1}
+.axis-l{stroke:var(--ink-3);stroke-width:1}
+.wedge{stroke:var(--wire-edge);fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hot-blk{stroke:var(--c-blk)}.hot-red{stroke:var(--c-red)}.hot-blu{stroke:var(--c-blu)}.neu{stroke:var(--c-wht)}.egc{stroke:var(--c-grn)}.gec{stroke:var(--c-cu)}
+.hot-brn{stroke:var(--c-brn)}.hot-org{stroke:var(--c-org)}.hot-yel{stroke:var(--c-yel)}.neu-gry{stroke:var(--c-gry)}
+.flow{fill:none;stroke:#fff;stroke-width:1.4;stroke-dasharray:3 8;stroke-linecap:round;animation:flow 1s linear infinite;pointer-events:none}
+.flow.fast{animation-duration:.35s;stroke-width:2.2}
+.flow.rev{animation-direction:reverse}
+@keyframes flow{from{stroke-dashoffset:11}to{stroke-dashoffset:0}}
+.paused .flow{animation-play-state:paused}
+.clickable{cursor:pointer}
+.hov{fill:none;stroke:var(--blue-2);stroke-width:1.5;opacity:0;pointer-events:none}
+.clickable:hover > .hov{opacity:.9}
+.selr{fill:none;stroke:var(--terra);stroke-width:2;stroke-dasharray:4 3;opacity:0;pointer-events:none}
+.sel > .selr{opacity:1}
+.dim{opacity:.25;transition:opacity .3s}
+.dead-w{opacity:.28}
+@media (prefers-reduced-motion:reduce){.flow{animation:none;stroke-dasharray:2 5}}
+
+/* tooltip */
+#tip{position:fixed;left:0;top:0;z-index:40;max-width:300px;background:var(--sheet);border:1px solid var(--ink-3);border-left:3px solid var(--terra);padding:7px 10px 8px;box-shadow:0 3px 14px rgba(31,29,26,.18);pointer-events:none;opacity:0;transform:translateY(3px);transition:opacity .12s,transform .12s;font-size:12px;line-height:1.4;color:var(--ink-2)}
+#tip.on{opacity:1;transform:none}
+#tip b{font-family:var(--serif);font-weight:normal;font-size:14.5px;color:var(--ink);display:block;line-height:1.2;margin-bottom:2px}
+@media (hover:none){#tip{display:none}}
+
+/* glossary & quiz */
+.gl-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.gl-tools input{border:1px solid var(--rule);background:var(--sheet);padding:5px 9px;border-radius:2px;width:300px;max-width:100%}
+.gl-list{columns:2 380px;column-gap:28px}
+.gl-item{break-inside:avoid;padding:7px 0 8px;border-bottom:1px dotted var(--rule)}
+.gl-item h4{font-size:15px;margin:0 0 2px;border:0;padding:0}
+.gl-item h4 small{font-family:var(--cond);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);margin-left:6px}
+.gl-item p{margin:0;color:var(--ink-2);font-size:13px}
+.q{background:var(--sheet);border:1px solid var(--rule-2);padding:12px 14px;margin-bottom:10px}
+.q h4{font-size:15px;margin:0 0 6px;border:0;padding:0}
+.q .opts{display:grid;gap:4px}
+.q .opt{text-align:left;border:1px solid var(--rule);background:var(--paper);padding:5px 9px;border-radius:2px;cursor:pointer;font-size:13px;color:var(--ink-2)}
+.q .opt:hover{border-color:var(--ink-3)}
+.q .opt.right{border-color:var(--olive);background:var(--olive-4);color:var(--ink)}
+.q .opt.wrong{border-color:var(--bad);background:var(--bad-4)}
+.q .why{margin-top:7px;font-size:12.5px;color:var(--ink-2);display:none}
+.q.done .why{display:block}
+
+/* cheat sheet */
+.sheetgrid{columns:3 330px;column-gap:18px}
+.sheetgrid .card{break-inside:avoid;margin-bottom:16px}
+.fx{font-family:var(--mono);font-size:12.5px;color:var(--ink);display:block;padding:2px 0}
+
+footer{max-width:1500px;margin:0 auto;padding:12px 24px 40px;font-size:11.5px;color:var(--ink-3);border-top:1px solid var(--rule-2)}
+
+@media (max-width:1100px){
+  .split{grid-template-columns:1fr}
+  .side{position:static;max-height:none}
+  .grid3{grid-template-columns:1fr 1fr}
+}
+@media (max-width:760px){
+  .masthead{padding:14px 16px 10px}
+  main{padding:14px 16px 50px}
+  .modnav{padding:0 8px}
+  .grid2,.grid3{grid-template-columns:minmax(0,1fr)}
+  .title-block h1{font-size:21px}
+  .ctl input[type=range]{width:140px}
+  .tiles{grid-template-columns:1fr 1fr}
+  .kv{display:block;overflow-x:auto}
+  footer{padding:12px 16px 40px}
+}
+@media print{
+  @page{margin:12mm}
+  body{background:#fff}
+  .modnav,.mast-tools,.noprint{display:none!important}
+  .side{position:static;max-height:none;overflow:visible}
+  .split,.grid2,.grid3{grid-template-columns:1fr}
+  .figure,.card{box-shadow:none;break-inside:avoid}
+}
+
+
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11.5px;color:var(--ink-3);margin:2px 0 6px}
+.sw{display:inline-block;width:11px;height:11px;border:1px solid var(--ink-3);vertical-align:-1px;margin-right:5px}
+.rlist{display:grid;gap:4px}
+.rlist button{text-align:left;border:1px solid var(--rule-2);background:var(--sheet);padding:6px 10px;border-radius:2px;cursor:pointer;color:var(--ink-2);font-size:13px;line-height:1.3}
+.rlist button:hover{border-color:var(--ink-3);color:var(--ink)}
+.rlist button.on{border-color:var(--terra);background:var(--terra-4);color:var(--ink)}
+.rlist button small{display:block;font-size:11px;color:var(--ink-3)}
+.rlist.two{grid-template-columns:1fr 1fr}
+.compare{width:100%;border-collapse:collapse;font-size:12.5px}
+.compare th,.compare td{border-bottom:1px solid var(--rule-2);padding:6px 7px;vertical-align:top;text-align:left}
+.compare th{font-family:var(--cond);font-weight:normal;text-transform:uppercase;letter-spacing:.1em;font-size:10px;color:var(--ink-3);border-bottom:1px solid var(--ink-3)}
+.compare td{color:var(--ink-2)}
+.compare td:first-child{color:var(--ink);font-family:var(--serif);font-size:14px}
+.compare td.n{font-family:var(--mono);white-space:nowrap}
+.compare tr.hl td{background:var(--terra-4)}
+ol.how{padding-left:22px;margin:4px 0 10px;color:var(--ink-2)}
+ol.how li{margin-bottom:5px}
+
+
+/* ---------- Plate XI specifics ---------- */
+:root{
+  --conc:#cfcac0; --conc-2:#a9a398; --block:#c9c1b2; --block-2:#8f877a; --soil:#cdb48d; --soil-2:#a88e66; --fnd:#b59f7f; --fnd-2:#8f7a5c;
+  --stone:#c3c0b8; --stone-2:#8d8a83; --boulder:#a9a49a; --boulder-2:#6f6a61; --granite:#bdbab4; --wood:#b99a6a; --wood-2:#7d6240;
+  --grid:#2f6b4f; --fabric:#6d5a9c; --rebar:#8b3a2a; --ice:#9cc7e6; --loam:#6f5a3e; --grass:#6f8f4a;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --conc:#77736c; --conc-2:#9a958c; --block:#6e685f; --block-2:#a39b8e; --soil:#7d6a4f; --soil-2:#a08867; --fnd:#685843; --fnd-2:#8e7a5e;
+    --stone:#6c6a65; --stone-2:#9a978f; --boulder:#6a665f; --boulder-2:#a29d93; --granite:#7a7874; --wood:#86704e; --wood-2:#b59a70;
+    --grid:#6fbf94; --fabric:#a593d6; --rebar:#e0806a; --ice:#6b9cc0; --loam:#4e4030; --grass:#6d8a4c;
+  }
+}
+:root[data-theme="dark"]{
+  --conc:#77736c; --conc-2:#9a958c; --block:#6e685f; --block-2:#a39b8e; --soil:#7d6a4f; --soil-2:#a08867; --fnd:#685843; --fnd-2:#8e7a5e;
+  --stone:#6c6a65; --stone-2:#9a978f; --boulder:#6a665f; --boulder-2:#a29d93; --granite:#7a7874; --wood:#86704e; --wood-2:#b59a70;
+  --grid:#6fbf94; --fabric:#a593d6; --rebar:#e0806a; --ice:#6b9cc0; --loam:#4e4030; --grass:#6d8a4c;
+}
+.figure svg .clickable:hover{filter:brightness(1.07)}
+.figure svg .clickable.sel path,.figure svg .clickable.sel rect,.figure svg .clickable.sel circle,.figure svg .clickable.sel ellipse{stroke:var(--terra);stroke-width:2.2}
+.checks{display:grid;gap:4px;margin:6px 0 10px}
+.checks label{display:grid;grid-template-columns:20px minmax(0,1fr);gap:6px;align-items:start;font-size:13px;color:var(--ink-2);cursor:pointer;padding:4px 6px;border:1px solid var(--rule-2);background:var(--sheet)}
+.checks label input{accent-color:var(--olive);margin-top:3px}
+.checks label.on{background:var(--olive-4);border-color:var(--olive)}
+.wtgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-bottom:20px}
+.wtgrid .card{display:flex;flex-direction:column}
+.wtgrid .card svg{display:block;width:100%;height:auto;background:var(--paper);border:1px solid var(--rule-2);margin-bottom:8px}
+.wtgrid .card h3{font-size:17px}
+.wtgrid .card p{font-size:12.5px}
+.wtgrid .card.on{border-color:var(--terra);box-shadow:inset 0 0 0 1px var(--terra)}
+.stepper{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:6px 0}
+.stepper .dots{display:flex;gap:3px}
+.stepper .dots button{width:22px;height:22px;border:1px solid var(--rule);background:var(--sheet);border-radius:50%;cursor:pointer;font-size:10.5px;color:var(--ink-3);padding:0;font-family:var(--mono)}
+.stepper .dots button.on{background:var(--terra);border-color:var(--terra);color:#fff}
+.stepper .dots button.done{background:var(--terra-4);border-color:var(--terra-2);color:var(--ink)}
+.checkline{display:grid;grid-template-columns:96px minmax(0,1fr) 70px;gap:8px;align-items:center;font-size:12.5px;padding:4px 0;border-bottom:1px dotted var(--rule)}
+.checkline .bar{height:10px}
+.checkline .bar i{background:var(--olive)}
+.checkline.fail .bar i{background:var(--bad)}
+.checkline.warnb .bar i{background:var(--amber)}
+.checkline .n{font-family:var(--mono);text-align:right}
+.checkline .bar b{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink-2)}
+.flags .callout{margin:5px 0}
+.est{width:100%;border-collapse:collapse;font-size:12.5px;margin:6px 0 10px}
+.est td,.est th{border-bottom:1px dotted var(--rule);padding:4px 6px 4px 0;text-align:left;vertical-align:top}
+.est th{font-family:var(--cond);font-weight:normal;text-transform:uppercase;letter-spacing:.1em;font-size:10px;color:var(--ink-3);border-bottom:1px solid var(--rule)}
+.est td.n{font-family:var(--mono);text-align:right;white-space:nowrap}
+.est td small{display:block;color:var(--ink-3);font-size:11px}
+#stFig svg,#anFig svg,#bdFig svg,#fmFig svg{max-height:74vh;margin:0 auto}
+#tiFig svg,#dnFig svg,#ctFig svg,#epFig svg{max-height:70vh;margin:0 auto}
+.diag{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:16px;align-items:start}
+.diag .card h4:first-of-type{margin-top:6px}
+@media (max-width:760px){.diag{grid-template-columns:minmax(0,1fr)}.checkline{grid-template-columns:84px minmax(0,1fr) 60px}}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="title-block">
+    <div class="cap"><a href="../">Plate XI</a> · Retaining walls for houses and light commercial sites in the Northeast · Educational, not an engineering design or a code book</div>
+    <h1>Batter &amp; Drain — <em>retaining walls, from the leveling pad to the cap</em></h1>
+  </div>
+  <div class="mast-tools">
+    <span class="cap">Theme</span>
+    <div class="seg" role="group" aria-label="Colour theme">
+      <button class="tbtn" data-theme-btn="auto">Auto</button>
+      <button class="tbtn" data-theme-btn="light">Light</button>
+      <button class="tbtn" data-theme-btn="dark">Dark</button>
+    </div>
+    <button class="tbtn" id="printBtn" title="Print the current section">Print</button>
+  </div>
+</header>
+
+<nav class="modnav" id="modnav" aria-label="Sections"></nav>
+
+<main id="main"></main>
+
+<footer>
+  Educational models, simplified on purpose. The stability checks use textbook Rankine and Coulomb earth pressure with presumptive soil values; they are not a design, and they skip internal, compound and global stability, seismic load and settlement. Code references (2021 IRC and IBC, ACI 318, OSHA 1926 Subpart P, ASTM C1372) summarise commonly adopted editions; the edition your state adopted, its amendments, local zoning and conservation rules, and the authority having jurisdiction govern. Frost depths are typical values: your building department sets the number. Walls over 4 ft, or holding up a driveway, a slope, a building or another wall, need a licensed engineer. Brand names are mentioned only as familiar examples. Everything runs in your browser; no data leaves the page.
+</footer>
+<div id="tip" role="tooltip"></div>
+<script>
+"use strict";
+/* =====================================================================
+   1. UTILITIES, STATE, NAVIGATION
+   ===================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const RM = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const fmt = (n, dec = 0) => isFinite(n) ? n.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec }) : "—";
+const D2R = Math.PI / 180, R2D = 180 / Math.PI;
+const inch = v => { const w = Math.floor(v + 1e-9), f = Math.round((v - w) * 16); if (f === 16) return `${w + 1}"`; if (!f) return `${w}"`; let n = f, d = 16; while (n % 2 === 0) { n /= 2; d /= 2; } return w ? `${w} ${n}/${d}"` : `${n}/${d}"`; };
+
+const STORE_KEY = "batterDrainLab.v1";
+const state = (() => {
+  const base = { mod: "wall", theme: "auto" };
+  try { const s = JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); return Object.assign(base, s); } catch (e) { return base; }
+})();
+let saveTimer = null;
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { /* storage blocked: run without it */ } }, 150);
+}
+const themeHooks = [];
+function applyTheme() {
+  const r = document.documentElement;
+  if (state.theme === "auto") r.removeAttribute("data-theme"); else r.setAttribute("data-theme", state.theme);
+  $$("[data-theme-btn]").forEach(b => b.classList.toggle("on", b.dataset.themeBtn === state.theme));
+  themeHooks.forEach(f => { try { f(); } catch (e) { console.error(e); } });
+}
+if (window.matchMedia) { const mq = window.matchMedia("(prefers-color-scheme: dark)"); if (mq.addEventListener) mq.addEventListener("change", () => applyTheme()); }
+const MODS = [
+  ["wall", "I", "The wall"],
+  ["fail", "II", "How walls fail"],
+  ["soil", "III", "Soil & water pressure"],
+  ["stab", "IV", "Stability check"],
+  ["types", "V", "Wall types"],
+  ["srw", "VI", "Block walls & geogrid"],
+  ["conc", "VII", "Concrete walls"],
+  ["water", "VIII", "Drainage & frost"],
+  ["tiers", "IX", "Tiers, slopes & loads"],
+  ["build", "X", "Building & estimating"],
+  ["codes", "XI", "Codes & permits"],
+  ["repair", "XII", "Troubleshooting"],
+  ["glossary", "XIII", "Glossary"],
+  ["quiz", "XIV", "Check yourself"]
+];
+const RENDER = {}, TICK = {}, rendered = {};
+function go(mod, opts = {}) {
+  if (!MODS.find(m => m[0] === mod)) mod = "wall";
+  state.mod = mod; save();
+  $$("#modnav button").forEach(b => b.classList.toggle("on", b.dataset.mod === mod));
+  $$(".mod").forEach(s => s.classList.toggle("on", s.id === "m-" + mod));
+  if (!rendered[mod]) { RENDER[mod]($("#m-" + mod)); rendered[mod] = true; }
+  if (opts.after) opts.after();
+  if (!opts.keepScroll) window.scrollTo({ top: 0, behavior: "auto" });
+  const btn = $(`#modnav button[data-mod="${mod}"]`);
+  if (btn && btn.scrollIntoView) btn.scrollIntoView({ block: "nearest", inline: "nearest" });
+  if (history.replaceState) history.replaceState(null, "", "#" + mod);
+  hideTip();
+}
+document.addEventListener("click", e => {
+  const a = e.target.closest("[data-go]");
+  if (!a) return;
+  e.preventDefault();
+  const [mod, id] = a.dataset.go.split(":");
+  if (mod === "glossary" && id) go("glossary", { after: () => glossaryFind(id) });
+  else go(mod);
+});
+const goLink = (mod, text) => `<button class="linkbtn" data-go="${mod}">${text}</button>`;
+
+function modHead(i, title, lede) {
+  const idx = MODS.findIndex(m => m[0] === i);
+  const prev = MODS[idx - 1], next = MODS[idx + 1];
+  return `<div class="mod-head"><div><h2><span class="fn">Section ${MODS[idx][1]}</span>${title}</h2><p class="lede">${lede}</p></div>
+  <div class="nextprev noprint">${prev ? `<button class="tbtn" data-go="${prev[0]}">← ${esc(prev[2])}</button>` : ""}${next ? `<button class="tbtn" data-go="${next[0]}">${esc(next[2])} →</button>` : ""}</div></div>`;
+}
+
+/* ---- tooltip: any element with data-tip="Title|body" ---- */
+const tip = $("#tip");
+let tipEl = null;
+function showTip(el, x, y) {
+  const raw = el.getAttribute("data-tip"); if (!raw) return;
+  const [h, ...rest] = raw.split("|");
+  tip.innerHTML = `<b>${esc(h)}</b>${rest.length ? esc(rest.join("|")) : ""}`;
+  tip.classList.add("on"); tipEl = el; moveTip(x, y);
+}
+function moveTip(x, y) {
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  let L = x + 14, T = y + 16;
+  if (L + w > innerWidth - 8) L = x - w - 14;
+  if (T + h > innerHeight - 8) T = y - h - 12;
+  tip.style.left = Math.max(6, L) + "px"; tip.style.top = Math.max(6, T) + "px";
+}
+function hideTip() { tip.classList.remove("on"); tipEl = null; }
+document.addEventListener("pointerover", e => {
+  if (e.pointerType === "touch") return;
+  const el = e.target.closest && e.target.closest("[data-tip]");
+  if (el) { if (el !== tipEl) showTip(el, e.clientX, e.clientY); } else if (tipEl) hideTip();
+});
+document.addEventListener("pointermove", e => { if (tipEl) moveTip(e.clientX, e.clientY); });
+document.addEventListener("scroll", hideTip, { passive: true });
+
+/* ---- generic controls ---- */
+function chipRow(name, items, cur, cls = "chips") {
+  return `<div class="${cls}" data-chips="${name}">${items.map(([v, l, t]) => `<button class="chip${String(v) === String(cur) ? " on" : ""}" data-v="${esc(v)}"${t ? ` data-tip="${esc(t)}"` : ""}>${l}</button>`).join("")}</div>`;
+}
+function bindChips(root, name, fn) {
+  const row = $(`[data-chips="${name}"]`, root); if (!row) return;
+  row.addEventListener("click", e => {
+    const b = e.target.closest("button[data-v]"); if (!b) return;
+    $$("button", row).forEach(x => x.classList.toggle("on", x === b));
+    fn(b.dataset.v);
+  });
+}
+function setChip(root, name, v) { $$(`[data-chips="${name}"] button`, root).forEach(b => b.classList.toggle("on", b.dataset.v === String(v))); }
+function sl(id, label, min, max, step) {
+  return `<label class="ctl"><span class="cap">${label}</span><input type="range" id="${id}" min="${min}" max="${max}" step="${step}"><output id="${id}o"></output></label>`;
+}
+/* bind a range input to obj[key]; show() formats the readout; after() redraws */
+function bindRange(root, id, obj, key, show, after) {
+  const el = $("#" + id, root), o = $("#" + id + "o", root);
+  const put = () => { obj[key] = +el.value; if (o) o.textContent = show ? show(obj[key]) : obj[key]; };
+  el.value = obj[key]; put();
+  el.addEventListener("input", () => { put(); after(); });
+  return v => { el.value = v; put(); };
+}
+const tile = (cap, big, sub = "", c = "") => `<div class="tile"${c ? ` style="--tc:${c}"` : ""}><span class="cap">${cap}</span><div class="big">${big}</div>${sub ? `<div class="sub">${sub}</div>` : ""}</div>`;
+const P = pts => "M" + pts.map(p => (+p[0].toFixed(2)) + "," + (+p[1].toFixed(2))).join("L");
+const pill = (cls, t) => `<span class="pill ${cls}">${t}</span>`;
+
+/* ---- animation loop ---- */
+let lastT = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  const f = TICK[state.mod];
+  if (f && !document.hidden) { try { f(dt, now / 1000); } catch (e) { console.error(e); } }
+  requestAnimationFrame(frame);
+}
+
+/* ---- a simple line chart: series [{pts:[[x,y]], c, w, dash, label}] ---- */
+function chart(o) {
+  const W = o.W || 560, H = o.H || 240, l = 44, r = 14, t = 14, b = 34;
+  const X = x => l + (x - o.x0) / (o.x1 - o.x0) * (W - l - r), Y = y => H - b - (y - o.y0) / (o.y1 - o.y0) * (H - t - b);
+  let s = `<svg class="chartsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.label || "chart")}">`;
+  (o.bands || []).forEach(bd => { s += `<rect x="${X(bd.x0)}" y="${t}" width="${Math.max(0, X(bd.x1) - X(bd.x0))}" height="${H - t - b}" fill="${bd.c}" opacity="${bd.o || .12}"/>${bd.label ? `<text x="${(X(bd.x0) + X(bd.x1)) / 2}" y="${t + 11}" class="t-xs t-mid">${bd.label}</text>` : ""}`; });
+  (o.hbands || []).forEach(bd => { s += `<rect x="${l}" y="${Y(bd.y1)}" width="${W - l - r}" height="${Math.max(0, Y(bd.y0) - Y(bd.y1))}" fill="${bd.c}" opacity="${bd.o || .12}"/>${bd.label ? `<text x="${l + 4}" y="${Y(bd.y1) + 11}" class="t-xs">${bd.label}</text>` : ""}`; });
+  for (const gx of o.xt) s += `<path d="M${X(gx)},${t}V${H - b}" class="grid-l"/><text x="${X(gx)}" y="${H - b + 13}" class="t-xs t-mid">${gx}</text>`;
+  for (const gy of o.yt) s += `<path d="M${l},${Y(gy)}H${W - r}" class="grid-l"/><text x="${l - 5}" y="${Y(gy) + 3}" class="t-xs t-end">${gy}</text>`;
+  s += `<path d="M${l},${t}V${H - b}H${W - r}" class="axis-l" fill="none"/>`;
+  s += `<text x="${(l + W - r) / 2}" y="${H - 4}" class="t-sm t-mid">${o.xl}</text><text x="12" y="${(t + H - b) / 2}" class="t-sm t-mid" transform="rotate(-90 12 ${(t + H - b) / 2})">${o.yl}</text>`;
+  (o.lines || []).forEach(ln => { s += `<path d="${ln.v !== undefined ? `M${X(ln.v)},${t}V${H - b}` : `M${l},${Y(ln.h)}H${W - r}`}" stroke="${ln.c}" stroke-width="1.2" stroke-dasharray="4 3" fill="none"/>${ln.label ? `<text x="${ln.v !== undefined ? X(ln.v) + 4 : W - r - 4}" y="${ln.v !== undefined ? t + 22 : Y(ln.h) - 4}" class="t-xs${ln.v !== undefined ? "" : " t-end"}" style="fill:${ln.c}">${ln.label}</text>` : ""}`; });
+  (o.series || []).forEach(se => { if (se.pts.length > 1) s += `<path d="${P(se.pts.map(p => [X(clamp(p[0], o.x0, o.x1)), Y(clamp(p[1], o.y0, o.y1))]))}" fill="none" stroke="${se.c}" stroke-width="${se.w || 2}"${se.dash ? ` stroke-dasharray="${se.dash}"` : ""} stroke-linejoin="round"/>`; });
+  (o.dots || []).forEach(d => { s += `<circle cx="${X(d.x)}" cy="${Y(d.y)}" r="${d.r || 4}" fill="${d.c}" stroke="var(--sheet)" stroke-width="1.5"/>${d.label ? `<text x="${X(d.x) + 7}" y="${Y(d.y) - 6}" class="t-xs" style="fill:${d.c}">${d.label}</text>` : ""}`; });
+  if (o.legend) { let lx = l + 8; o.legend.forEach(g => { s += `<path d="M${lx},${t + 8}h16" stroke="${g.c}" stroke-width="2.4"${g.dash ? ` stroke-dasharray="${g.dash}"` : ""}/><text x="${lx + 20}" y="${t + 11}" class="t-xs">${g.label}</text>`; lx += 30 + g.label.length * 5.2; }); }
+  return s + "</svg>";
+}
+
+/* =====================================================================
+   2. ENGINE: SOILS, EARTH PRESSURE, WALL STABILITY
+   Units are feet, pounds, pcf and psf; forces and moments are per foot
+   of wall. Rankine for the cantilever (on a vertical plane through the
+   heel), Coulomb with wall friction for block and stone walls, as the
+   NCMA method does. External stability only: overturning about the toe,
+   sliding on the base and bearing under it.
+   ===================================================================== */
+const GW = 62.4;
+const ftin = v => { if (!isFinite(v)) return "—"; const t = Math.round(v * 12), f = Math.floor(t / 12), i = t - f * 12; return f ? `${f}'-${i}"` : `${i}"`; };
+const lbs = v => fmt(Math.round(v / 10) * 10);
+/* g: moist unit weight (pcf); phi: friction angle (deg); efpA/efp0: IBC Table 1610.1 active and at-rest
+   equivalent fluid pressure (psf per ft); qa: IBC Table 1806.2 presumptive bearing (psf) */
+const SOILS = {
+  stone: { name: "Crushed stone, 3/4 in. clean", short: "crushed stone", uscs: "GP", g: 105, phi: 38, efpA: 30, efp0: 60, qa: 3000, back: true, fnd: false, frost: "None", drain: "Excellent", note: "Angular, one size, no fines: the drainage zone, the leveling pad and the best backfill there is. Compacts by vibration, not by water." },
+  gravel: { name: "Sand & gravel (GW, GP)", short: "sand & gravel", uscs: "GW", g: 125, phi: 34, efpA: 30, efp0: 60, qa: 3000, back: true, fnd: true, frost: "Low", drain: "Good", note: "Glacial outwash and bank-run gravel from river valleys and eskers: the best common backfill and foundation in New England." },
+  sand: { name: "Clean sand (SW, SP)", short: "clean sand", uscs: "SW", g: 120, phi: 32, efpA: 30, efp0: 60, qa: 2000, back: true, fnd: true, frost: "Low", drain: "Good", note: "Cape Cod, Long Island, the coastal plain and the outwash plains. Drains well, but runs out through any open joint unless filter fabric stops it." },
+  till: { name: "Silty sand, glacial till (SM)", short: "glacial till", uscs: "SM", g: 125, phi: 30, efpA: 45, efp0: 60, qa: 2000, back: true, fnd: true, frost: "Medium–high", drain: "Poor", note: "The New England default: a dense, bouldery mix of sand, silt and stones left by the ice sheet, \"hardpan\" when undisturbed. Strong in place, but water perches on top of it and it heaves when wet. Dug up and put back, it is only a fair backfill." },
+  silt: { name: "Silt (ML)", short: "silt", uscs: "ML", g: 115, phi: 28, efpA: 45, efp0: 100, qa: 1500, back: true, fnd: true, frost: "Very high", drain: "Poor", note: "The most frost-susceptible soil: it wicks water up to the freezing front and grows ice lenses. Old lake-bottom silts in the Connecticut and Hudson valleys." },
+  clay: { name: "Lean clay (CL)", short: "clay", uscs: "CL", g: 120, phi: 24, efpA: 60, efp0: 100, qa: 1500, back: true, fnd: true, frost: "High", drain: "Very poor", note: "Marine and lake clays: Boston blue clay, the varved clays of the Connecticut River valley, the Champlain Sea clay. Creeps, swells and holds water: a poor backfill and a soft foundation. The code's 60 psf/ft is higher than theory to cover creep and swell." },
+  ledge: { name: "Ledge (crystalline bedrock)", short: "ledge", uscs: "—", g: 165, phi: 40, efpA: null, efp0: null, qa: 12000, back: false, fnd: true, frost: "None", drain: "—", note: "Granite, schist and gneiss at or near the surface across much of New England. Excellent bearing: sweep it clean, step or pin the base to it, and drain the water that runs along its surface." }
+};
+const BACKSOILS = Object.keys(SOILS).filter(k => SOILS[k].back), FNDSOILS = Object.keys(SOILS).filter(k => SOILS[k].fnd);
+const SLOPES = [[0, "Level", "Level backfill"], [14.04, "4:1", "4 horizontal to 1 vertical, about 14°"], [18.43, "3:1", "3 horizontal to 1 vertical, about 18°: the steepest you can mow"], [26.57, "2:1", "2 horizontal to 1 vertical, about 27°: a steep, planted bank"]];
+const SURCH = [[0, "None"], [100, "Lawn, patio", "Foot traffic, a patio or lawn furniture: about 100 psf"], [250, "Driveway", "Cars on a driveway or parking area: 250 psf is the usual design surcharge"], [400, "Trucks", "Delivery trucks, oil trucks, a loaded dumpster or equipment near the wall"]];
+
+function rankineKa(phi, beta) {
+  const p = phi * D2R, b = Math.min(beta, phi) * D2R, cb = Math.cos(b), r = Math.sqrt(Math.max(0, cb * cb - Math.cos(p) ** 2));
+  return cb * (cb - r) / (cb + r);
+}
+/* Coulomb, NCMA form: omega is the batter of the wall back from vertical, leaning into the soil */
+function coulombKa(phi, delta, omega, beta) {
+  const p = phi * D2R, d = delta * D2R, w = omega * D2R, b = Math.min(beta, phi) * D2R;
+  const root = Math.sqrt(Math.max(0, Math.sin(p + d) * Math.sin(p - b) / (Math.cos(d - w) * Math.cos(w + b))));
+  return Math.cos(p + w) ** 2 / (Math.cos(w) ** 2 * Math.cos(d - w) * (1 + root) ** 2);
+}
+const restK = (phi, beta) => (1 - Math.sin(phi * D2R)) * (1 + Math.sin(Math.min(beta, phi) * D2R));
+const passiveKp = phi => Math.tan((45 + phi / 2) * D2R) ** 2;
+
+/* Lateral pressure on a vertical plane of height H: soil K·σv', surcharge K·q and water below hw.
+   ang tilts the earth thrust from horizontal (β for Rankine, δ − ω for Coulomb); water acts horizontally. */
+function pressure(o) {
+  const s = SOILS[o.soil], H = o.H, hw = clamp(o.hw || 0, 0, H), z1 = H - hw, gb = s.g + 8 - GW;   /* saturated ≈ moist + 8 pcf */
+  const ca = Math.cos(o.ang || 0), ta = Math.tan(o.ang || 0), n = 240, dz = H / n, q = o.q || 0;
+  const prof = [];
+  for (let i = 0; i <= n; i++) {
+    const z = i * dz, sv = z <= z1 ? s.g * z : s.g * z1 + gb * (z - z1);
+    prof.push({ z, ps: o.K * sv * ca, pq: o.K * q * ca, pw: z > z1 ? GW * (z - z1) : 0 });
+  }
+  let Ps = 0, Ms = 0, Pq = 0, Mq = 0, Pw = 0, Mw = 0;
+  for (let i = 0; i < n; i++) {                       /* trapezoid rule, moments about the base */
+    const a = prof[i], b = prof[i + 1], arm = H - (a.z + b.z) / 2;
+    const fs = (a.ps + b.ps) / 2 * dz, fq = (a.pq + b.pq) / 2 * dz, fw = (a.pw + b.pw) / 2 * dz;
+    Ps += fs; Ms += fs * arm; Pq += fq; Mq += fq * arm; Pw += fw; Mw += fw * arm;
+  }
+  const Ph = Ps + Pq + Pw, Mo = Ms + Mq + Mw;
+  return { K: o.K, H, hw, prof, Ps, Pq, Pw, Ph, Mo, y: Ph ? Mo / Ph : 0, ys: Ps ? Ms / Ps : 0, yq: Pq ? Mq / Pq : 0, yw: Pw ? Mw / Pw : 0, Pv: (Ps + Pq) * ta, yv: Ps + Pq ? (Ms + Mq) / (Ps + Pq) : 0,
+    pmax: Math.max(1, ...prof.map(p => p.ps + p.pq + p.pw)) };
+}
+
+const WTYPES = {
+  srw: ["Block wall, gravity", "Segmental concrete units stacked dry with a setback; their weight alone holds the soil."],
+  grid: ["Block wall with geogrid", "The same units tied into a block of compacted soil by layers of geogrid: the reinforced soil is the wall."],
+  stone: ["Boulder or granite wall", "Large stones set dry with a battered face, wide at the base: a mass gravity wall."],
+  cant: ["Poured concrete cantilever", "A reinforced concrete stem on a footing below frost; the soil on the heel holds it down."]
+};
+const STONE_G = [[115, "Boulders", "Boulders set dry (a rockery): about 165 pcf rock with about 30% voids"], [140, "Mortared stone", "Stone laid in mortar, or stone-faced concrete"], [150, "Cut granite", "Squared granite blocks laid tight"]];
+const ST = { type: "srw", Hex: 3, soil: "gravel", fnd: "till", beta: 0, q: 0, hwp: 0, rest: false, d: 1, batter: 6, gridK: 0.7, stoneB: 0.55, stoneT: 1.5, stoneG: 115, cB: 0.55, cToe: 0.33, cTs: 12, cTf: 12, frost: 4, key: 1, passive: false };
+
+/* geometry, weights and the earth-pressure model for one wall; x runs from the toe into the backfill */
+function wallGeom(o) {
+  const s = SOILS[o.soil], f = SOILS[o.fnd], Hex = o.Hex, parts = [];
+  if (o.type === "cant") {
+    const D = o.frost, H = Hex + D, B = o.cB * H, toe = o.cToe * B, ts = o.cTs / 12, tf = o.cTf / 12, heel = Math.max(0, B - toe - ts);
+    parts.push({ id: "Footing", W: 150 * B * tf, x: B / 2 }, { id: "Stem", W: 150 * ts * (H - tf), x: toe + ts / 2 }, { id: "Soil on the heel", W: s.g * heel * (H - tf), x: toe + ts + heel / 2 });
+    return { H, D, B, parts, toe, ts, tf, heel, back: () => B, soilBack: () => toe + ts, front: () => toe, mu: Math.tan(2 / 3 * f.phi * D2R), muNote: "tan(⅔φ) of the foundation, concrete cast on soil",
+      K: o.rest ? restK(s.phi, o.beta) : rankineKa(s.phi, o.beta), ang: o.beta * D2R, method: o.rest ? "at rest" : "Rankine, on a plane through the heel" };
+  }
+  const delta = 2 / 3 * s.phi, mu = Math.tan(Math.min(f.phi, 34) * D2R), muNote = "tan φ of the weaker of the stone base and the foundation";
+  if (o.type === "stone") {
+    const D = Math.max(1, Hex / 8), H = Hex + D, B = Math.max(o.stoneT, o.stoneB * H), bt = Math.min(o.stoneT, B), r = B - bt;
+    parts.push({ id: "Stone, upright part", W: o.stoneG * bt * H, x: r + bt / 2 }, { id: "Stone, battered toe", W: o.stoneG * r * H / 2, x: 2 * r / 3 });
+    return { H, D, B, bt, parts, back: () => B, soilBack: () => B, front: y => r * y / H, mu, muNote,
+      K: o.rest ? restK(s.phi, o.beta) : coulombKa(s.phi, delta, 0, o.beta), ang: (o.rest ? o.beta : delta) * D2R, method: o.rest ? "at rest" : `Coulomb, δ = ⅔φ = ${fmt(delta, 1)}°` };
+  }
+  const D = Math.max(0.5, Hex / 8), H = Hex + D, d = o.d, tw = Math.tan(o.batter * D2R);
+  parts.push({ id: "Units and core fill", W: 125 * d * H, x: d / 2 + H / 2 * tw });
+  let B = d, back = y => d + y * tw;
+  if (o.type === "grid") {
+    const L = Math.max(4, o.gridK * H); B = L; back = y => L + y * tw;
+    parts.push({ id: "Reinforced soil", W: s.g * (L - d) * H, x: d + (L - d) / 2 + H / 2 * tw });
+  }
+  return { H, D, B, d, tw, parts, back, soilBack: y => d + y * tw, front: y => y * tw, mu, muNote, L: o.type === "grid" ? B : 0,
+    K: o.rest ? restK(s.phi, o.beta) : coulombKa(s.phi, delta, o.batter, o.beta), ang: (o.rest ? o.beta : delta - o.batter) * D2R, method: o.rest ? "at rest" : `Coulomb, δ = ⅔φ = ${fmt(delta, 1)}°, batter ${o.batter}°` };
+}
+function stability(o) {
+  const g = wallGeom(o), s = SOILS[o.soil], f = SOILS[o.fnd];
+  const hw = clamp(o.hwp, 0, 100) / 100 * g.H;
+  const P = pressure({ soil: o.soil, H: g.H, hw, q: o.q, K: g.K, ang: g.ang });
+  const Wt = g.parts.reduce((a, p) => a + p.W, 0), Mw = g.parts.reduce((a, p) => a + p.W * p.x, 0);
+  const Mv = P.Pv * g.back(P.yv);
+  const U = hw > 0 ? GW * hw * g.B / 2 : 0, Mu = U * g.B * 2 / 3;       /* uplift: full head at the heel, none at a drained toe */
+  const N = Wt + P.Pv - U, Mr = Mw + Mv, Mo = P.Mo + Mu;
+  const Kp = passiveKp(f.phi);
+  let top = 0, bot = 0;
+  if (o.type === "cant") { top = o.passive ? 1 : g.D; bot = g.D + (o.key || 0); } else if (o.passive) { top = 1; bot = g.D; }
+  const Pp = bot > top ? 0.5 * Kp * f.g * (bot * bot - top * top) : 0;
+  const FSo = Mr / Mo, FSs = (N * g.mu + Pp) / P.Ph;
+  const xr = (Mr - Mo) / N, e = g.B / 2 - xr;
+  const mid = Math.abs(e) <= g.B / 6 + 1e-9;
+  const qmax = N <= 0 || xr <= 0 ? Infinity : mid ? N / g.B * (1 + 6 * e / g.B) : 2 * N / (3 * xr);
+  const qmin = mid ? N / g.B * (1 - 6 * e / g.B) : 0;
+  const ok = { o: FSo >= 1.5, s: FSs >= 1.5, q: qmax <= f.qa, e: mid };
+  const flags = [];
+  if (o.beta > s.phi - 1) flags.push(["bad", `A ${fmt(o.beta, 0)}° slope is at or past the friction angle of ${s.short} (${s.phi}°): it won't stand on its own, and the numbers here aren't meaningful. An engineer has to design this.`]);
+  if (g.H > 4 || o.q > 0) flags.push(["warn", `${o.q > 0 ? "It carries a surcharge" : `It is ${ftin(g.H)} from the bottom of the base to the top`}: a building permit and, in most towns, an engineer's stamped design. See Codes & permits.`]);
+  if (o.hwp > 0) flags.push(["warn", `Water ${fmt(o.hwp)}% of the way up adds ${lbs(P.Pw)} lb/ft of water pressure${U ? ` and ${lbs(U)} lb/ft of uplift` : ""}. Drainage is what keeps this at zero.`]);
+  if (o.type === "srw" && o.Hex > 4) flags.push(["warn", "Over about 4 ft, standard gravity blocks need geogrid, or large-format units."]);
+  if (o.fnd === "clay" || o.fnd === "silt") flags.push(["warn", `On ${SOILS[o.fnd].short}, settlement and global stability (a deep slip under the whole wall) usually govern. Neither is checked here.`]);
+  if (o.type === "grid") flags.push(["", "Internal stability (grid strength, pullout, connection to the units, bulging) isn't checked. The geogrid maker's design tables or an engineer do that."]);
+  if (o.type === "cant") flags.push(["", "The stem and footing still need reinforcing steel designed for bending and shear; this checks only that the wall as a whole stays put."]);
+  if (o.rest) flags.push(["", "At-rest pressure: for a wall that can't lean, like one braced at the top or cast against ledge. It is about 50% more than active."]);
+  if (Pp > 0) flags.push(["", `Counting ${lbs(Pp)} lb/ft of passive soil in front. It needs the wall to move a little to develop, and the soil has to stay there: no trench, no erosion, no frost.`]);
+  return { g, P, hw, Wt, Mw, Mv, U, Mu, N, Mr, Mo, Kp, Pp, FSo, FSs, xr, e, mid, qmax, qmin, qa: f.qa, ok, flags, pass: ok.o && ok.s && ok.q };
+}
+/* the tallest exposed height (to 1/4 ft) a gravity block wall passes all three checks at */
+function maxGravity(o) {
+  let best = 0;
+  for (let h = 0.5; h <= 14 + 1e-9; h += 0.25) { if (stability(Object.assign({}, o, { type: "srw", Hex: h })).pass) best = h; else break; }
+  return best;
+}
+
+/* =====================================================================
+   I. THE WALL
+   A section through a geogrid-reinforced block wall, 6 ft exposed:
+   ten 8 in. courses with 3/4 in. setback, one buried, grid on top of
+   courses 2, 5 and 8, 5 ft long. The same drawing, built up in stages,
+   is the construction sequence in section VI.
+   ===================================================================== */
+const AN = { ch: 8 / 12, n: 10, d: 1, sb: 0.75 / 12, grid: [2, 5, 8], L: 5, cap: 4 / 12 };
+const AN_PARTS = {
+  cap: ["Cap units", "Solid units on the top course, glued down with concrete adhesive (not mortar) so they can't be pried or plowed off. They shed water off the top of the cores."],
+  unit: ["Facing units", "Dry-cast concrete segmental retaining wall (SRW) units, stacked without mortar. A lip or pins set each course back from the one below, so the wall leans into the hill: here 3/4 in. per 8 in. course, about 5°. In the Northeast specify units that pass ASTM C1372 and its freeze-thaw test."],
+  batter: ["Batter (setback)", "The lean of the face back into the soil. It moves the wall's weight back over its base and reduces the soil thrust: a 12° batter can let the same block retain half again as much as a 4° one. Built in by the unit's lip; never shim the face out to vertical."],
+  drain: ["Drainage aggregate", "At least 12 in. of clean 3/4 in. crushed stone directly behind the units, from the base to within about a foot of the top, and in the units' cores. It carries water down to the pipe so that no water pressure can build up against the face, and it doesn't hold water to freeze."],
+  pipe: ["Drain pipe", "4 in. perforated pipe at the bottom of the drainage stone, at the back of the base, sloped to outlets that daylight at least every 50 ft (or a solid pipe through the face). An unoutletted pipe is a reservoir. Fit rodent screens and mark the outlets."],
+  fabric: ["Filter fabric", "Non-woven geotextile between the drainage stone and finer soil. It lets water through but stops silt and sand from washing into the stone, clogging it, and leaving sinkholes behind the wall. Needed wherever the fill or the retained soil is fine-grained."],
+  grid: ["Geogrid", "Polyester or polypropylene grid laid between courses, caught by the units' lips or pins, pulled taut, and covered with compacted fill. It ties the face to a block of soil so the reinforced soil acts as one wide gravity mass. Typical: at least 0.6 times the wall height long, every 2 or 3 courses."],
+  reinf: ["Reinforced zone", "The compacted fill the geogrid runs through: granular soil placed in lifts of no more than 8 in. and compacted to 95% of Standard Proctor (ASTM D698). It is the wall. Only hand-guided plate compactors within 3 ft of the back of the units."],
+  retained: ["Retained soil", "The native soil behind everything: here dense glacial till, cut back at a safe slope while the wall was built. Its strength and its groundwater set the load on the wall."],
+  pad: ["Leveling pad", "At least 6 in. of compacted crushed stone (or a lean concrete pad), extending at least 6 in. in front of and behind the units. It spreads the load, drains the base, and is where the wall is made dead level. A wall built on a bad pad shows it in every course above."],
+  embed: ["Embedment", "The buried bottom course. It keeps the toe from kicking out and protects the base from erosion: about 1 in. per 8 in. of wall height, never less than 6 in., more when the ground in front slopes down."],
+  found: ["Foundation soil", "Undisturbed natural soil or ledge, with all topsoil (loam), roots and organics stripped. Soft spots get dug out and replaced with crushed stone. The wall can be no better than this."],
+  swale: ["Cap soil and swale", "6–12 in. of compacted low-permeability soil over the drainage and reinforced zones keeps surface water out, and a shallow swale behind the wall carries runoff around its ends. Never point a downspout or a driveway at the back of a wall."],
+  toe: ["Toe and front grade", "The ground in front of the wall. Keep it, and slope it away so water doesn't pond at the base. Digging a trench or a planting bed along the face later removes the embedment and the passive soil."]
+};
+const AN_STAGES = [
+  ["Dig and check the subgrade", "Call 811 first. Excavate for the base and, for geogrid, the full grid length plus a foot; lay the cut back to a safe slope. Strip all loam and roots, proof-roll or probe, and dig out soft spots and replace them with crushed stone.", { courses: 0 }],
+  ["Leveling pad", "Place and compact at least 6 in. of 3/4 in. dense-graded crushed stone, 6 in. wider than the units front and back. Screed it dead level along the wall; step it in full course heights where the grade climbs.", { courses: 0, pad: true }],
+  ["Base course", "Set the first course on the pad, level side to side and front to back, string-lined. It's buried. Half the work of a straight wall is in this course. Backfill and compact in front of it.", { courses: 1, pad: true, front: true }],
+  ["Drain pipe, fabric, stone", "Lay the perforated pipe at the back of the base, sloped to its outlets. Line the excavation with filter fabric against the fine soil. Fill cores and 12 in. behind the units with clean stone.", { courses: 1, pad: true, front: true, pipe: true, fill: 1 }],
+  ["Geogrid", "Build up to the first grid elevation, filling and compacting each course as you go. Lay the grid on the units, its strong direction perpendicular to the face, to within about 1 in. of the face; set the next course to lock it, pull it taut and stake it, then cover it with at least 6 in. of fill before anything drives on it.", { courses: 3, pad: true, front: true, pipe: true, fill: 3, grids: 1 }],
+  ["Repeat to the top", "Course, stone, fill in 6–8 in. lifts, compact, grid at every layer the design calls for. Check level every course and the batter every few. Keep heavy equipment 3 ft back from the units.", { courses: 10, pad: true, front: true, pipe: true, fill: 9.25, grids: 3 }],
+  ["Cap and finish grade", "Glue the caps. Cap the drainage and reinforced zones with compacted low-permeability soil, grade a swale to carry water around the ends, then loam and seed. Check the drain outlets run.", { courses: 10, pad: true, front: true, pipe: true, fill: 9.25, grids: 3, cap: true, swale: true }]
+];
+function srwFig(o) {
+  const st = o.stage === undefined ? AN_STAGES[AN_STAGES.length - 1][2] : AN_STAGES[o.stage][2];
+  const A = AN, H = A.n * A.ch, tw = A.sb / A.ch, s = 40, x0 = 160, yb = 362, X = x => x0 + x * s, Y = y => yb - y * s;
+  const cut = y => A.L + 0.5 + (y + 0.5) * 0.75, topY = H + A.cap, xR = (640 - x0) / s, xL = -x0 / s, D = A.ch;
+  const back = y => A.d + y * tw, sel = o.sel, hl = id => sel === id ? " sel" : "";
+  const g = (id, inner) => o.parts === false ? inner : `<g class="clickable${hl(id)}" data-part="${id}" data-tip="${esc(AN_PARTS[id][0])}|${esc(AN_PARTS[id][1].slice(0, 110))}…">${inner}</g>`;
+  const poly = (pts, fill, extra = "") => `<path d="${P(pts.map(p => [X(p[0]), Y(p[1])]))}Z" fill="${fill}" ${extra}/>`;
+  let v = `<svg viewBox="0 0 640 440" role="img" aria-label="Section through a geogrid-reinforced block retaining wall">`;
+  /* native ground: foundation, front, retained beyond the cut */
+  v += g("found", poly([[xL, -0.5], [xR, -0.5], [xR, -1.9], [xL, -1.9]], "var(--fnd)"));
+  v += g("toe", poly([[xL, -0.5], [-0.8, -0.5], [-0.8, D], [xL, D]], "var(--soil)") + `<path d="M${X(xL)},${Y(D)}H${X(-0.8)}" stroke="var(--grass)" stroke-width="3"/>`);
+  v += g("retained", poly([[cut(-0.5), -0.5], [xR, -0.5], [xR, topY + 0.55], [cut(topY), topY + 0.3]], "var(--soil-2)") + `<path d="M${X(cut(topY))},${Y(topY + 0.3)}L${X(xR)},${Y(topY + 0.55)}" stroke="var(--grass)" stroke-width="3"/>`);
+  v += `<path d="M${X(-0.8)},${Y(D)}V${Y(-0.5)}H${X(cut(-0.5))}L${X(cut(topY))},${Y(topY + 0.3)}" fill="none" stroke="var(--ink-3)" stroke-dasharray="5 4"/>`;
+  if (!st.pad) v += `<text x="${X(2.6)}" y="${Y(-0.2)}" class="t-xs t-mid">strip loam · proof-roll · dig out soft spots</text>`;
+  /* built-up layers */
+  const fh = st.fill ? Math.min(H - 0.6, st.fill * A.ch) : -0.5;
+  if (st.fill) {
+    v += g("reinf", poly([[back(0) + 1, -0.5], [cut(-0.5), -0.5], [cut(fh), fh], [back(fh) + 1, fh]], "var(--soil)"));
+    v += g("drain", poly([[A.d + 0.5, -0.5], [back(0) + 1, -0.5], [back(fh) + 1, fh], [back(fh), fh], [back(0), 0], [A.d + 0.5, 0]], "var(--stone)") +
+      Array.from({ length: 70 }, (_, i) => { const yy = -0.4 + (i * 0.137) % (fh + 0.4), xx = back(Math.max(0, yy)) + 0.12 + ((i * 0.37) % 0.8); return yy < fh - 0.05 ? `<circle cx="${X(xx)}" cy="${Y(yy)}" r="1.6" fill="var(--stone-2)"/>` : ""; }).join(""));
+  }
+  if (st.pad) v += g("pad", poly([[-0.5, -0.5], [A.d + 0.5, -0.5], [A.d + 0.5, 0], [-0.5, 0]], "var(--stone)", `stroke="var(--stone-2)"`) + Array.from({ length: 18 }, (_, i) => `<circle cx="${X(-0.42 + i * 0.11)}" cy="${Y(-0.25 + ((i * 7) % 3 - 1) * 0.1)}" r="1.7" fill="var(--stone-2)"/>`).join(""));
+  if (st.front) v += g("embed", poly([[-0.8, -0.5], [-0.5, -0.5], [-0.5, 0], [0, 0], [0, D], [-0.8, D]], "var(--soil)") + `<path d="M${X(-0.8)},${Y(D)}H${X(0)}" stroke="var(--grass)" stroke-width="3"/>`);
+  if (st.pipe) {
+    v += g("pipe", `<circle cx="${X(A.d + 0.55)}" cy="${Y(0.22)}" r="${0.17 * s}" fill="var(--sheet)" stroke="var(--ink-2)" stroke-width="1.4"/><circle cx="${X(A.d + 0.55)}" cy="${Y(0.22)}" r="${0.1 * s}" fill="none" stroke="var(--ink-4)" stroke-dasharray="1.5 1.5"/>`);
+    v += g("fabric", `<path d="M${X(back(0) + 1)},${Y(-0.5)}L${X(back(fh) + 1)},${Y(Math.max(fh, 0))}M${X(A.d + 0.5)},${Y(-0.5)}H${X(back(0) + 1)}" stroke="var(--fabric)" stroke-width="2.2" stroke-dasharray="6 2" fill="none"/>`);
+  }
+  /* units */
+  let units = "";
+  for (let i = 0; i < st.courses; i++) {
+    const y0 = i * A.ch, x = i * A.sb;
+    units += `<rect x="${X(x)}" y="${Y(y0 + A.ch)}" width="${A.d * s}" height="${A.ch * s}" fill="var(--block)" stroke="var(--block-2)"/><path d="M${X(x + A.d - 0.18)},${Y(y0 + A.ch) + 2}v${A.ch * s - 4}M${X(x + 0.18)},${Y(y0 + A.ch) + 2}v${A.ch * s - 4}" stroke="var(--block-2)" stroke-width=".7" stroke-dasharray="2 2"/>`;
+    units += `<path d="M${X(x + A.d) - 2},${Y(y0) - 1}v5h-5" fill="none" stroke="var(--block-2)" stroke-width="1"/>`;
+  }
+  if (st.courses) v += g("unit", units);
+  if (st.grids) v += g("grid", A.grid.slice(0, st.grids).map(k => { const y = k * A.ch, x = k * A.sb + 0.05; return `<path d="M${X(x)},${Y(y)}H${X(x + A.L)}" stroke="var(--grid)" stroke-width="2.6"/><path d="M${X(x)},${Y(y)}H${X(x + A.L)}" stroke="var(--sheet)" stroke-width=".8" stroke-dasharray="1 5"/>`; }).join(""));
+  if (st.cap) v += g("cap", `<rect x="${X(A.n * A.sb - 0.06)}" y="${Y(topY)}" width="${(A.d + 0.06) * s}" height="${A.cap * s}" fill="var(--conc)" stroke="var(--block-2)"/>`);
+  if (st.swale) {
+    const sw = [[back(H) + 0.02, H + 0.15], [1.9, H + 0.2], [2.8, H + 0.02], [3.8, H + 0.25], [cut(topY), topY + 0.3]];
+    v += g("swale", `<path d="${P(sw.map(p => [X(p[0]), Y(p[1])]))}L${X(cut(fh))},${Y(fh)}L${X(back(fh) + 0.05)},${Y(fh)}Z" fill="var(--loam)"/><path d="${P(sw.map(p => [X(p[0]), Y(p[1])]))}" stroke="var(--grass)" stroke-width="3" fill="none"/>`);
+  }
+  /* batter callout and dims */
+  if (st.courses >= 10) {
+    v += g("batter", `<path d="M${X(0)},${Y(0)}L${X(0)},${Y(H)}" stroke="var(--ink-4)" stroke-dasharray="3 3"/><path d="M${X(0)},${Y(0)}L${X(H * tw)},${Y(H)}" stroke="var(--terra)" stroke-width="1.4"/><text x="${X(0) - 4}" y="${Y(H * 0.72)}" class="t-xs t-end t-terra">batter ${fmt(Math.atan(tw) * R2D, 1)}°</text><rect x="${X(-0.5)}" y="${Y(H)}" width="${0.9 * s}" height="${H * s}" fill="transparent"/>`);
+    v += `<path d="M${X(-2.6)},${Y(D)}V${Y(topY)}M${X(-2.75)},${Y(D)}h10M${X(-2.75)},${Y(topY)}h10" stroke="var(--ink-3)"/><text x="${X(-2.75)}" y="${Y((D + topY) / 2)}" class="t-xs t-end" transform="rotate(-90 ${X(-2.75)} ${Y((D + topY) / 2)})" text-anchor="middle">exposed height ${ftin(topY - D)}</text>`;
+    v += `<path d="M${X(A.grid[0] * A.sb)},${Y(-1.25)}H${X(A.grid[0] * A.sb + A.L)}M${X(A.grid[0] * A.sb)},${Y(-1.1)}v-8M${X(A.grid[0] * A.sb + A.L)},${Y(-1.1)}v-8" stroke="var(--grid)"/><text x="${X(A.grid[0] * A.sb + A.L / 2)}" y="${Y(-1.25) + 12}" class="t-xs t-mid" style="fill:var(--grid)">grid length ${ftin(A.L)} ≈ 0.7 H</text>`;
+  }
+  v += `<text x="${X(xR) - 8}" y="${Y(-1.65)}" class="t-zone t-end">foundation soil</text><text x="${X(xR) - 8}" y="${Y(topY - 1.2)}" class="t-zone t-end">retained soil</text>`;
+  return v + `</svg>`;
+}
+const AN_S = { sel: "drain" };
+RENDER.wall = el => {
+  el.innerHTML = modHead("wall", "The wall", "A retaining wall holds the ground at two levels. It does three jobs: it resists the push of the soil, it keeps water from building up behind it, and it survives forty New England winters. Click any part.") +
+  `<div class="split"><div class="figure"><div id="anFig"></div><div class="figcap"><span>A 6 ft geogrid-reinforced block wall in glacial till. Most of a well-built wall is underground or behind the face.</span><span class="legend"><span><i class="sw" style="background:var(--stone)"></i>crushed stone</span><span><i class="sw" style="background:var(--grid)"></i>geogrid</span><span><i class="sw" style="background:var(--fabric)"></i>filter fabric</span></span></div></div>
+   <div class="side" id="anSide"></div></div>
+   <div class="grid3">
+    <div class="card"><h3>Words that matter</h3><ul>
+     <li><b>Exposed height</b>: what you see, finished grade to top of wall.</li>
+     <li><b>Total height</b>: from the bottom of the footing or base to the top. Codes and permits use this one.</li>
+     <li><b>Unbalanced fill</b>: the difference in ground level from one side to the other.</li>
+     <li><b>Retained soil</b>, <b>backfill</b>, <b>foundation soil</b>: what's behind, what you put back, what's under.</li>
+     <li><b>Surcharge</b>: any load on top of the retained soil: a driveway, a slope, a building, another wall.</li>
+     <li><b>Toe</b> and <b>heel</b>: the front and back of the base. The wall tips about its toe.</li></ul></div>
+    <div class="card"><h3>Four ways to hold up soil</h3><ul>
+     <li><b>Gravity</b>: mass. Stone, boulders, big blocks, unreinforced block walls. Wide at the base, leaning back. ${goLink("types", "Wall types")}</li>
+     <li><b>Reinforced soil</b>: geogrid turns the backfill into the wall. ${goLink("srw", "Block walls & geogrid")}</li>
+     <li><b>Cantilever</b>: a reinforced concrete stem fixed to a footing; the soil on the heel holds it down. ${goLink("conc", "Concrete walls")}</li>
+     <li><b>Anchored</b>: tiebacks, soil nails, helical anchors, piles. Tight sites and big walls, always engineered.</li></ul></div>
+    <div class="card"><h3>Why the Northeast is different</h3><ul>
+     <li><b>Frost</b>: 3½–5 ft deep. Rigid walls go below it; flexible walls ride it out on stone and drainage. ${goLink("water", "Drainage & frost")}</li>
+     <li><b>Glacial till and ledge</b>: dense, bouldery, wet on top, often with bedrock a few feet down.</li>
+     <li><b>Freeze-thaw and salt</b>: what destroys concrete faces and caps. Specify durable units and air-entrained concrete.</li>
+     <li><b>Conservation commissions</b>: walls near wetlands, streams and the coast need approval before the permit.</li>
+     <li><b>Stone wall country</b>: the old farm walls are boundary walls, not retaining walls; they lean and tumble when asked to hold soil.</li></ul></div>
+   </div>`;
+  const draw = () => {
+    $("#anFig", el).innerHTML = srwFig({ sel: AN_S.sel });
+    const p = AN_PARTS[AN_S.sel];
+    $("#anSide", el).innerHTML = `<div class="cap">Part</div><h3>${esc(p[0])}</h3><p>${esc(p[1])}</p>
+      <h4>All the parts</h4><div class="chips">${Object.keys(AN_PARTS).map(k => `<button class="chip${k === AN_S.sel ? " on" : ""}" data-an="${k}">${esc(AN_PARTS[k][0])}</button>`).join("")}</div>
+      <p class="note">See it go together, step by step, in ${goLink("srw", "Block walls & geogrid")}.</p>`;
+  };
+  el.addEventListener("click", e => { const t = e.target.closest("[data-part],[data-an]"); if (!t || !el.contains(t)) return; AN_S.sel = t.dataset.part || t.dataset.an; draw(); });
+  draw();
+};
+
+/* =====================================================================
+   II. HOW WALLS FAIL
+   One gravity block wall, animated through seven ways of failing.
+   t runs 0 → 1, holds, and starts again.
+   ===================================================================== */
+const FAILS = {
+  overturn: ["Overturning", "The wall rotates forward about its toe. The top leans out; a crack opens in the ground behind the top.", "Too tall for its base, too little batter, water or a surcharge behind it, or the toe soil dug away.", "Wider base, more batter, geogrid, drainage, and keep loads back from the top.", "o"],
+  slide: ["Sliding", "The whole wall moves out on its base, staying upright. The ground in front bulges; the base course shows past the face above.", "Not enough weight or friction under the base, water pressure, too little embedment, base on topsoil or frozen ground.", "More embedment, a wider or heavier base, a shear key under a concrete footing, drainage.", "s"],
+  bearing: ["Bearing", "The soil under the toe gives way: the wall sinks and tips forward, and the ground in front heaves.", "Soft clay, organics or fill under the base; a base never compacted; the load all on the toe.", "Dig out to firm soil, a wider pad or footing, keep the resultant in the middle third.", "q"],
+  global: ["Global (deep-seated)", "A slip surface passes under and behind the whole wall: wall, backfill and slope move together as one block.", "Weak or wet soil below the base, a steep slope below the wall, terraced walls too close together.", "An engineer's global stability analysis: longer grid, lower walls, flatter slopes, drained ground.", ""],
+  internal: ["Internal (bulging)", "A geogrid wall bulges at mid-height or blocks push out between grid layers; the top may slump.", "Grid too short, too weak or too widely spaced; grid not pulled taut; fill not compacted; fine wet fill.", "Follow the design layout to the letter, compact in thin lifts, granular fill, drainage.", ""],
+  water: ["Water pressure", "After a storm or a thaw the wall moves: water behind it more than doubles the push on it.", "No drainage stone, a buried or crushed drain pipe with no outlets, downspouts or a driveway draining behind the wall.", "12 in. of clean stone, a perforated pipe with outlets every 50 ft, fabric, a swale, a sealed top.", ""],
+  frost: ["Frost heave", "Each winter the wall pushes out a little and doesn't come all the way back: it ratchets forward, course by course.", "Wet, fine (silty) soil behind or under the wall freezes and grows ice lenses.", "Free-draining stone behind the wall, dry backfill, rigid walls on footings below frost.", ""]
+};
+const FM = { mode: "overturn", t: 0, clock: 0 };
+function fmFig(mode, t) {
+  const s = 38, x0 = 210, yb = 300, X = x => x0 + x * s, Y = y => yb - y * s, n = 9, ch = 0.5, H = n * ch, d = 1.5, D = 0.5, tw = 0.08, xr = (640 - x0) / s;
+  const e = t * t * (3 - 2 * t);
+  let rot = 0, dx = 0, dy = 0, bulge = 0, hw = 0, lens = 0, slip = 0;
+  if (mode === "overturn") rot = 9 * e;
+  if (mode === "slide") dx = -0.9 * e;
+  if (mode === "bearing") { dy = -0.35 * e; rot = 5 * e; }
+  if (mode === "global") slip = 6 * e;
+  if (mode === "internal") bulge = 0.55 * e;
+  if (mode === "water") { hw = Math.min(1, t * 1.6) * H * 0.85; rot = t > 0.6 ? 6 * (t - 0.6) / 0.4 : 0; }
+  if (mode === "frost") { lens = e; rot = 2.5 * e; }
+  /* rot: forward tilt about the toe, degrees; tp moves a point of the wall (in feet) with it */
+  const a = rot * D2R, tp = (x, y) => [x * Math.cos(a) - y * Math.sin(a) + dx, x * Math.sin(a) + y * Math.cos(a) + dy];
+  const S = p => [X(p[0]), Y(p[1])], bt = tp(d + H * tw, H), bb = tp(d, 0), xc = d + H * tw + 1.4;
+  let v = `<svg viewBox="0 0 640 380" role="img" aria-label="${esc(FAILS[mode][0])} failure of a retaining wall">`;
+  v += `<rect x="0" y="${Y(0)}" width="640" height="${380 - Y(0)}" fill="var(--fnd)"/><rect x="0" y="${Y(D)}" width="${X(0)}" height="${D * s}" fill="var(--soil)"/><path d="M0,${Y(D)}H${X(0)}" stroke="var(--grass)" stroke-width="3"/>`;
+  const back = mode === "global" ? [[d, 0], [d + H * tw, H]] : [bb, bt];
+  v += `<path d="${P([S(back[0]), [640, Y(0)], [640, Y(H)], S([xc, H]), S(back[1])])}Z" fill="var(--soil-2)"/><path d="${P([S(back[1]), S([xc, H]), [640, Y(H)]])}" stroke="var(--grass)" stroke-width="3" fill="none"/>`;
+  if (hw > 0) v += `<path d="${P([S(back[0]), [640, Y(0)], [640, Y(hw)], S(tp(d + hw * tw, hw))])}Z" fill="var(--water)" opacity=".35"/><path d="M${X(d + 0.4)},${Y(hw)}H640" stroke="var(--water)" stroke-width="1.4"/><text x="634" y="${Y(hw) - 4}" class="t-xs t-end" style="fill:var(--water)">water</text>`;
+  if (mode === "water") for (let i = 0; i < 6; i++) { const yy = 0.4 + i * 0.6; if (yy < hw) v += `<path d="M${X(d + 2.6)},${Y(yy)}h-${18 + (hw - yy) * 8}" stroke="var(--water)" stroke-width="2"/><path d="M${X(d + 2.6) - 20 - (hw - yy) * 8},${Y(yy)}l6,-4v8z" fill="var(--water)"/>`; }
+  if (lens > 0) for (let i = 0; i < 7; i++) { const yy = H - 0.5 - i * 0.45, w = (0.6 + (i % 3) * 0.3) * lens; if (yy > 1) v += `<ellipse cx="${X(d + 1 + (i % 2) * 0.9)}" cy="${Y(yy)}" rx="${w * s}" ry="${3 * lens + 1}" fill="var(--ice)" stroke="var(--blue)" stroke-width=".8"/>`; }
+  if (mode === "frost") v += `<text x="${X(d + 3.2)}" y="${Y(H - 0.9)}" class="t-xs" style="fill:var(--blue)">ice lenses in wet silty soil</text><path d="M0,${Y(H - 1.4)}H640" stroke="var(--blue)" stroke-dasharray="6 4" opacity=".6"/><text x="8" y="${Y(H - 1.4) - 4}" class="t-xs" style="fill:var(--blue)">frost line, January</text>`;
+  let wall = "";
+  for (let i = 0; i < n; i++) {
+    const y0 = i * ch, b = bulge * Math.sin(Math.PI * (i + 0.5) / n), x = y0 * tw - b;
+    wall += `<rect x="${X(x)}" y="${Y(y0 + ch)}" width="${d * s}" height="${ch * s}" fill="var(--block)" stroke="var(--block-2)"/>`;
+  }
+  if (mode === "internal") wall += [2, 5].map(k => `<path d="M${X(k * ch * tw + d)},${Y(k * ch)}H${X(k * ch * tw + 2.4)}" stroke="var(--grid)" stroke-width="2.4"/>`).join("") + `<text x="${X(2.6)}" y="${Y(2 * ch) + 14}" class="t-xs" style="fill:var(--grid)">grid too short</text>`;
+  if (mode === "global") {
+    /* a circle through the ground behind (7.5 ft back) and in front (3 ft out), passing 1.5 ft below the base */
+    const cx = 1.5, cy = 4.47, R = 6.0, arc = [];
+    for (let g = -138.6; g <= 0.3 + 1e-9; g += 3.5) arc.push([cx + R * Math.cos(g * D2R), cy + R * Math.sin(g * D2R)]);
+    const scar = `<path d="${P(arc.map(S))}" stroke="var(--bad)" stroke-width="1.6" stroke-dasharray="6 4" fill="none"/>`;
+    const mass = `<path d="${P(arc.map(S).concat([S([7.5, H]), S([d + H * tw, H]), S([H * tw, H]), S([D * tw, D])]))}Z" fill="var(--soil-2)"/><path d="M${X(7.5)},${Y(H)}H${X(d + H * tw)}" stroke="var(--grass)" stroke-width="3"/>`;
+    v += `<g transform="rotate(${slip} ${X(cx)} ${Y(cy)})">${mass}${wall}</g>${scar}<circle cx="${X(cx)}" cy="${Y(cy)}" r="3" fill="var(--bad)"/><text x="${X(cx) + 6}" y="${Y(cy) - 4}" class="t-xs" style="fill:var(--bad)">centre of the slip</text>`;
+  } else v += `<g transform="translate(${dx * s} ${-dy * s}) rotate(${-rot} ${X(0)} ${Y(0)})">${wall}</g>`;
+  if ((mode === "overturn" || mode === "water") && rot > 2) v += `<path d="M${X(xc)},${Y(H)}l4,${2 * rot}l-3,${1.6 * rot}" stroke="var(--ink-2)" fill="none" stroke-width="1.4"/><text x="${X(xc) + 8}" y="${Y(H) + 14}" class="t-xs">tension crack</text>`;
+  if ((mode === "slide" || mode === "bearing") && e > 0.1) v += `<path d="M${X(-3.4)},${Y(D)}Q${X(-1.5)},${Y(D + 0.5 * e)} ${X(dx - 0.05)},${Y(D)}" fill="var(--soil)" stroke="var(--grass)" stroke-width="2"/>`;
+  if (mode === "bearing") v += `<path d="M${X(0.6)},${Y(0) + 3}Q${X(0.2)},${Y(-1.6)} ${X(-2.8)},${Y(D) - 1}" stroke="var(--bad)" stroke-dasharray="5 3" fill="none" stroke-width="1.4"/><text x="${X(-1)}" y="${Y(-1.2)}" class="t-xs t-end" style="fill:var(--bad)">soft soil shears</text>`;
+  v += `<circle cx="${X(dx)}" cy="${Y(dy)}" r="3.5" fill="var(--terra)"/><text x="${X(dx) - 6}" y="${Y(dy) + 16}" class="t-xs t-end t-terra">toe</text>`;
+  return v + `</svg>`;
+}
+RENDER.fail = el => {
+  el.innerHTML = modHead("fail", "How walls fail", "Engineers check a wall for each of these. The first three are external stability, checked in section IV; the rest need drainage, good construction, or an engineer.") +
+  `<div class="split"><div class="figure"><div id="fmFig"></div>
+    <div class="ctls">${chipRow("fmM", Object.keys(FAILS).map(k => [k, FAILS[k][0]]), FM.mode)}<button class="tbtn" id="fmR">Replay</button></div></div>
+   <div class="side" id="fmSide"></div></div>
+   <div class="grid3">
+    <div class="card"><h3>Safety factors</h3><p>A safety factor is resistance divided by load. The IBC (1807.2.3) and IRC (R404.4) both ask for at least <b>1.5</b> against overturning and sliding; many engineers use 2.0 for overturning of block walls. Bearing pressure must stay under what the soil allows.</p><p>${goLink("stab", "Run the checks →")}</p></div>
+    <div class="card"><h3>What most failures have in common</h3><p>Water. Nearly every failed residential wall in the Northeast had a drain that didn't work, no drainage stone, or roof and driveway water sent behind it, usually with frost-susceptible soil as backfill. The structure was often fine on paper.</p></div>
+    <div class="card"><h3>Signs to watch</h3><ul><li>The top out of line, or leaning past plumb (a wall built with batter should never lean <i>forward</i>).</li><li>Bulges, open joints, blocks cracking at the lips.</li><li>Cracks or sinkholes in the ground behind the top.</li><li>Wet face, ice or stains at mid-height; silty water from the outlets.</li></ul><p>${goLink("repair", "Troubleshooting →")}</p></div>
+   </div>`;
+  const side = () => { const f = FAILS[FM.mode]; $("#fmSide", el).innerHTML = `<div class="cap">Failure mode</div><h3>${f[0]}</h3><h4>What you'd see</h4><p>${f[1]}</p><h4>Why</h4><p>${f[2]}</p><h4>How to prevent it</h4><p>${f[3]}</p>${f[4] ? `<p class="note">Checked in ${goLink("stab", "Stability check")}.</p>` : `<p class="note">Not a hand calculation: drainage, construction and, for global stability, an engineer.</p>`}`; };
+  const draw = () => { $("#fmFig", el).innerHTML = fmFig(FM.mode, FM.t); };
+  bindChips(el, "fmM", v => { FM.mode = v; FM.clock = 0; side(); });
+  $("#fmR", el).onclick = () => { FM.clock = 0; };
+  side(); FM.t = RM ? 1 : 0; draw();
+  TICK.fail = dt => { if (RM) return; FM.clock += dt; const c = FM.clock % 5.2; const t = clamp((c - 0.6) / 3.2, 0, 1); if (Math.abs(t - FM.t) > 1e-4 || c < 0.05) { FM.t = t; draw(); } };
+};
+
+/* stacked pressure diagram (soil, surcharge, water) drawn off a plane x = xp(y) */
+function pdiag(pr, xp, X, Y, k) {
+  const pf = pr.prof, H = pr.H, idx = [];
+  for (let i = 0; i < pf.length; i += 6) idx.push(i);
+  if (idx[idx.length - 1] !== pf.length - 1) idx.push(pf.length - 1);
+  const pt = (i, f) => { const p = pf[i], y = H - p.z; return [X(xp(y)) + f(p) * k, Y(y)]; };
+  const lay = (fa, fb, c, op) => `<path d="${P(idx.map(i => pt(i, fb)).concat(idx.slice().reverse().map(i => pt(i, fa))))}Z" fill="${c}" opacity="${op}"/>`;
+  let s = lay(() => 0, p => p.ps, "var(--terra)", 0.55);
+  if (pr.Pq > 0) s += lay(p => p.ps, p => p.ps + p.pq, "var(--amber)", 0.65);
+  if (pr.Pw > 0) s += lay(p => p.ps + p.pq, p => p.ps + p.pq + p.pw, "var(--blue)", 0.6);
+  return s + `<path d="${P(idx.map(i => pt(i, p => p.ps + p.pq + p.pw)))}" stroke="var(--ink-2)" fill="none" stroke-width="1"/>`;
+}
+const arrowL = (x1, x2, y, c) => `<path d="M${x1},${y}H${x2 + 8}" stroke="${c}" stroke-width="2.6"/><path d="M${x2},${y}l10,-5v10z" fill="${c}"/>`;
+const arrowD = (x, y1, y2, c) => `<path d="M${x},${y1}V${y2 - 8}" stroke="${c}" stroke-width="2.6"/><path d="M${x},${y2}l-5,-10h10z" fill="${c}"/>`;
+function surchArrows(x1, x2, y, X, Y, q) {
+  let s = ""; for (let x = x1 + 0.4; x < x2 - 0.2; x += 0.9) s += arrowD(X(x), Y(y) - 20, Y(y) - 2, "var(--amber)");
+  return s + `<text x="${X(x2) - 4}" y="${Y(y) - 24}" class="t-xs t-end" style="fill:var(--amber)">q = ${q} psf</text>`;
+}
+
+/* =====================================================================
+   III. SOIL & WATER PRESSURE
+   Rankine pressure on a smooth vertical wall: p = K·γ·z, plus K·q for a
+   surcharge, plus γw·h below the water table. The stability check uses
+   Coulomb for block and stone walls, which is a little lower.
+   ===================================================================== */
+const EP = { H: 8, soil: "till", beta: 0, q: 0, hwp: 0, rest: false };
+function epCalc(o) {
+  const s = SOILS[o.soil], K = o.rest ? restK(s.phi, o.beta) : rankineKa(s.phi, o.beta);
+  const pr = pressure({ soil: o.soil, H: o.H, hw: o.hwp / 100 * o.H, q: o.q, K, ang: o.beta * D2R });
+  const dry = pressure({ soil: o.soil, H: o.H, hw: 0, q: o.q, K, ang: o.beta * D2R });
+  return { s, K, pr, dry, efp: K * s.g * Math.cos(o.beta * D2R), code: o.rest ? s.efp0 : s.efpA };
+}
+function epFig(o, r) {
+  const pr = r.pr, H = o.H, tb = Math.tan(o.beta * D2R), rise = o.beta ? Math.min(3, H * 0.4) : 0;
+  const s = Math.min(290 / (H + rise + 1.4), 34), x0 = 120, yb = 36 + (H + rise) * s, X = x => x0 + x * s, Y = y => yb - y * s;
+  const t = 0.9, xR = (600 - x0) / s, xs = t + (tb ? rise / tb : 0), k = 150 / pr.pmax;
+  let v = `<svg viewBox="0 0 600 ${yb + 46}" role="img" aria-label="Earth pressure diagram">`;
+  v += `<rect x="0" y="${Y(0)}" width="600" height="46" fill="var(--fnd)"/><rect x="0" y="${Y(1)}" width="${X(0)}" height="${s}" fill="var(--soil)"/>`;
+  v += `<path d="${P([[X(t), Y(0)], [X(xR), Y(0)], [X(xR), Y(H + rise)], [X(xs), Y(H + rise)], [X(t), Y(H)]])}Z" fill="var(--soil-2)"/><path d="M${X(t)},${Y(H)}L${X(xs)},${Y(H + rise)}H600" stroke="var(--grass)" stroke-width="3" fill="none"/>`;
+  if (pr.hw > 0) v += `<rect x="${X(t)}" y="${Y(pr.hw)}" width="${600 - X(t)}" height="${pr.hw * s}" fill="var(--water)" opacity=".3"/><path d="M${X(t)},${Y(pr.hw)}H600" stroke="var(--water)" stroke-width="1.2" stroke-dasharray="6 3"/><text x="594" y="${Y(pr.hw) - 4}" class="t-xs t-end" style="fill:var(--water)">▽ water table</text>`;
+  if (o.q) v += surchArrows(xs, xR, H + rise, X, Y, o.q);
+  v += `<rect x="${X(0)}" y="${Y(H)}" width="${t * s}" height="${H * s}" fill="var(--conc)" stroke="var(--conc-2)"/>`;
+  v += pdiag(pr, () => t, X, Y, k);
+  const yR = Y(pr.y), xw = X(t);
+  v += arrowL(xw + 150 * Math.max(...pr.prof.map(p => p.ps + p.pq + p.pw)) / pr.pmax + 34, xw + 2, yR, "var(--ink)");
+  v += `<text x="${xw + 160}" y="${yR - 8}" class="t-sm" style="fill:var(--ink)">P = ${lbs(pr.Ph)} lb/ft at ${ftin(pr.y)}</text>`;
+  const bot = pr.prof[pr.prof.length - 1];
+  v += `<text x="${X(t) + (bot.ps + bot.pq + bot.pw) * k + 6}" y="${Y(0) - 4}" class="t-xs">${fmt(bot.ps + bot.pq + bot.pw)} psf</text>`;
+  v += `<path d="M${X(-2.2)},${Y(0)}V${Y(H)}M${X(-2.35)},${Y(0)}h10M${X(-2.35)},${Y(H)}h10" stroke="var(--ink-3)"/><text x="${X(-2.5)}" y="${Y(H / 2)}" class="t-xs t-end">H = ${ftin(H)}</text>`;
+  return v + `</svg>`;
+}
+RENDER.soil = el => {
+  el.innerHTML = modHead("soil", "Soil &amp; water pressure", "Soil behind a wall pushes like a heavy liquid, about a third as hard as its weight. Water pushes at its full weight, and it doesn't care how strong the soil is. Change the soil, the slope, the load and the water.") +
+  `<div class="split"><div class="figure"><div id="epFig"></div>
+    <div class="ctls">${sl("epH", "Height", 2, 16, 0.5)}${sl("epW", "Water behind", 0, 100, 5)}</div>
+    <div class="figcap"><span class="legend"><span><i class="sw" style="background:var(--terra);opacity:.6"></i>soil</span><span><i class="sw" style="background:var(--amber);opacity:.7"></i>surcharge</span><span><i class="sw" style="background:var(--blue);opacity:.6"></i>water</span></span><span>Rankine pressure on a smooth vertical back; the resultant of a triangle acts at H/3.</span></div>
+    <div id="epChart"></div></div>
+   <div class="side"><h3>The load on the wall</h3>
+    <div class="form"><span>Backfill</span><select class="sel" id="epS">${BACKSOILS.map(k => `<option value="${k}">${esc(SOILS[k].name)}</option>`).join("")}</select>
+     <span>Slope above</span>${chipRow("epB", SLOPES, EP.beta)}
+     <span>Surcharge</span>${chipRow("epQ", SURCH, EP.q)}</div>
+    <label class="chk"><input type="checkbox" id="epR"> Wall can't lean (at-rest pressure)</label>
+    <div id="epOut"></div></div></div>
+   <div class="card wide" style="margin-bottom:20px"><h3>Soils of the Northeast</h3><div class="tblwrap"><table class="compare"><tr><th>Soil</th><th>γ pcf</th><th>φ</th><th>Rankine K<sub>a</sub>γ</th><th>IBC active / at rest</th><th>Bearing</th><th>Frost</th><th>Drains</th><th>Notes</th></tr>
+    ${Object.keys(SOILS).map(k => { const s = SOILS[k]; return `<tr><td>${esc(s.name)}</td><td class="n">${s.g}</td><td class="n">${s.phi}°</td><td class="n">${s.back ? fmt(rankineKa(s.phi, 0) * s.g) : "—"}</td><td class="n">${s.efpA ? `${s.efpA} / ${s.efp0}` : "—"}</td><td class="n">${fmt(s.qa)}</td><td>${s.frost}</td><td>${s.drain}</td><td>${esc(s.note)}</td></tr>`; }).join("")}</table></div>
+    <p class="note">Unit weights and friction angles are typical values for compacted backfill, chosen so the Rankine pressure lands near the IBC's presumptive values (Table 1610.1, psf per foot of depth). Bearing is the IBC Table 1806.2 presumptive value in psf. A geotechnical report replaces all of these.</p></div>
+   <div class="grid3">
+    <div class="card"><h3>Active, at rest, passive</h3><p><b>Active</b> (K<sub>a</sub> ≈ 0.3): the wall moves away a fraction of an inch and the soil behind relaxes into a wedge. Block, stone and cantilever walls are designed this way.</p><p><b>At rest</b> (K<sub>0</sub> ≈ 0.5): the wall can't move: basement walls braced by the floor, walls on ledge, corners.</p><p><b>Passive</b> (K<sub>p</sub> ≈ 3): soil being pushed, as in front of the toe. Large, but only after movement, and only if nobody digs it away.</p></div>
+    <div class="card"><h3>Water: the big one</h3><p>Saturated soil weighs less underwater, so its own push drops a little, but the water adds 62.4 psf per foot of depth on top. Fully saturated backfill more than doubles the force on a wall. A drainage system is cheaper than a wall designed to hold water.</p><p>${goLink("water", "Drainage & frost →")}</p></div>
+    <div class="card"><h3>Slopes and surcharges</h3><p>A 3:1 slope above the wall raises K<sub>a</sub> by about 20%; a 2:1 slope by about half in sand and gravel and 60–80% in till and silt. A uniform load q adds a rectangle of pressure K·q, acting at mid-height. Driveways are usually taken as 250 psf. Keep loads back at least the wall's height, or include them. ${goLink("tiers", "Tiers, slopes & loads →")}</p></div>
+   </div>`;
+  const draw = () => {
+    const r = epCalc(EP), pr = r.pr;
+    $("#epFig", el).innerHTML = epFig(EP, r);
+    const ratio = pr.Ph / r.dry.Ph;
+    $("#epOut", el).innerHTML = `<div class="tiles">${tile(EP.rest ? "K₀ at rest" : "Kₐ active", fmt(r.K, 3), `φ = ${r.s.phi}°, slope ${fmt(EP.beta, 1)}°`)}${tile("Equivalent fluid", `${fmt(r.efp)} <small>psf/ft</small>`, r.code ? `IBC table: ${r.code} psf/ft` : "")}${tile("Total push", `${lbs(pr.Ph)} <small>lb/ft</small>`, `at ${ftin(pr.y)} above the base`, "var(--terra)")}${tile("Versus drained", `×${fmt(ratio, 2)}`, pr.Pw ? `water adds ${lbs(pr.Pw)} lb/ft` : "no water", ratio > 1.3 ? "var(--bad)" : "var(--olive)")}</div>
+     <table class="kv"><tr><th>Part</th><th class="n">lb/ft</th><th class="n">acts at</th></tr><tr><td>Soil, ½·K·γ·H²</td><td class="n">${lbs(pr.Ps)}</td><td class="n">${ftin(pr.ys)}</td></tr>${pr.Pq ? `<tr><td>Surcharge, K·q·H</td><td class="n">${lbs(pr.Pq)}</td><td class="n">${ftin(pr.yq)}</td></tr>` : ""}${pr.Pw ? `<tr><td>Water, ½·γw·h²</td><td class="n">${lbs(pr.Pw)}</td><td class="n">${ftin(pr.yw)}</td></tr>` : ""}<tr class="tot"><td>Total</td><td class="n">${lbs(pr.Ph)}</td><td class="n">${ftin(pr.y)}</td></tr></table>
+     ${EP.beta > r.s.phi - 1 ? `<div class="callout bad">This slope is at or past the soil's friction angle: it won't stand without cohesion or reinforcement.</div>` : ""}
+     <div class="callout">${esc(r.s.note)}</div>`;
+    const pf = pr.prof, yy = z => EP.H - z;
+    $("#epChart", el).innerHTML = chart({ W: 560, H: 220, x0: 0, x1: Math.ceil(pr.pmax / 100) * 100, y0: 0, y1: EP.H, xl: "pressure, psf", yl: "height above base, ft", label: "Pressure with height",
+      xt: Array.from({ length: 6 }, (_, i) => Math.round(Math.ceil(pr.pmax / 100) * 100 * i / 5)), yt: Array.from({ length: Math.floor(EP.H / 2) + 1 }, (_, i) => i * 2),
+      series: [{ pts: pf.map(p => [p.ps, yy(p.z)]), c: "var(--terra)" }, { pts: pf.map(p => [p.ps + p.pq + p.pw, yy(p.z)]), c: "var(--ink-2)", dash: "4 3" }, { pts: r.dry.prof.map(p => [p.ps + p.pq, yy(p.z)]), c: "var(--olive)", w: 1.4 }],
+      legend: [{ c: "var(--terra)", label: "soil" }, { c: "var(--ink-2)", label: "total", dash: "4 3" }, { c: "var(--olive)", label: "total if drained" }] });
+  };
+  $("#epS", el).value = EP.soil; $("#epS", el).onchange = e => { EP.soil = e.target.value; draw(); };
+  bindChips(el, "epB", v => { EP.beta = +v; draw(); });
+  bindChips(el, "epQ", v => { EP.q = +v; draw(); });
+  bindRange(el, "epH", EP, "H", v => ftin(v), draw);
+  bindRange(el, "epW", EP, "hwp", v => v + "% of H", draw);
+  const rc = $("#epR", el); rc.checked = EP.rest; rc.onchange = () => { EP.rest = rc.checked; draw(); };
+  draw();
+};
+
+/* =====================================================================
+   IV. STABILITY CHECK
+   ===================================================================== */
+function stFig(o, r) {
+  const g = r.g, H = g.H, B = g.B, pr = r.P, tb = Math.tan(o.beta * D2R), rise = o.beta ? Math.min(H * 0.4, 5) : 0;
+  const xbt = g.back(H), diagW = 120, left = Math.max(2.5, H * 0.3), right = Math.max(B, xbt) + Math.max(3, H * 0.4);
+  const s = Math.min(320 / (H + rise + 1.5), (640 - 30 - diagW) / (left + right)), x0 = 16 + left * s, yb = 34 + (H + rise) * s;
+  const X = x => x0 + x * s, Y = y => yb - y * s, xL = -x0 / s, xR = (640 - x0) / s, VH = yb + 92;
+  const sb = g.soilBack, xst = sb(H), xs = xst + (tb ? rise / tb : 0), cant = o.type === "cant";
+  let v = `<svg viewBox="0 0 640 ${VH}" role="img" aria-label="Section of the wall with its loads">`;
+  v += `<rect x="0" y="${Y(0)}" width="640" height="${VH - Y(0)}" fill="var(--fnd)"/>`;
+  const xf0 = cant ? g.toe : 0, xfD = cant ? g.toe : g.front(g.D);
+  v += `<path d="${P([[0, Y(0)], [X(xf0), Y(0)], [X(xfD), Y(g.D)], [0, Y(g.D)]])}Z" fill="var(--soil)"/><path d="M0,${Y(g.D)}H${X(xfD)}" stroke="var(--grass)" stroke-width="3"/>`;
+  v += `<path d="${P([[X(sb(0)), Y(0)], [640, Y(0)], [640, Y(H + rise)], [X(xs), Y(H + rise)], [X(xst), Y(H)]])}Z" fill="var(--soil-2)"/><path d="M${X(xst)},${Y(H)}L${X(xs)},${Y(H + rise)}H640" stroke="var(--grass)" stroke-width="3" fill="none"/>`;
+  if (o.type === "grid") {
+    v += `<path d="${P([[X(sb(0)), Y(0)], [X(g.back(0)), Y(0)], [X(g.back(H)), Y(H)], [X(sb(H)), Y(H)]])}Z" fill="var(--soil)"/>`;
+    for (let y = 2 / 3; y < H - 0.4; y += 16 / 12) v += `<path d="M${X(g.front(y) + 0.05)},${Y(y)}H${X(g.back(y))}" stroke="var(--grid)" stroke-width="2"/>`;
+  }
+  const dz0 = cant ? g.tf : 0, dz1 = H - 0.6;
+  if (dz1 > dz0) v += `<path d="${P([[X(sb(dz0)), Y(dz0)], [X(sb(dz0) + 1), Y(dz0)], [X(sb(dz1) + 1), Y(dz1)], [X(sb(dz1)), Y(dz1)]])}Z" fill="var(--stone)"/>`;
+  if (r.hw > 0) v += `<path d="${P([[X(sb(0)), Y(0)], [640, Y(0)], [640, Y(r.hw)], [X(sb(r.hw)), Y(r.hw)]])}Z" fill="var(--water)" opacity=".3"/><path d="M${X(sb(r.hw))},${Y(r.hw)}H640" stroke="var(--water)" stroke-dasharray="6 3"/>`;
+  if (o.q) v += surchArrows(xs, xR, H + rise, X, Y, o.q);
+  if (!cant) v += `<rect x="${X(-0.5)}" y="${Y(0)}" width="${((o.type === "stone" ? B : g.d) + 1) * s}" height="${0.5 * s}" fill="var(--stone)" stroke="var(--stone-2)"/>`;
+  /* the wall */
+  if (o.type === "srw" || o.type === "grid") {
+    const n = Math.max(1, Math.round(H / (g.d >= 3 ? 1.5 : 8 / 12))), ch = H / n;
+    for (let i = 0; i < n; i++) v += `<rect x="${X(i * ch * g.tw)}" y="${Y((i + 1) * ch)}" width="${g.d * s}" height="${ch * s}" fill="var(--block)" stroke="var(--block-2)"/>`;
+  } else if (o.type === "stone") {
+    const r0 = B - g.bt;
+    v += `<path d="${P([[X(0), Y(0)], [X(B), Y(0)], [X(B), Y(H)], [X(r0), Y(H)]])}Z" fill="var(--boulder)" stroke="var(--boulder-2)" stroke-width="1.4"/>`;
+    const nb = Math.max(2, Math.round(H / 1.6)), bh = H / nb;
+    for (let i = 1; i < nb; i++) v += `<path d="M${X(r0 * i * bh / H)},${Y(i * bh)}H${X(B)}" stroke="var(--boulder-2)"/>`;
+    for (let i = 0; i < nb; i++) { const xa = r0 * (i + 0.5) * bh / H; for (let x = xa + 1.2 + (i % 2) * 0.6; x < B - 0.3; x += 1.5) v += `<path d="M${X(x)},${Y(i * bh)}V${Y((i + 1) * bh)}" stroke="var(--boulder-2)"/>`; }
+  } else {
+    v += `<rect x="${X(0)}" y="${Y(g.tf)}" width="${B * s}" height="${g.tf * s}" fill="var(--conc)" stroke="var(--conc-2)"/><rect x="${X(g.toe)}" y="${Y(H)}" width="${g.ts * s}" height="${(H - g.tf) * s}" fill="var(--conc)" stroke="var(--conc-2)"/>`;
+    if (o.key) v += `<rect x="${X(g.toe)}" y="${Y(0)}" width="${g.ts * s}" height="${o.key * s}" fill="var(--conc)" stroke="var(--conc-2)"/>`;
+    const c = 3 / 12;
+    v += `<path d="M${X(g.toe + g.ts - c)},${Y(H - c)}V${Y(c)}H${X(B - c)}M${X(c)},${Y(c)}H${X(g.toe + g.ts - c)}" stroke="var(--rebar)" stroke-width="1.6" fill="none" stroke-dasharray="7 2"/>`;
+    for (let y = g.D + 0.4; y < H - 0.5 && y < g.D + 1.5; y += 2) v += `<circle cx="${X(g.toe + g.ts / 2)}" cy="${Y(y)}" r="3" fill="var(--paper)" stroke="var(--ink-3)"/>`;
+  }
+  if (!cant) v += `<circle cx="${X(sb(0) + 0.5)}" cy="${Y(0.2)}" r="${Math.max(3, 0.17 * s)}" fill="var(--sheet)" stroke="var(--ink-2)"/>`;
+  else v += `<circle cx="${X(sb(0) + 0.5)}" cy="${Y(g.tf + 0.2)}" r="${Math.max(3, 0.17 * s)}" fill="var(--sheet)" stroke="var(--ink-2)"/>`;
+  /* loads */
+  const k = diagW / pr.pmax;
+  v += pdiag(pr, g.back, X, Y, k);
+  const yR = Y(pr.y), xpl = X(g.back(pr.y));
+  v += arrowL(xpl + diagW + 16, xpl + 3, yR, "var(--ink)") + `<text x="${xpl + diagW + 20}" y="${yR + 4}" class="t-sm" style="fill:var(--ink)">Pₕ ${lbs(pr.Ph)} lb/ft</text>`;
+  const xbar = r.Mw / r.Wt, yW = Y(H * 0.5);
+  v += arrowD(X(xbar), yW - 30, yW + 30, "var(--olive)") + `<text x="${X(xbar) + 6}" y="${yW - 18}" class="t-sm" style="fill:var(--olive)">W ${lbs(r.Wt)} lb/ft</text>`;
+  /* base: middle third, resultant, bearing pressure */
+  v += `<rect x="${X(B / 3)}" y="${Y(0) - 3}" width="${B / 3 * s}" height="5" fill="var(--olive)" opacity=".55"/>`;
+  if (isFinite(r.qmax) && r.qmax > 0) {
+    const qs = 42 / r.qmax, yq = Y(0);
+    const pts = r.mid ? [[X(0), yq], [X(0), yq + r.qmax * qs], [X(B), yq + r.qmin * qs], [X(B), yq]] : [[X(0), yq], [X(0), yq + r.qmax * qs], [X(Math.min(B, 3 * r.xr)), yq]];
+    v += `<path d="${P(pts)}Z" fill="${r.ok.q ? "var(--terra)" : "var(--bad)"}" opacity=".4" stroke="var(--terra)"/><text x="${X(0) - 4}" y="${yq + 42}" class="t-xs t-end">q ${fmt(r.qmax)} psf</text>`;
+  }
+  if (r.xr > 0 && r.xr < B) v += `<path d="M${X(r.xr)},${Y(0) - 4}l-5,-9h10z" fill="${r.mid ? "var(--olive)" : "var(--bad)"}"/>`;
+  v += `<circle cx="${X(0)}" cy="${Y(0)}" r="3.5" fill="var(--terra)"/><text x="${X(0) - 6}" y="${Y(0) - 6}" class="t-xs t-end t-terra">toe</text>`;
+  v += `<path d="M${X(xL + 0.8)},${Y(0)}V${Y(H)}M${X(xL + 0.65)},${Y(0)}h8M${X(xL + 0.65)},${Y(H)}h8" stroke="var(--ink-3)"/><text x="${X(xL + 0.8) + 5}" y="${Y(H) + 12}" class="t-xs">H ${ftin(H)}</text>`;
+  v += `<path d="M${X(xL + 1.6)},${Y(g.D)}V${Y(H)}M${X(xL + 1.45)},${Y(g.D)}h8M${X(xL + 1.45)},${Y(H)}h8" stroke="var(--ink-3)"/><text x="${X(xL + 1.6) + 5}" y="${Y((g.D + H) / 2)}" class="t-xs">exposed ${ftin(o.Hex)}</text>`;
+  v += `<text x="634" y="${VH - 8}" class="t-zone t-end">${esc(SOILS[o.fnd].short)} below · ${esc(SOILS[o.soil].short)} behind</text>`;
+  return v + `</svg>`;
+}
+const chkLine = (label, val, need, txt, good) => `<div class="checkline${good ? "" : " fail"}"><span>${label}</span><div class="bar"><i style="width:${clamp(val / (need * 2), 0, 1) * 100}%"></i><b style="left:50%"></b></div><span class="n">${txt}</span></div>`;
+function stCtls(o) {
+  if (o.type === "srw" || o.type === "grid") return `<span>Block depth</span>${chipRow("stD", [[1, '12"'], [1.5, '18"'], [2, '24"'], [3.4, '41"', "Large-format gravity block, about 2,000 lb each"]], o.d)}
+    <span>Batter</span>${chipRow("stBt", [[3, "3°"], [6, "6°"], [9, "9°"], [12, "12°"]], o.batter)}${o.type === "grid" ? `<span>Grid length</span><span>${sl("stGk", "", 0.5, 1.2, 0.01)}</span>` : ""}`;
+  if (o.type === "stone") return `<span>Material</span>${chipRow("stG", STONE_G, o.stoneG)}<span>Base width</span><span>${sl("stSB", "", 0.3, 1, 0.05)}</span><span>Top width</span><span>${sl("stST", "", 1, 4, 0.25)}</span>`;
+  return `<span>Footing width</span><span>${sl("stCB", "", 0.35, 0.9, 0.01)}</span><span>Toe</span><span>${sl("stCT", "", 0, 0.6, 0.01)}</span><span>Stem</span>${chipRow("stTs", [[8, '8"'], [10, '10"'], [12, '12"'], [16, '16"']], o.cTs)}<span>Footing</span>${chipRow("stTf", [[10, '10"'], [12, '12"'], [18, '18"'], [24, '24"']], o.cTf)}<span>Frost depth</span>${chipRow("stFr", [[3.5, '42"'], [4, '48"'], [5, '60"']], o.frost)}<span>Shear key</span>${chipRow("stK", [[0, "None"], [1, '12"'], [1.5, '18"'], [2, '24"']], o.key)}`;
+}
+RENDER.stab = el => {
+  el.innerHTML = modHead("stab", "Stability check", "The three external checks an engineer runs first: does the wall tip over, slide out, or overload the soil under it? Pick a wall, a height and the soil, and watch the safety factors.") +
+  `<div class="split"><div class="figure"><div id="stFig"></div>
+    <div class="ctls">${sl("stH", "Exposed height", 1, 12, 0.25)}${sl("stW", "Water behind", 0, 100, 5)}</div>
+    <div class="figcap"><span class="legend"><span><i class="sw" style="background:var(--terra);opacity:.6"></i>earth pressure</span><span><i class="sw" style="background:var(--olive);opacity:.6"></i>middle third of the base</span><span>▲ where the resultant meets the base</span></span></div></div>
+   <div class="side"><h3>The wall</h3>${chipRow("stT", Object.keys(WTYPES).map(k => [k, WTYPES[k][0]]), ST.type)}
+    <p class="note" id="stTn" style="margin-top:4px"></p>
+    <div class="form" id="stCt"></div>
+    <h4>The ground</h4>
+    <div class="form"><span>Retained</span><select class="sel" id="stS">${BACKSOILS.map(k => `<option value="${k}">${esc(SOILS[k].name)}</option>`).join("")}</select>
+     <span>Foundation</span><select class="sel" id="stF">${FNDSOILS.map(k => `<option value="${k}">${esc(SOILS[k].name)}</option>`).join("")}</select>
+     <span>Slope above</span>${chipRow("stB", SLOPES, ST.beta)}<span>Surcharge</span>${chipRow("stQ", SURCH, ST.q)}</div>
+    <div class="chips"><label class="chk"><input type="checkbox" id="stP"> Count passive soil in front</label> <label class="chk"><input type="checkbox" id="stR"> At rest (wall can't lean)</label></div>
+    <div id="stOut"></div></div></div>
+   <div class="grid2"><div class="card"><h3>How it's calculated</h3><div id="stEq"></div></div><div class="card"><h3>Weights and lever arms</h3><div id="stTbl"></div><p class="note">Per foot of wall. Arms measured from the toe. Earth pressure on a block or stone wall follows Coulomb with wall friction δ = ⅔φ, as the NCMA method does; on the cantilever it is Rankine, on a vertical plane through the heel. Cohesion is ignored, which is conservative for clay. The vertical part of the earth thrust (Pᵥ) helps hold the wall down.</p></div></div>`;
+  const ctl = () => {
+    $("#stTn", el).textContent = WTYPES[ST.type][1];
+    $("#stCt", el).innerHTML = stCtls(ST);
+    const c = $("#stCt", el);
+    bindChips(c, "stD", v => { ST.d = +v; draw(); }); bindChips(c, "stBt", v => { ST.batter = +v; draw(); });
+    bindChips(c, "stG", v => { ST.stoneG = +v; draw(); }); bindChips(c, "stTs", v => { ST.cTs = +v; draw(); }); bindChips(c, "stTf", v => { ST.cTf = +v; draw(); });
+    bindChips(c, "stFr", v => { ST.frost = +v; draw(); }); bindChips(c, "stK", v => { ST.key = +v; draw(); });
+    const H = () => wallGeom(ST).H;
+    if ($("#stGk", c)) bindRange(c, "stGk", ST, "gridK", v => `${fmt(v, 2)} H = ${ftin(Math.max(4, v * H()))}`, draw);
+    if ($("#stSB", c)) bindRange(c, "stSB", ST, "stoneB", v => `${fmt(v, 2)} H = ${ftin(Math.max(ST.stoneT, v * H()))}`, draw);
+    if ($("#stST", c)) bindRange(c, "stST", ST, "stoneT", v => ftin(v), draw);
+    if ($("#stCB", c)) bindRange(c, "stCB", ST, "cB", v => `${fmt(v, 2)} H = ${ftin(v * H())}`, draw);
+    if ($("#stCT", c)) bindRange(c, "stCT", ST, "cToe", v => `${fmt(v, 2)} B = ${ftin(v * ST.cB * H())}`, draw);
+  };
+  const relabel = () => { const c = $("#stCt", el), H = wallGeom(ST).H; [["stGk", v => `${fmt(v, 2)} H = ${ftin(Math.max(4, v * H))}`], ["stSB", v => `${fmt(v, 2)} H = ${ftin(Math.max(ST.stoneT, v * H))}`], ["stCB", v => `${fmt(v, 2)} H = ${ftin(v * H)}`], ["stCT", v => `${fmt(v, 2)} B = ${ftin(v * ST.cB * H)}`]].forEach(([id, f]) => { const o = $("#" + id + "o", c), i = $("#" + id, c); if (o && i) o.textContent = f(+i.value); }); };
+  const draw = () => {
+    const r = stability(ST), g = r.g, P_ = r.P;
+    relabel();
+    $("#stFig", el).innerHTML = stFig(ST, r);
+    const fail = [!r.ok.o && "overturning", !r.ok.s && "sliding", !r.ok.q && "bearing"].filter(Boolean);
+    $("#stOut", el).innerHTML = `<div class="status"><span class="badge ${r.pass ? "ok" : "bad"}">${r.pass ? "Passes" : "Fails"}</span>${r.pass ? `the three external checks${r.mid ? "" : ", but the resultant is outside the middle third"}` : esc(fail.join(", "))}<small>${esc(WTYPES[ST.type][0])}, ${ftin(ST.Hex)} exposed, ${ftin(g.H)} total</small></div>
+      ${chkLine("Overturning", r.FSo, 1.5, `${fmt(r.FSo, 2)}`, r.ok.o)}${chkLine("Sliding", r.FSs, 1.5, `${fmt(r.FSs, 2)}`, r.ok.s)}${chkLine("Bearing", r.qa / r.qmax, 1, `${fmt(r.qmax)} psf`, r.ok.q)}
+      <div class="checkline${r.mid ? "" : " warnb"}"><span>Resultant</span><div class="bar" style="background:linear-gradient(90deg,var(--paper-3) 33.3%,var(--olive-4) 33.3%,var(--olive-4) 66.7%,var(--paper-3) 66.7%)"><b style="left:${clamp(r.xr / g.B, 0, 1) * 100}%;background:${r.mid ? "var(--olive)" : "var(--amber)"};width:4px"></b></div><span class="n">${fmt(r.xr / g.B, 2)} B</span></div>
+      <p class="note">Bars: the tick is the minimum (1.5 for overturning and sliding, the presumptive bearing of ${fmt(r.qa)} psf). The resultant should land in the middle third of the base.</p>
+      <div class="flags">${r.flags.map(f => `<div class="callout ${f[0]}">${esc(f[1])}</div>`).join("")}</div>
+      ${ST.type === "srw" ? `<p class="note">With these soils, slope and load, ${ST.d === 1 ? "12 in." : ftin(ST.d)} blocks at ${ST.batter}° stand as a gravity wall up to about <b>${ftin(maxGravity(ST))}</b> exposed.</p>` : ""}`;
+    $("#stEq", el).innerHTML = `<div class="eq">K = <b>${fmt(g.K, 3)}</b> (${esc(g.method)})<br>Pₕ = ½·K·γ·H²·cos + K·q·H·cos + ½·γw·h² = <b>${lbs(P_.Ph)}</b> lb/ft at ${ftin(P_.y)}<br>Pᵥ = <b>${lbs(P_.Pv)}</b> lb/ft${r.U ? `, uplift U = ${lbs(r.U)} lb/ft` : ""}</div>
+      <div class="eq">FS overturning = Mr / Mo = ${lbs(r.Mr)} / ${lbs(r.Mo)} = <b>${fmt(r.FSo, 2)}</b></div>
+      <div class="eq">N = W + Pᵥ${r.U ? " − U" : ""} = <b>${lbs(r.N)}</b> lb/ft, μ = ${fmt(g.mu, 2)} (${esc(g.muNote)})<br>FS sliding = (N·μ${r.Pp ? " + Pp" : ""}) / Pₕ = (${lbs(r.N * g.mu)}${r.Pp ? ` + ${lbs(r.Pp)}` : ""}) / ${lbs(P_.Ph)} = <b>${fmt(r.FSs, 2)}</b></div>
+      <div class="eq">e = B/2 − (Mr − Mo)/N = ${ftin(g.B / 2)} − ${ftin(r.xr)} = <b>${fmt(r.e, 2)} ft</b> (B/6 = ${fmt(g.B / 6, 2)})<br>q max = ${r.mid ? "N/B·(1 + 6e/B)" : "2N / 3(B/2 − e)"} = <b>${fmt(r.qmax)} psf</b> ≤ ${fmt(r.qa)}</div>`;
+    $("#stTbl", el).innerHTML = `<table class="kv"><tr><th>Item</th><th class="n">lb/ft</th><th class="n">arm</th><th class="n">moment</th></tr>${g.parts.map(p => `<tr><td>${esc(p.id)}</td><td class="n">${lbs(p.W)}</td><td class="n">${ftin(p.x)}</td><td class="n">${lbs(p.W * p.x)}</td></tr>`).join("")}<tr><td>Pᵥ, earth thrust</td><td class="n">${lbs(P_.Pv)}</td><td class="n">${ftin(g.back(P_.yv))}</td><td class="n">${lbs(r.Mv)}</td></tr><tr class="tot"><td>Resisting</td><td class="n">${lbs(r.Wt + P_.Pv)}</td><td></td><td class="n">${lbs(r.Mr)}</td></tr><tr><td>Pₕ, earth${P_.Pw ? " and water" : ""}</td><td class="n">${lbs(P_.Ph)}</td><td class="n">${ftin(P_.y)}</td><td class="n">${lbs(P_.Mo)}</td></tr>${r.U ? `<tr><td>Uplift</td><td class="n">${lbs(r.U)}</td><td class="n">${ftin(g.B * 2 / 3)}</td><td class="n">${lbs(r.Mu)}</td></tr>` : ""}<tr class="tot"><td>Overturning</td><td></td><td></td><td class="n">${lbs(r.Mo)}</td></tr></table>`;
+  };
+  bindChips(el, "stT", v => { ST.type = v; ctl(); draw(); });
+  bindRange(el, "stH", ST, "Hex", v => ftin(v), draw);
+  bindRange(el, "stW", ST, "hwp", v => v + "% of H", draw);
+  $("#stS", el).value = ST.soil; $("#stS", el).onchange = e => { ST.soil = e.target.value; draw(); };
+  $("#stF", el).value = ST.fnd; $("#stF", el).onchange = e => { ST.fnd = e.target.value; draw(); };
+  bindChips(el, "stB", v => { ST.beta = +v; draw(); }); bindChips(el, "stQ", v => { ST.q = +v; draw(); });
+  [["stP", "passive"], ["stR", "rest"]].forEach(([id, k]) => { const c = $("#" + id, el); c.checked = ST[k]; c.onchange = () => { ST[k] = c.checked; draw(); }; });
+  ctl(); draw();
+  stSync = () => { setChip(el, "stT", ST.type); $("#stH", el).value = ST.Hex; $("#stHo", el).textContent = ftin(ST.Hex); $("#stS", el).value = ST.soil; ctl(); draw(); };
+};
+let stSync = null;
+/* hand a design from another section to the stability check */
+function sendToStab(o) { Object.assign(ST, o); if (stSync) stSync(); go("stab"); }
+
+/* =====================================================================
+   V. WALL TYPES
+   Heights are typical residential practice: "plain" is what is commonly
+   built without an engineer (and never over the 4 ft permit line), "max"
+   what the system reaches with an engineered design.
+   ===================================================================== */
+const ROOM = { little: 0, some: 1, lots: 2 };
+const WALLS = [
+  { id: "field", name: "Dry-laid fieldstone", plain: 3, max: 4, room: "some", machine: false, look: "traditional", cost: 3, life: "A century or more, if it's relaid as it moves", how: "Stones laid without mortar, battered about 2 in. per foot, at least half as thick at the base as it is tall, with long through-stones tying face to back and small stones (hearting) packed in between.", ne: "The look of New England. Old farm walls are free-standing boundary walls: rebuild, don't just backfill against, them." },
+  { id: "boulder", name: "Boulder wall (rockery)", plain: 4, max: 10, room: "some", machine: true, look: "natural", cost: 2, life: "Very long; stones can be reset", how: "Large stones set by excavator, each course bearing on two below, battered back, with crushed stone behind. Sized as two-man, three-man and four-man boulders (roughly 18–24, 24–36 and 36–48 in.). Base stones the biggest, at least a third of the wall height deep.", ne: "Common on wooded, ledgy lots, where the stone comes out of the excavation. Over 4 ft, have it engineered." },
+  { id: "granite", name: "Cut granite blocks", plain: 4, max: 10, room: "some", machine: true, look: "formal", cost: 4, life: "Centuries", how: "Split or sawn granite blocks, new or reclaimed (old curbing, foundation and bridge stone), set dry on a crushed stone pad with a slight batter.", ne: "Quarried in New England for two centuries; reclaimed granite is a regional specialty." },
+  { id: "srw", name: "Segmental block, gravity", plain: 3, max: 4, room: "little", machine: false, look: "clean", cost: 2, life: "50+ years with durable units", how: "Dry-cast concrete units (12 in. deep, 50–90 lb) stacked with a built-in setback on a crushed stone pad, with drainage stone behind. Their weight alone holds the soil.", ne: "The workhorse of residential walls and the one people build themselves. Specify freeze-thaw-tested units and keep salt off them." },
+  { id: "grid", name: "Segmental block with geogrid", plain: 4, max: 20, room: "lots", machine: true, look: "clean", cost: 2, life: "75+ years", how: "The same units tied into compacted fill with geogrid layers 0.6–1.0 times the wall height long. Needs room to dig back that far.", ne: "The usual answer for walls of 4–20 ft on house lots and commercial sites, where there's room behind." },
+  { id: "bigblock", name: "Large-format gravity block", plain: 4, max: 12, room: "some", machine: true, look: "clean", cost: 3, life: "75+ years", how: "Wet-cast concrete blocks of 1,000–4,000 lb (24–60 in. deep) set by excavator. Heavy enough to stand 6–10 ft as a gravity wall; can take geogrid for more.", ne: "Good where there's no room for geogrid: near property lines, ledge, or a house." },
+  { id: "timber", name: "Pressure-treated timber", plain: 3, max: 4, room: "some", machine: false, look: "rustic", cost: 1, life: "20–30 years", how: "6×6 or 6×8 ground-contact treated timbers (AWPA UC4B), stepped back, spiked together, with deadmen (tie-back timbers) every 6–8 ft every other course.", ne: "Cheap and quick, but it rots from the inside; many 1980s and '90s timber walls are being replaced now." },
+  { id: "cant", name: "Poured concrete cantilever", plain: 4, max: 16, room: "some", machine: true, look: "formal", cost: 4, life: "75+ years", how: "A reinforced concrete stem on a footing below frost, about 0.5–0.6 times the height wide. Thin, so it fits tight sites; faced with stone veneer or form liners.", ne: "The choice next to buildings, driveways and property lines, and for walls that are part of the foundation." },
+  { id: "cmu", name: "Reinforced CMU cantilever", plain: 4, max: 10, room: "some", machine: false, look: "formal", cost: 3, life: "75+ years", how: "Concrete masonry on a poured footing, with vertical bars grouted in the cells and bond beams. Usually veneered with stone or stucco.", ne: "Built by masons without big equipment; good for garden walls and site walls that need a finished face." },
+  { id: "gabion", name: "Gabion baskets", plain: 3, max: 15, room: "some", machine: true, look: "modern", cost: 2, life: "50+ years (galvanized and PVC-coated wire)", how: "Wire mesh baskets filled with stone, stacked and stepped back. Heavy, flexible and free-draining.", ne: "More common on streams and highways, and in modern landscapes. Needs fabric behind and good stone to fill." },
+  { id: "anchored", name: "Anchored or nailed wall", plain: 0, max: 30, room: "little", machine: true, look: "any", cost: 4, life: "Design life 75+ years", how: "Soil nails, helical tiebacks, or soldier piles and lagging drilled or driven into the ground behind, with a concrete or block facing.", ne: "Tight urban sites, cuts under existing buildings and repairs to failing walls. Always engineered." }
+];
+function wtIcon(id) {
+  let s = `<svg viewBox="0 0 220 110" aria-hidden="true"><rect x="0" y="86" width="220" height="24" fill="var(--fnd)"/><path d="M0,86H70" stroke="var(--grass)" stroke-width="2.5"/><path d="M110,30H220V86H100Z" fill="var(--soil-2)"/><path d="M118,30H220" stroke="var(--grass)" stroke-width="2.5"/>`;
+  const B = (x, y, w, h, f = "var(--block)", st = "var(--block-2)") => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}" stroke="${st}"/>`;
+  if (id === "srw" || id === "grid") { for (let i = 0; i < 7; i++) s += B(80 + i * 1.6, 79 - i * 8, 22, 8); if (id === "grid") [71, 55, 39].forEach(y => { s += `<path d="M${102 + (79 - y) / 5},${y}H${166 + (79 - y) / 5}" stroke="var(--grid)" stroke-width="2"/>`; }); }
+  else if (id === "bigblock") { for (let i = 0; i < 3; i++) s += B(76 + i * 3, 70 - i * 18, 40, 18); }
+  else if (id === "field") s += `<path d="M66,86L98,86L104,30L90,30Z" fill="var(--boulder)" stroke="var(--boulder-2)"/>` + [[70, 78], [82, 80], [92, 76], [74, 66], [86, 64], [96, 62], [78, 52], [90, 50], [82, 40], [94, 38]].map(p => `<ellipse cx="${p[0]}" cy="${p[1]}" rx="7" ry="4.5" fill="var(--granite)" stroke="var(--boulder-2)"/>`).join("");
+  else if (id === "boulder") s += [[64, 70, 20, 15], [96, 72, 18, 14], [76, 46, 17, 13], [104, 48, 13, 12], [92, 26, 13, 10]].map(b => `<ellipse cx="${b[0] + 8}" cy="${b[1]}" rx="${b[2]}" ry="${b[3]}" fill="var(--boulder)" stroke="var(--boulder-2)" stroke-width="1.2"/>`).join("");
+  else if (id === "granite") { [[74, 68, 44, 18], [80, 50, 38, 18], [86, 32, 32, 18]].forEach(b => { s += B(b[0], b[1], b[2], b[3], "var(--granite)", "var(--boulder-2)"); }); }
+  else if (id === "timber") { for (let i = 0; i < 6; i++) s += B(84 + i * 2.5, 77 - i * 9, 14, 9, "var(--wood)", "var(--wood-2)"); s += B(98, 59, 50, 6, "var(--wood)", "var(--wood-2)") + B(146, 55, 6, 12, "var(--wood)", "var(--wood-2)"); }
+  else if (id === "cant" || id === "cmu") { s += B(70, 80, 70, 10, "var(--conc)", "var(--conc-2)") + B(92, 28, 12, 52, "var(--conc)", "var(--conc-2)"); if (id === "cmu") for (let y = 34; y < 80; y += 8) s += `<path d="M92,${y}h12" stroke="var(--conc-2)"/>`; s += `<path d="M101,30V84H136" stroke="var(--rebar)" stroke-width="1.4" fill="none" stroke-dasharray="4 2"/>`; }
+  else if (id === "gabion") { for (let i = 0; i < 3; i++) { const x = 70 + i * 10, y = 68 - i * 18; s += B(x, y, 34, 18, "var(--stone)", "var(--ink-3)") + `<path d="M${x},${y + 6}h34M${x},${y + 12}h34M${x + 8},${y}v18M${x + 17},${y}v18M${x + 26},${y}v18" stroke="var(--ink-3)" stroke-width=".6"/>`; } }
+  else if (id === "anchored") { s += B(92, 28, 8, 60, "var(--conc)", "var(--conc-2)") + [40, 58, 76].map(y => `<path d="M100,${y}L176,${y + 16}" stroke="var(--ink-2)" stroke-width="1.6"/><rect x="164" y="${y + 9}" width="16" height="9" fill="var(--conc-2)" transform="rotate(12 172 ${y + 13})"/>`).join(""); }
+  return s + `</svg>`;
+}
+function chooseWall(o) {
+  const out = WALLS.map(w => {
+    const why = [];
+    if (o.h > w.max) why.push(`tops out about ${w.max} ft`);
+    if (ROOM[w.room] > ROOM[o.room]) why.push(`needs ${w.room === "lots" ? "room behind the wall about its height" : "some room behind the wall"}`);
+    if (w.machine && !o.machine && o.h > 3) why.push("needs an excavator at this height");
+    const eng = o.h > 4 || o.h > w.plain;
+    let score = 10 - w.cost * (o.budget === "low" ? 2 : o.budget === "mid" ? 1 : 0.3);
+    if (o.look !== "any" && w.look === o.look) score += 4;
+    if (eng) score -= 2;
+    if (w.id === "timber") score -= 1.5;               /* a 20–30 year wall */
+    if (w.id === "anchored") score -= 6;
+    return { w, fit: !why.length, why, eng, score };
+  });
+  return out.sort((a, b) => (b.fit - a.fit) || (b.score - a.score));
+}
+const CH = { h: 4, room: "some", machine: true, look: "any", budget: "mid" };
+RENDER.types = el => {
+  el.innerHTML = modHead("types", "Wall types", "Eleven ways to hold up a grade change, from a fieldstone wall to a tied-back cut. Tell the chooser about the site and it ranks them.") +
+  `<div class="split"><div class="figure" style="padding:14px"><h3 style="margin-bottom:6px">Which wall?</h3><div id="chOut"></div></div>
+   <div class="side"><h3>The site</h3><div class="form"><span>Exposed height</span><span>${sl("chH", "", 1, 20, 0.5)}</span>
+    <span>Room behind</span>${chipRow("chR", [["little", "Little", "Under about 2 ft: a property line, a house, ledge"], ["some", "Some", "About half the wall height"], ["lots", "Lots", "About the wall height or more"]], CH.room)}
+    <span>Machine access</span>${chipRow("chM", [["yes", "Excavator"], ["no", "Hand only"]], CH.machine ? "yes" : "no")}
+    <span>Look</span>${chipRow("chL", [["any", "Any"], ["natural", "Natural"], ["traditional", "Traditional"], ["clean", "Clean"], ["formal", "Formal"], ["modern", "Modern"], ["rustic", "Rustic"]], CH.look)}
+    <span>Budget</span>${chipRow("chB", [["low", "Tight"], ["mid", "Middle"], ["high", "Open"]], CH.budget)}</div>
+    <p class="note">A rough sort from typical practice; site, soils, water and the local market change the answer.</p></div></div>
+   <div class="wtgrid" id="wtG">${WALLS.map(w => `<div class="card" id="wt-${w.id}">${wtIcon(w.id)}<span class="cap">${"$".repeat(w.cost)} · up to ${w.max} ft · ${esc(w.life)}</span><h3>${esc(w.name)}</h3><p>${esc(w.how)}</p><p class="note">${esc(w.ne)}</p></div>`).join("")}</div>`;
+  const draw = () => {
+    const res = chooseWall(CH);
+    $("#chOut", el).innerHTML = `<div class="rlist">${res.map((r, i) => `<button data-wt="${r.w.id}"${r.fit ? "" : ` style="opacity:.55"`}>${r.fit ? `<b>${i + 1}.</b> ` : ""}${esc(r.w.name)} ${r.fit ? (r.eng ? pill("warn", "engineer") : pill("ok", "fits")) : pill("dead", "no")}<small>${r.fit ? esc(r.w.look) + " · " + "$".repeat(r.w.cost) + (r.eng ? (r.w.plain ? " · over " + (CH.h > 4 ? "the 4 ft permit line" : `${r.w.plain} ft, have it designed`) : " · always engineered") : "") : esc(r.why.join("; "))}</small></button>`).join("")}</div>`;
+    $$(".wtgrid .card", el).forEach(c => c.classList.toggle("on", c.id === "wt-" + res[0].w.id));
+  };
+  bindRange(el, "chH", CH, "h", v => ftin(v), draw);
+  bindChips(el, "chR", v => { CH.room = v; draw(); }); bindChips(el, "chM", v => { CH.machine = v === "yes"; draw(); });
+  bindChips(el, "chL", v => { CH.look = v; draw(); }); bindChips(el, "chB", v => { CH.budget = v; draw(); });
+  $("#chOut", el).addEventListener("click", e => { const b = e.target.closest("[data-wt]"); if (!b) return; const c = $("#wt-" + b.dataset.wt, el); if (c) c.scrollIntoView({ behavior: RM ? "auto" : "smooth", block: "center" }); });
+  draw();
+};
+
+/* =====================================================================
+   VI. BLOCK WALLS & GEOGRID
+   The geogrid layout is a rule of thumb for planning and estimating, in
+   the spirit of manufacturers' typical charts; the design for a real wall
+   over 4 ft comes from the maker's engineered tables or an engineer.
+   ===================================================================== */
+const GP = { Hex: 6, ch: 8, load: "none", soil: "gravel" };
+function gridPlan(o) {
+  const ch = o.ch / 12, Dc = Math.ceil(Math.max(0.5, o.Hex / 8) / ch - 1e-9), n = Math.ceil(o.Hex / ch - 1e-9) + Dc, H = n * ch;
+  const k = 0.7 + (o.load === "slope" || o.load === "both" ? 0.2 : 0) + (o.load === "surch" || o.load === "both" ? 0.1 : 0);
+  const L = Math.ceil(Math.max(4, k * H) * 2 - 1e-9) / 2;
+  const sc = Math.max(1, Math.floor((o.load === "none" ? 24 : 16) / o.ch));
+  const first = o.ch >= 8 ? 1 : 2, layers = [];
+  for (let c = first; c <= n - 1; c += sc) layers.push(c);
+  if (layers.length && n - layers[layers.length - 1] > sc) layers.push(n - 1);
+  const grav = maxGravity({ ...ST, soil: o.soil, fnd: ST.fnd, beta: o.load === "slope" || o.load === "both" ? 18.43 : 0, q: o.load === "surch" || o.load === "both" ? 250 : 0, hwp: 0, rest: false, d: 1, batter: 6 });
+  return { n, Dc, H, L, k, sc, layers, area: layers.length * L, grav, needGrid: o.Hex > grav };
+}
+function gpFig(o, r) {
+  const ch = o.ch / 12, s = Math.min(26, 300 / (r.H + 1)), x0 = 70, yb = 20 + (r.H + 0.6) * s, X = x => x0 + x * s, Y = y => yb - y * s, tw = 0.75 / 8;
+  let v = `<svg viewBox="0 0 ${Math.max(420, X(r.L + 3))} ${yb + 30}" role="img" aria-label="Geogrid layout">`;
+  v += `<rect x="0" y="${Y(0)}" width="100%" height="30" fill="var(--fnd)"/><rect x="${X(1)}" y="${Y(r.H)}" width="${(r.L + 2) * s}" height="${r.H * s}" fill="var(--soil)"/><rect x="0" y="${Y(r.Dc * ch)}" width="${X(0)}" height="${r.Dc * ch * s}" fill="var(--soil)"/>`;
+  for (let i = 0; i < r.n; i++) v += `<rect x="${X(i * ch * tw)}" y="${Y((i + 1) * ch)}" width="${s}" height="${ch * s}" fill="var(--block)" stroke="var(--block-2)" stroke-width=".8"/>`;
+  r.layers.forEach(c => { const y = c * ch, x = c * ch * tw; v += `<path d="M${X(x + 0.05)},${Y(y)}H${X(x + r.L)}" stroke="var(--grid)" stroke-width="2.4"/><text x="${X(x + r.L) + 4}" y="${Y(y) + 3}" class="t-xs" style="fill:var(--grid)">course ${c} · ${fmt(y * 12)} in.</text>`; });
+  v += `<path d="M${X(0)},${Y(r.Dc * ch)}H0" stroke="var(--grass)" stroke-width="2"/><text x="${X(0) - 4}" y="${Y(r.Dc * ch) - 4}" class="t-xs t-end">grade</text>`;
+  return v + `</svg>`;
+}
+const BD = { stage: 0 };
+RENDER.srw = el => {
+  el.innerHTML = modHead("srw", "Block walls &amp; geogrid", "Segmental retaining wall (SRW) units are dry-stacked concrete blocks with a lip or pins that set the batter. Short walls stand on their own weight; taller ones are tied into the soil with geogrid. Step through the build.") +
+  `<div class="split"><div class="figure"><div id="bdFig"></div>
+    <div class="stepper noprint"><button class="tbtn" id="bdP">← Back</button><div class="dots" id="bdDots"></div><button class="tbtn" id="bdN">Next →</button></div></div>
+   <div class="side" id="bdSide"></div></div>
+   <div class="split"><div class="figure"><div id="gpFig"></div><div class="figcap"><span>Grid on top of the listed courses, measured from the face. Courses counted from the base course (1).</span></div></div>
+    <div class="side"><h3>Geogrid layout</h3><div class="form"><span>Exposed height</span><span>${sl("gpH", "", 2, 16, 0.5)}</span>
+     <span>Course height</span>${chipRow("gpC", [[6, '6"'], [8, '8"']], GP.ch)}
+     <span>Above the wall</span>${chipRow("gpL", [["none", "Level"], ["slope", "3:1 slope"], ["surch", "Driveway"], ["both", "Both"]], GP.load)}
+     <span>Backfill</span><select class="sel" id="gpS">${BACKSOILS.map(k => `<option value="${k}">${esc(SOILS[k].name)}</option>`).join("")}</select></div>
+     <div id="gpOut"></div></div></div>
+   <div class="grid3">
+    <div class="card"><h3>The units</h3><ul><li><b>Dry-cast</b> SRW units (ASTM C1372): at least 3,000 psi, low absorption. In the Northeast also ask for freeze-thaw test results (ASTM C1262), ideally in salt water where plows throw slush on the wall.</li><li><b>Hollow-core</b> units are filled with drainage stone; <b>solid</b> units are heavier per course.</li><li><b>Lips</b> at the back of the unit or <b>pins</b> between courses set the setback: 1/8 in. to 1 1/2 in. per course. Some systems offer both near-vertical and battered setbacks.</li><li><b>Large-format wet-cast</b> blocks (Redi-Rock, Stone Strong and similar) are another class: much stronger and heavier, set by machine.</li></ul></div>
+    <div class="card"><h3>Curves, corners, ends</h3><ul><li><b>Outside curves</b> shrink as the wall rises because of the setback: start the base on a larger radius. <b>Inside curves</b> grow and open the joints.</li><li>Minimum radius depends on the unit: often 3–6 ft at the top course.</li><li><b>Outside corners</b> use corner units, glued; geogrid from each face overlaps with a few inches of fill between layers.</li><li><b>Ends</b>: turn the wall back into the slope, or step it down so the last unit is buried. A wall that just stops is eroded around.</li><li>Step the base in full course heights where grade drops; step the top with the grade.</li></ul></div>
+    <div class="card"><h3>Mistakes that show up later</h3><ul><li>Base course not level or not buried.</li><li>Native silty soil or topsoil as backfill, no drainage stone, no fabric.</li><li>Drain pipe with no outlet, or outlet buried by the landscaper.</li><li>Grid laid with its weak direction toward the face, not pulled taut, or driven on without cover.</li><li>Heavy compactor against the back of the units, pushing them out.</li><li>Caps not glued: they come off in the first winter.</li><li>A fence or railing posted through the top courses without design: the post is a lever on the wall.</li></ul></div>
+   </div>`;
+  const dots = $("#bdDots", el);
+  dots.innerHTML = AN_STAGES.map((_, i) => `<button data-st="${i}">${i + 1}</button>`).join("");
+  const bd = () => {
+    $("#bdFig", el).innerHTML = srwFig({ stage: BD.stage, parts: false });
+    const st = AN_STAGES[BD.stage];
+    $$("button", dots).forEach((b, i) => { b.classList.toggle("on", i === BD.stage); b.classList.toggle("done", i < BD.stage); });
+    $("#bdSide", el).innerHTML = `<div class="cap">Step ${BD.stage + 1} of ${AN_STAGES.length}</div><h3>${esc(st[0])}</h3><p>${esc(st[1])}</p>${BD.stage === AN_STAGES.length - 1 ? `<p class="note">The finished wall, part by part, is in ${goLink("wall", "The wall")}; check its stability in ${goLink("stab", "Stability check")}.</p>` : ""}`;
+    $("#bdP", el).disabled = BD.stage === 0; $("#bdN", el).disabled = BD.stage === AN_STAGES.length - 1;
+  };
+  dots.addEventListener("click", e => { const b = e.target.closest("[data-st]"); if (b) { BD.stage = +b.dataset.st; bd(); } });
+  $("#bdP", el).onclick = () => { BD.stage = Math.max(0, BD.stage - 1); bd(); };
+  $("#bdN", el).onclick = () => { BD.stage = Math.min(AN_STAGES.length - 1, BD.stage + 1); bd(); };
+  const gp = () => {
+    const r = gridPlan(GP);
+    $("#gpFig", el).innerHTML = gpFig(GP, r);
+    $("#gpOut", el).innerHTML = `<div class="tiles">${tile("Courses", r.n, `${r.Dc} buried, ${ftin(r.H)} total`)}${tile("Grid length", ftin(r.L), `${fmt(r.k, 1)} × H, from the face`, "var(--grid)")}${tile("Layers", r.layers.length || "—", r.layers.length ? `every ${r.sc} courses (${fmt(r.sc * GP.ch)} in.)` : "")}${tile("Grid per ft of wall", `${fmt(r.area, 1)} <small>sq ft</small>`, "before laps and waste")}</div>
+      ${r.needGrid ? `<div class="callout">Plain 12 in. units at 6° stand on their own to about ${ftin(r.grav)} here; this wall needs grid${GP.Hex > 4 ? " and, over 4 ft, an engineered design" : ""}.</div>` : `<div class="callout ok">At ${ftin(GP.Hex)}, 12 in. units at 6° can stand as a gravity wall here (to about ${ftin(r.grav)}). Grid adds margin; many makers still call for one layer at this height.</div>`}
+      <button class="tbtn" id="gpGo">Check this wall's stability →</button>
+      <p class="note">Rule of thumb: grid 0.6–0.7 H long, longer under slopes and driveways, every 2–3 courses (16–24 in.). The design for a wall over 4 ft comes from the maker's engineered tables or an engineer, with a named grid and its strength.</p>`;
+    $("#gpGo", el).onclick = () => sendToStab({ type: "grid", Hex: GP.Hex, soil: GP.soil, gridK: r.L / wallGeom({ ...ST, type: "grid", Hex: GP.Hex }).H, beta: GP.load === "slope" || GP.load === "both" ? 18.43 : 0, q: GP.load === "surch" || GP.load === "both" ? 250 : 0, d: 1, batter: 6, hwp: 0 });
+  };
+  bindRange(el, "gpH", GP, "Hex", v => ftin(v), gp);
+  bindChips(el, "gpC", v => { GP.ch = +v; gp(); }); bindChips(el, "gpL", v => { GP.load = v; gp(); });
+  $("#gpS", el).value = GP.soil; $("#gpS", el).onchange = e => { GP.soil = e.target.value; gp(); };
+  bd(); gp();
+};
+
+/* =====================================================================
+   VII. CONCRETE WALLS
+   Proportions are the textbook first trial (base 0.5–0.65 H, toe B/3,
+   footing and stem about H/10), rounded to the sizes in the stability
+   check, which then shows whether the trial works.
+   ===================================================================== */
+const CT = { Hex: 6, frost: 4, load: "none" };
+const pick = (list, v) => list.find(x => x >= v - 1e-9) || list[list.length - 1];
+function cantProps(o) {
+  const H = o.Hex + o.frost, kB = o.load === "none" ? 0.55 : o.load === "both" ? 0.7 : 0.62;
+  const B = Math.ceil(kB * H * 4 - 1e-9) / 4, toe = Math.round(B / 3 * 4) / 4;
+  const tf = pick([10, 12, 18, 24], Math.max(12, H * 12 / 10)) / 12, ts = pick([8, 10, 12, 16], Math.max(10, H * 12 / 12)) / 12;
+  const key = H >= 8 ? (H >= 12 ? 1.5 : 1) : 0;
+  return { H, B, toe, tf, ts, key, heel: B - toe - ts, kB };
+}
+function ctFig(o, c) {
+  const H = c.H, s = Math.min(30, 330 / (H + 1.5)), x0 = 70 + Math.max(2, c.toe + 1.5) * s, yb = 24 + H * s, X = x => x0 + x * s, Y = y => yb - y * s, cv = 3 / 12;
+  const sx = c.toe, sb = c.toe + c.ts, D = o.frost;
+  let v = `<svg viewBox="0 0 600 ${yb + 64}" role="img" aria-label="Section through a concrete cantilever retaining wall">`;
+  v += `<rect x="0" y="${Y(0)}" width="600" height="64" fill="var(--fnd)"/><rect x="0" y="${Y(D)}" width="${X(sx)}" height="${D * s}" fill="var(--soil)"/><path d="M0,${Y(D)}H${X(sx)}" stroke="var(--grass)" stroke-width="3"/>`;
+  v += `<rect x="${X(sb)}" y="${Y(H)}" width="${600 - X(sb)}" height="${H * s}" fill="var(--soil-2)"/><path d="M${X(sb)},${Y(H)}H600" stroke="var(--grass)" stroke-width="3"/>`;
+  v += `<path d="${P([[X(sb), Y(c.tf)], [X(sb + 1), Y(c.tf)], [X(sb + 1), Y(H - 1)], [X(sb), Y(H - 1)]])}Z" fill="var(--stone)"/><path d="M${X(sb) + 2},${Y(c.tf)}V${Y(H - 0.3)}" stroke="var(--ink-4)" stroke-width="3" stroke-dasharray="2 2"/>`;
+  v += `<path d="M${X(sb + 1)},${Y(c.tf)}V${Y(H - 1)}" stroke="var(--fabric)" stroke-width="2" stroke-dasharray="6 2"/>`;
+  v += `<rect x="${X(0)}" y="${Y(c.tf)}" width="${c.B * s}" height="${c.tf * s}" fill="var(--conc)" stroke="var(--conc-2)"/><rect x="${X(sx)}" y="${Y(H)}" width="${c.ts * s}" height="${(H - c.tf) * s}" fill="var(--conc)" stroke="var(--conc-2)"/>`;
+  if (c.key) v += `<rect x="${X(sx)}" y="${Y(0)}" width="${c.ts * s}" height="${c.key * s}" fill="var(--conc)" stroke="var(--conc-2)"/>`;
+  const rb = (d, w = 2) => `<path d="${d}" stroke="var(--rebar)" stroke-width="${w}" fill="none" stroke-linecap="round"/>`;
+  v += rb(`M${X(sb - cv)},${Y(H - cv)}V${Y(c.tf - cv - 0.1)}`);                                     /* main vertical bars, soil face */
+  v += rb(`M${X(sb - cv - 0.12)},${Y(c.tf + 2.5)}V${Y(cv + 0.1)}H${X(sx - 0.6)}`, 1.6);               /* dowels hooked into the footing */
+  v += rb(`M${X(sx + cv)},${Y(H - cv)}V${Y(c.tf)}`, 1.1);                                              /* front face bars */
+  v += rb(`M${X(cv)},${Y(cv)}H${X(c.B - cv)}`) + rb(`M${X(sb)},${Y(c.tf - cv)}H${X(c.B - cv)}`);          /* footing bottom, heel top */
+  for (let y = c.tf + 0.6; y < H - 0.3; y += 1) v += `<circle cx="${X(sb - cv - 0.1)}" cy="${Y(y)}" r="2" fill="var(--rebar)"/><circle cx="${X(sx + cv + 0.08)}" cy="${Y(y)}" r="1.6" fill="var(--rebar)"/>`;
+  if (D + 0.5 < H) v += `<circle cx="${X(sx + c.ts / 2)}" cy="${Y(D + 0.5)}" r="4" fill="var(--paper)" stroke="var(--ink-2)"/><text x="${X(sx) - 6}" y="${Y(D + 0.5) + 3}" class="t-xs t-end">weep</text>`;
+  v += `<circle cx="${X(sb + 0.5)}" cy="${Y(c.tf + 0.25)}" r="${0.17 * s}" fill="var(--sheet)" stroke="var(--ink-2)"/>`;
+  const dim = (x1, x2, y, t) => `<path d="M${X(x1)},${Y(y)}H${X(x2)}M${X(x1)},${Y(y) - 4}v8M${X(x2)},${Y(y) - 4}v8" stroke="var(--ink-3)"/><text x="${(X(x1) + X(x2)) / 2}" y="${Y(y) + 13}" class="t-xs t-mid">${t}</text>`;
+  v += dim(0, c.B, -0.25 - c.key, `B ${ftin(c.B)}`) + dim(0, sx, -0.25 - c.key - 0.9, `toe ${ftin(c.toe)}`) + dim(sb, c.B, -0.25 - c.key - 0.9, `heel ${ftin(c.heel)}`);
+  v += `<path d="M${X(-1.2)},${Y(0)}V${Y(H)}M${X(-1.35)},${Y(0)}h8M${X(-1.35)},${Y(H)}h8" stroke="var(--ink-3)"/><text x="${X(-1.4)}" y="${Y(H / 2)}" class="t-xs t-end">H ${ftin(H)}</text>`;
+  v += `<path d="M${X(-0.5)},${Y(0)}V${Y(D)}" stroke="var(--blue)" stroke-dasharray="3 3"/><text x="${X(-0.6)}" y="${Y(D / 2)}" class="t-xs t-end" style="fill:var(--blue)">frost ${ftin(D)}</text>`;
+  v += `<text x="${X(sb + c.heel / 2)}" y="${Y(H / 2)}" class="t-xs t-mid">soil on heel</text><text x="${X(sx + c.ts / 2)}" y="${Y(H) - 5}" class="t-xs t-mid">stem ${fmt(c.ts * 12)}"</text><text x="${X(c.B) + 6}" y="${Y(c.tf / 2) + 3}" class="t-xs">footing ${fmt(c.tf * 12)}"</text>`;
+  if (c.key) v += `<text x="${X(sx + c.ts) + 6}" y="${Y(-c.key / 2) + 3}" class="t-xs">key ${fmt(c.key * 12)}"</text>`;
+  v += `<text x="${X(sb + 1.4)}" y="${Y(H - 1.6)}" class="t-xs" style="fill:var(--rebar)">main bars on the soil side</text>`;
+  return v + `</svg>`;
+}
+RENDER.conc = el => {
+  el.innerHTML = modHead("conc", "Concrete walls", "A cantilever wall is an upside-down T. The stem bends like a diving board fixed at the footing, so its steel goes on the soil side. Its footing goes below frost, and the soil on the heel does the holding down.") +
+  `<div class="split"><div class="figure"><div id="ctFig"></div><div class="figcap"><span>First-trial proportions, drawn to scale. Bars shown dashed red: vertical bars at the back of the stem, dowels hooked into the footing, bottom bars through the toe, top bars in the heel.</span></div></div>
+   <div class="side"><h3>Proportion a wall</h3><div class="form"><span>Exposed height</span><span>${sl("ctH", "", 2, 12, 0.5)}</span>
+    <span>Frost depth</span>${chipRow("ctF", [[3.5, '42"'], [4, '48"'], [5, '60"']], CT.frost)}
+    <span>Above the wall</span>${chipRow("ctL", [["none", "Level"], ["slope", "2:1 slope"], ["surch", "Driveway"], ["both", "Both"]], CT.load)}</div>
+    <div id="ctOut"></div></div></div>
+   <div class="grid3">
+    <div class="card"><h3>Concrete for New England</h3><ul><li>Exposure class <b>F2</b> (wet, freezing): at least 4,500 psi, w/cm ≤ 0.45, about 6% entrained air with 3/4 in. stone.</li><li>Walls splashed by salted roads and driveways are <b>F3</b>: 5,000 psi, w/cm ≤ 0.40.</li><li>Cover to the steel (ACI 318): 3 in. where cast against earth (the footing bottom), 2 in. for #6 bars and larger formed and exposed to earth or weather, 1 1/2 in. for #5 and smaller.</li><li>No pours on frozen ground; protect fresh concrete from freezing for the first days with blankets.</li></ul></div>
+    <div class="card"><h3>Joints</h3><ul><li><b>Control joints</b> in the stem every 20–30 ft (about 2–3 times the height), where it will crack anyway.</li><li><b>Expansion joints</b> every 60–90 ft and where the wall meets a building, with the steel stopped or sleeved.</li><li>A <b>keyway</b> or roughened joint and dowels between footing and stem; a waterstop if water must not get through.</li><li>Vertical hairline shrinkage cracks between joints are normal. A horizontal crack near the base with lean is not.</li></ul></div>
+    <div class="card"><h3>Draining a concrete wall</h3><ul><li>Weep holes: 2–4 in. pipes through the stem every 6–10 ft just above finished grade, each with a pocket of stone and fabric behind it.</li><li>Better, a perforated pipe at the heel to outlets, with 12 in. of stone or a drainage board up the back.</li><li>Dampproof the back face when it shows on a visible face, or when a finished space is on the other side.</li><li>Weeps stain and ice up; in the Northeast, the pipe behind is the main drain and the weeps are the backup.</li></ul></div>
+    <div class="card"><h3>Reinforced masonry (CMU)</h3><p>8 in. or 12 in. block on a poured footing with dowels at each grouted cell; vertical #5 or #6 bars at 16–48 in., cells with bars grouted solid; bond beams at the top and every 4 ft or so. Hollow cells of an unreinforced block wall are not a retaining wall.</p></div>
+    <div class="card"><h3>On ledge</h3><p>Where the footing lands on bedrock, frost depth no longer applies: clean the rock, step it level, and pin the footing to it with drilled and epoxied dowels. Rock that slopes toward the face needs an engineer: the wall can slide on it.</p></div>
+    <div class="card"><h3>Facing it</h3><p>Natural or manufactured stone veneer with ties, form liners that mimic stone or board, or a stucco skim coat. Veneer is decoration: it adds weight but no strength. Keep its base on the footing, not on the backfill in front.</p></div>
+   </div>`;
+  const draw = () => {
+    const c = cantProps(CT);
+    $("#ctFig", el).innerHTML = ctFig(CT, c);
+    const beta = CT.load === "slope" || CT.load === "both" ? 26.57 : 0, q = CT.load === "surch" || CT.load === "both" ? 250 : 0;
+    const send = { type: "cant", Hex: CT.Hex, frost: CT.frost, cB: c.B / c.H, cToe: c.toe / c.B, cTs: c.ts * 12, cTf: c.tf * 12, key: c.key, beta, q, soil: "gravel", fnd: "till", hwp: 0, rest: false, passive: false };
+    const r = stability(Object.assign({}, ST, send));
+    $("#ctOut", el).innerHTML = `<div class="tiles">${tile("Total height", ftin(c.H), `${ftin(CT.Hex)} + ${ftin(CT.frost)} frost`)}${tile("Footing", ftin(c.B), `${fmt(c.kB, 2)} H, toe ${ftin(c.toe)}`)}${tile("Stem", `${fmt(c.ts * 12)}"`, "uniform here; often tapered")}${tile("Footing thick", `${fmt(c.tf * 12)}"`, c.key ? `key ${fmt(c.key * 12)}"` : "no key")}</div>
+      <div class="status"><span class="badge ${r.pass ? "ok" : "bad"}">${r.pass ? "Trial works" : "Trial fails"}</span><small>with gravel backfill on till: FS ${fmt(r.FSo, 2)} overturning, ${fmt(r.FSs, 2)} sliding, ${fmt(r.qmax)} psf</small></div>
+      <button class="tbtn" id="ctGo">Open it in the stability check →</button>
+      <p class="note">A first trial, for scale and budget. Reinforcing (bar size and spacing, laps, development) comes from a structural design.</p>`;
+    $("#ctGo", el).onclick = () => sendToStab(send);
+  };
+  bindRange(el, "ctH", CT, "Hex", v => ftin(v), draw);
+  bindChips(el, "ctF", v => { CT.frost = +v; draw(); }); bindChips(el, "ctL", v => { CT.load = v; draw(); });
+  draw();
+};
+
+/* =====================================================================
+   VIII. DRAINAGE & FROST
+   A qualitative model: which parts of the drainage system are present
+   sets how high water stands behind the wall after a wet spell, and
+   whether the backfill can grow ice lenses. The force multiplier comes
+   from the pressure engine for a 6 ft wall in the chosen backfill.
+   ===================================================================== */
+const DN = { stone: true, pipe: true, outlet: true, fabric: true, cap: true, roof: false, soil: "till" };
+const FINE = { till: 1, silt: 1, clay: 1, sand: 0.5 };
+function drainState(o) {
+  const works = o.stone && o.pipe && o.outlet;
+  let hw = !o.stone ? 55 : !works ? 75 : 0;
+  if (o.roof && !works) hw += 20;
+  if (!o.cap && !works) hw += 10;
+  hw = Math.min(100, hw);
+  const fine = FINE[o.soil] || 0, msgs = [];
+  if (works && o.roof) msgs.push(["warn", "The drain copes, but a downspout or driveway emptying behind the wall is the most common reason a good drain gets overwhelmed. Pipe roof water past the end of the wall."]);
+  if (!o.stone) msgs.push(["bad", "Without a stone zone, water seeps through the backfill and stands against the face."]);
+  if (o.stone && !works) msgs.push(["bad", o.pipe ? "A pipe with no outlet is a bathtub: the stone fills up and holds water against the wall." : "Stone with nowhere to drain to fills up and holds water against the wall."]);
+  if (!o.fabric && fine && o.stone) msgs.push(["warn", `${SOILS[o.soil].name} will wash into the stone without fabric. The drain clogs over a few years, and the soil it carries leaves holes behind the wall.`]);
+  if (!o.cap) msgs.push(["", "Without a compacted, sloped cap, rain and snowmelt go straight down into the backfill."]);
+  const frost = fine >= 1 ? (hw > 0 ? "high" : o.stone ? "low" : "medium") : fine ? (hw > 0 ? "medium" : "low") : "low";
+  if (frost === "high") msgs.push(["bad", "Wet, fine soil within the frost zone grows ice lenses: the wall gets pushed every winter."]);
+  const K = rankineKa(SOILS[o.soil].phi, 0);
+  const dry = pressure({ soil: o.soil, H: 6, hw: 0, K }), wet = pressure({ soil: o.soil, H: 6, hw: hw / 100 * 6, K });
+  return { hw, works, frost, msgs, mult: wet.Ph / dry.Ph, dry, wet };
+}
+function dnFig(o, d) {
+  const s = 34, x0 = 160, yb = 300, X = x => x0 + x * s, Y = y => yb - y * s, H = 6, D = 0.67, tw = 0.09;
+  let v = `<svg viewBox="0 0 640 360" role="img" aria-label="Drainage behind a retaining wall">`;
+  v += `<rect x="0" y="${Y(0)}" width="640" height="60" fill="var(--fnd)"/><rect x="0" y="${Y(D)}" width="${X(0)}" height="${D * s}" fill="var(--soil)"/><path d="M0,${Y(D)}H${X(0)}" stroke="var(--grass)" stroke-width="3"/>`;
+  v += `<path d="M${X(1)},${Y(0)}H640V${Y(H + 0.6)}H${X(1 + H * tw)}Z" fill="var(--soil-2)"/>`;
+  if (o.stone) v += `<path d="${P([[X(1), Y(0)], [X(2), Y(0)], [X(2 + H * tw), Y(H - 0.7)], [X(1 + H * tw), Y(H - 0.7)]])}Z" fill="var(--stone)"/>`;
+  if (o.fabric && o.stone) v += `<path d="M${X(2)},${Y(0)}L${X(2 + H * tw)},${Y(H - 0.7)}" stroke="var(--fabric)" stroke-width="2.2" stroke-dasharray="6 2"/>`;
+  const hw = d.hw / 100 * H;
+  if (hw > 0) v += `<path d="M${X(1)},${Y(0)}H640V${Y(hw)}H${X(1 + hw * tw)}Z" fill="var(--water)" opacity=".38"/><path d="M${X(1 + hw * tw)},${Y(hw)}H640" stroke="var(--water)" stroke-width="1.4" stroke-dasharray="6 3"/><text x="634" y="${Y(hw) - 5}" class="t-xs t-end" style="fill:var(--water)">▽ water after a wet week: ${fmt(d.hw)}% of H</text>`;
+  if (d.frost !== "low") for (let i = 0; i < (d.frost === "high" ? 8 : 4); i++) { const yy = H - 0.4 - (i % 4) * 0.5, xx = (o.stone ? 2.6 : 1.6) + Math.floor(i / 4) * 1.6 + (i % 2) * 0.5; v += `<ellipse cx="${X(xx)}" cy="${Y(yy)}" rx="${(0.5 + (i % 3) * 0.2) * s}" ry="3" fill="var(--ice)" stroke="var(--blue)" stroke-width=".8"/>`; }
+  v += `<path d="M0,${Y(H - 1.6)}H640" stroke="var(--blue)" stroke-dasharray="6 4" opacity=".5"/><text x="8" y="${Y(H - 1.6) - 4}" class="t-xs" style="fill:var(--blue)">frost depth, a cold January</text>`;
+  if (o.cap) v += `<path d="${P([[X(1 + H * tw), Y(H + 0.05)], [X(3.2), Y(H - 0.1)], [X(4.6), Y(H + 0.25)], [X(6.5), Y(H + 0.38)], [X(6.5), Y(H - 0.5)], [X(1 + H * tw), Y(H - 0.6)]])}Z" fill="var(--loam)"/>`;
+  v += `<path d="M${X(1 + H * tw)},${Y(H + (o.cap ? 0.05 : 0.6))}${o.cap ? `L${X(3.2)},${Y(H - 0.1)}L${X(4.6)},${Y(H + 0.25)}` : ""}L640,${Y(H + 0.6)}" stroke="var(--grass)" stroke-width="3" fill="none"/>`;
+  for (let i = 0; i < 9; i++) { const x = 2.4 + i * 1.3; v += `<path d="M${X(x)},${Y(H + 2.6)}l-6,16" stroke="var(--blue)" stroke-width="1.2" opacity=".7"/>`; }
+  if (o.cap) v += `<path d="M${X(3.2)},${Y(H - 0.1) + 6}l${-60},0" stroke="var(--blue)" stroke-width="1.6" marker-end=""/><text x="${X(3.2) - 66}" y="${Y(H - 0.1) + 18}" class="t-xs" style="fill:var(--blue)">swale carries it to the ends</text>`;
+  if (o.roof) v += `<rect x="${X(9)}" y="${Y(H + 3.4)}" width="${3 * s}" height="${2.6 * s}" fill="var(--paper-3)" stroke="var(--ink-3)"/><path d="M${X(9.2)},${Y(H + 3)}V${Y(H + 0.9)}h-12" stroke="var(--ink-2)" stroke-width="4" fill="none"/><path d="M${X(9.2) - 12},${Y(H + 0.8)}v24" stroke="var(--blue)" stroke-width="2.4"/><text x="${X(9.2) - 16}" y="${Y(H + 1.2)}" class="t-xs t-end" style="fill:var(--bad)">downspout behind the wall</text>`;
+  for (let i = 0; i < 9; i++) v += `<rect x="${X(i * 0.667 * tw)}" y="${Y((i + 1) * 0.667)}" width="${s}" height="${0.667 * s}" fill="var(--block)" stroke="var(--block-2)"/>`;
+  if (o.pipe) v += `<circle cx="${X(1.5)}" cy="${Y(0.22)}" r="6" fill="var(--sheet)" stroke="var(--ink-2)" stroke-width="1.4"/>${o.outlet ? `<path d="M${X(1.5)},${Y(0.22)}L${X(-0.3)},${Y(0.22)}" stroke="var(--ink-3)" stroke-dasharray="3 2"/><path d="M${X(-0.4)},${Y(0.22)}h-34" stroke="var(--blue)" stroke-width="2.4"/><text x="${X(-0.4) - 38}" y="${Y(0.22) + 4}" class="t-xs t-end" style="fill:var(--blue)">outlet to daylight</text>` : `<text x="${X(1.5) + 10}" y="${Y(0.22) + 4}" class="t-xs" style="fill:var(--bad)">pipe, no outlet</text>`}`;
+  return v + `</svg>`;
+}
+const FROST = [
+  ["Connecticut", "42 in.", "Set by the state building code."],
+  ["Rhode Island", "36–42 in.", "Coastal towns at the low end."],
+  ["Massachusetts", "48 in.", "Set by the state code statewide; some Berkshire towns use more."],
+  ["New York", "36–60 in.", "Set by county: about 36 in. on Long Island, 42–48 in. in the Hudson valley and NYC, 48–60 in. upstate."],
+  ["New Jersey", "36 in.", "Statewide."],
+  ["Pennsylvania", "36–42 in.", "Set by municipality; more in the northern tier."],
+  ["New Hampshire", "48–60 in.", "Set by town; deeper in the north and mountains."],
+  ["Vermont", "48–72 in.", "Set by town; 60 in. is common."],
+  ["Maine", "48–72 in.", "Set by town; deeper inland and north."]
+];
+RENDER.water = el => {
+  el.innerHTML = modHead("water", "Drainage &amp; frost", "Water is the cause of most wall failures, and in the Northeast water becomes ice. Turn the parts of the drainage system on and off and see what stands behind the wall after a wet week.") +
+  `<div class="split"><div class="figure"><div id="dnFig"></div></div>
+   <div class="side"><h3>The drainage system</h3><div class="checks" id="dnC">${[["stone", "12 in. of clean crushed stone behind the wall"], ["pipe", "Perforated drain pipe at the base"], ["outlet", "Pipe outlets to daylight every 50 ft"], ["fabric", "Filter fabric against fine soil"], ["cap", "Compacted cap and swale on top"], ["roof", "A downspout or driveway drains behind it"]].map(([k, t]) => `<label class="${DN[k] ? "on" : ""}"><input type="checkbox" data-k="${k}"${DN[k] ? " checked" : ""}> ${t}</label>`).join("")}</div>
+    <div class="form"><span>Backfill</span><select class="sel" id="dnS">${["gravel", "sand", "till", "silt", "clay"].map(k => `<option value="${k}">${esc(SOILS[k].name)}</option>`).join("")}</select></div>
+    <div id="dnOut"></div></div></div>
+   <div class="grid3">
+    <div class="card"><h3>How ice lenses push</h3><p>Frost heave needs three things at once: <b>freezing</b>, <b>frost-susceptible soil</b> (silts and silty till, which wick water upward), and a <b>supply of water</b>. Ice grows in layers at the freezing front and lifts or pushes whatever is in the way. Take away any one: clean stone and dry backfill take away two.</p></div>
+    <div class="card"><h3>Rigid versus flexible</h3><p><b>Rigid walls</b> (poured concrete, mortared stone, CMU) crack if they move, so their footings go below the frost depth. <b>Flexible walls</b> (dry-stacked blocks, boulders, gabions, fieldstone) can move a little and come back: they sit on a crushed stone pad above frost, buried 6 in. or more, and rely on drainage to keep frost from building up behind and under them.</p></div>
+    <div class="card"><h3>Salt and freeze-thaw</h3><p>De-icing salt soaks into concrete faces and caps, and each freeze-thaw cycle spalls a little off. Keep plow piles off the wall, use calcium magnesium acetate or sand near it, specify units tested to ASTM C1262 (in saline where it matters), and use air-entrained concrete. Sealers help caps.</p></div>
+    <div class="card"><h3>Pipe details</h3><ul><li>4 in. perforated, holes down, in the stone at the heel; slope it at least 1/8 in. per foot.</li><li>Outlets at low points and every 30–50 ft: through the face with a solid pipe, or out the ends to daylight. Screen and mark them.</li><li>A cleanout at the high end lets you flush it.</li><li>Prefer a fabric-wrapped stone envelope to a sock on the pipe: socks clog in silt.</li></ul></div>
+    <div class="card"><h3>Typical frost depths</h3><table class="kv">${FROST.map(f => `<tr><td>${f[0]}</td><td class="n">${f[1]}</td></tr>`).join("")}</table><p class="note">Common design values; your building department sets the number. ${FROST.map(f => `${f[0]}: ${f[2]}`).join(" ")}</p></div>
+    <div class="card"><h3>Ledge and perched water</h3><p>Water travels along the top of ledge and of dense till, and pops out where a cut intercepts it. Expect a seep at the base of any cut into a hillside in the spring. Collect it at the base with stone and pipe, and never trap it behind a solid wall.</p></div>
+   </div>`;
+  const draw = () => {
+    const d = drainState(DN);
+    $("#dnFig", el).innerHTML = dnFig(DN, d);
+    $("#dnOut", el).innerHTML = `<div class="tiles">${tile("Water behind", `${fmt(d.hw)}%`, d.works ? "drained" : "of the wall height", d.hw ? "var(--bad)" : "var(--olive)")}${tile("Push on a 6 ft wall", `×${fmt(d.mult, 2)}`, `${lbs(d.wet.Ph)} vs ${lbs(d.dry.Ph)} lb/ft drained`, d.mult > 1.2 ? "var(--bad)" : "var(--olive)")}${tile("Frost heave risk", d.frost, SOILS[DN.soil].frost + " frost susceptibility", d.frost === "high" ? "var(--bad)" : d.frost === "medium" ? "var(--amber)" : "var(--olive)")}</div>
+      <div class="flags">${d.msgs.length ? d.msgs.map(m => `<div class="callout ${m[0]}">${esc(m[1])}</div>`).join("") : `<div class="callout ok">Water reaching the wall goes down through the stone, into the pipe and out. Nothing builds up, and the backfill stays too dry to grow ice.</div>`}</div>`;
+  };
+  $("#dnC", el).addEventListener("change", e => { const c = e.target.closest("[data-k]"); if (!c) return; DN[c.dataset.k] = c.checked; c.parentElement.classList.toggle("on", c.checked); draw(); });
+  $("#dnS", el).value = DN.soil; $("#dnS", el).onchange = e => { DN.soil = e.target.value; draw(); };
+  draw();
+};
+
+/* =====================================================================
+   IX. TIERS, SLOPES & LOADS
+   Terraces: the common rule is that walls act independently when the
+   horizontal distance between faces is at least twice the lower wall's
+   height. Inside the lower wall's active wedge (a plane at 45 + φ/2 from
+   the back of its base), the upper wall bears on it in full; between,
+   its share is taken as falling off linearly. A planning picture only.
+   ===================================================================== */
+const TI = { H1: 4, H2: 4, S: 6, soil: "gravel" };
+function tierCheck(o) {
+  const s = SOILS[o.soil], B1 = 2, th = (45 + s.phi / 2) * D2R, xw = B1 + o.H1 / Math.tan(th), rule = 2 * o.H1;
+  const share = o.S >= rule ? 0 : o.S <= xw ? 1 : (rule - o.S) / (rule - xw);
+  const q = share * s.g * o.H2, K = rankineKa(s.phi, 0), H = o.H1 + Math.max(0.5, o.H1 / 8);
+  const alone = pressure({ soil: o.soil, H, K }), withU = pressure({ soil: o.soil, H, K, q });
+  return { xw, rule, share, q, alone, withU, inc: withU.Ph / alone.Ph - 1, indep: o.S >= rule, total: o.H1 + o.H2 };
+}
+function tiFig(o, t) {
+  const W = Math.max(o.S + 9, t.rule + 6), s = Math.min(36, 600 / (W + 3), 300 / (o.H1 + o.H2 + 1.5)), x0 = 60, yb = 26 + (o.H1 + o.H2 + 0.6) * s, X = x => x0 + x * s, Y = y => yb - y * s, tw = 0.09;
+  let v = `<svg viewBox="0 0 640 ${yb + 40}" role="img" aria-label="Two terraced walls">`;
+  v += `<rect x="0" y="${Y(0)}" width="640" height="40" fill="var(--fnd)"/><rect x="0" y="${Y(0.5)}" width="${X(0)}" height="${0.5 * s}" fill="var(--soil)"/>`;
+  v += `<path d="M${X(1)},${Y(0)}H640V${Y(o.H1 + o.H2 + 0.3)}H${X(o.S + 1 + o.H2 * tw)}V${Y(o.H1 + 0.3)}H${X(1 + o.H1 * tw)}Z" fill="var(--soil-2)"/>`;
+  v += `<path d="M0,${Y(0.5)}H${X(0)}M${X(1 + o.H1 * tw)},${Y(o.H1 + 0.3)}H${X(o.S)}M${X(o.S + 1 + o.H2 * tw)},${Y(o.H1 + o.H2 + 0.3)}H640" stroke="var(--grass)" stroke-width="3"/>`;
+  const wall = (x, y0, h) => { let w = ""; const n = Math.max(1, Math.round(h / 0.667)), ch = h / n; for (let i = 0; i < n; i++) w += `<rect x="${X(x + i * ch * tw)}" y="${Y(y0 + (i + 1) * ch)}" width="${s}" height="${ch * s}" fill="var(--block)" stroke="var(--block-2)" stroke-width=".8"/>`; return w; };
+  v += wall(0, 0, o.H1 + 0.3) + wall(o.S, o.H1 + 0.3 - 0.5, o.H2 + 0.5);
+  v += `<path d="M${X(2)},${Y(0)}L${X(t.xw)},${Y(o.H1 + 0.3)}" stroke="var(--terra)" stroke-width="1.6" stroke-dasharray="6 3"/><text x="${X(t.xw) + 4}" y="${Y(o.H1 + 0.3) + 14}" class="t-xs t-terra">active wedge, 45° + φ/2</text>`;
+  v += `<path d="M${X(t.rule)},${Y(o.H1 + 0.3) + 6}V${Y(-0.2)}" stroke="var(--olive)" stroke-width="1.4" stroke-dasharray="3 3"/><text x="${X(t.rule) + 4}" y="${Y(o.H1 * 0.4)}" class="t-xs" style="fill:var(--olive)">2 × lower height</text>`;
+  v += `<path d="M${X(0)},${Y(-0.45)}H${X(o.S)}M${X(0)},${Y(-0.3)}v-8M${X(o.S)},${Y(-0.3)}v-8" stroke="var(--ink-3)"/><text x="${X(o.S / 2)}" y="${Y(-0.45) + 12}" class="t-xs t-mid">${ftin(o.S)} face to face</text>`;
+  if (t.q > 0) v += `<path d="M${X(o.S)},${Y(o.H1 + 0.3) + 2}h${2 * s}" stroke="var(--amber)" stroke-width="5" opacity=".7"/>`;
+  return v + `</svg>`;
+}
+const LOADS = [
+  ["Lawn, garden, foot traffic", "100 psf", "Often ignored on small walls; include it on engineered ones."],
+  ["Patio, walkway, hot tub pad", "100–150 psf", "A hot tub is a concentrated load: engineer it."],
+  ["Driveway or parking", "250 psf", "The standard design surcharge for cars, at the wall's edge."],
+  ["Oil or propane delivery, plow trucks", "300–400 psf, plus impact", "Keep the drive back from the top or design for it."],
+  ["Plowed snow pile", "about 150–250 psf", "A 6–8 ft pile of packed snow, plus salt and meltwater in spring."],
+  ["Pool", "about 60 psf per ft of water", "Plus the pool structure: always engineer it."],
+  ["House or garage footing", "a strip load", "Within a 1:1 line up from the base of the wall, it bears on the wall: engineer it."],
+  ["Fence or guard posts", "a wind or lean load on a lever", "Sleeves in the reinforced zone, posts set back, or designed footings: not just cored through the caps."]
+];
+RENDER.tiers = el => {
+  el.innerHTML = modHead("tiers", "Tiers, slopes &amp; loads", "Two short walls are not two independent walls unless they are far enough apart. Anything on top of the retained soil (a driveway, a slope, a fence, another wall) adds to the push.") +
+  `<div class="split"><div class="figure"><div id="tiFig"></div>
+    <div class="ctls">${sl("tiH1", "Lower wall", 2, 8, 0.5)}${sl("tiH2", "Upper wall", 2, 8, 0.5)}${sl("tiS", "Spacing", 2, 20, 0.5)}</div></div>
+   <div class="side"><h3>Terraced walls</h3><div class="form"><span>Soil</span><select class="sel" id="tiSoil">${BACKSOILS.map(k => `<option value="${k}">${esc(SOILS[k].name)}</option>`).join("")}</select></div><div id="tiOut"></div></div></div>
+   <div class="grid2">
+    <div class="card"><h3>Common surcharges</h3><table class="kv"><tr><th>Load near the top</th><th>Design value</th><th>Note</th></tr>${LOADS.map(l => `<tr><td>${l[0]}</td><td class="n">${l[1]}</td><td>${l[2]}</td></tr>`).join("")}</table><p class="note">Rule of thumb: a load farther back from the top than the wall is tall (outside a 1:1 line up from the base) has little effect; closer, include it. ${goLink("stab", "Add a surcharge in the stability check →")}</p></div>
+    <div class="card"><h3>Slopes above and below</h3><ul><li><b>Above</b>: a 3:1 slope adds about 15–20% to the soil push; a 2:1 slope about 50% in sand and gravel and 60–80% in till and silt. Slopes steeper than 2:1 above a wall need an engineer.</li><li><b>Below</b> (a toe slope): the wall loses the soil in front of it. Bury it deeper (about H/10 for a 3:1 toe slope, H/7 for 2:1), leave a level bench of 4 ft or so in front, and have global stability checked.</li><li><b>Trees</b>: keep them out of the reinforced zone; roots heave units and a falling tree levers the wall.</li><li><b>Utilities</b>: don't run pipes along the wall through the reinforced zone. Cross it above the grid, in a sleeve.</li></ul></div>
+   </div>`;
+  const draw = () => {
+    const t = tierCheck(TI);
+    $("#tiFig", el).innerHTML = tiFig(TI, t);
+    $("#tiOut", el).innerHTML = `<div class="status"><span class="badge ${t.indep ? "ok" : "warn"}">${t.indep ? "Independent" : t.share >= 1 ? "Acts as one wall" : "Interacting"}</span><small>${ftin(TI.S)} apart; rule of thumb ${ftin(t.rule)}</small></div>
+      <div class="tiles">${tile("Combined height", ftin(t.total), t.indep ? "two separate walls" : "treat as one for permits", t.indep ? "var(--olive)" : "var(--amber)")}${tile("Load on lower wall", `+${fmt(t.inc * 100)}%`, t.q ? `upper wall acts like ${fmt(t.q)} psf` : "upper wall outside its reach", t.inc > 0.25 ? "var(--bad)" : "var(--olive)")}</div>
+      <div class="callout ${t.indep ? "ok" : "warn"}">${t.indep ? "Far enough apart to act on their own. Each still needs its own base, drainage and outlets, and the slope between them must stand." : `The upper wall bears on the lower one${TI.H1 + TI.H2 > 4 ? `, and together they retain ${ftin(t.total)}: over 4 ft, have the pair designed together, with a global stability check` : ""}. Move the upper wall back to at least ${ftin(t.rule)}, make the lower one stronger, or design them as one.`}</div>
+      ${TI.H2 > TI.H1 ? `<div class="callout warn">Put the taller wall at the bottom: an upper wall taller than the lower one piles the most load where there's least room.</div>` : ""}
+      <p class="note">Active wedge drawn from the back of a gravity block wall's base; geogrid walls reach farther back, so their wedge starts at the end of the grid.</p>`;
+  };
+  bindRange(el, "tiH1", TI, "H1", v => ftin(v), draw); bindRange(el, "tiH2", TI, "H2", v => ftin(v), draw); bindRange(el, "tiS", TI, "S", v => ftin(v), draw);
+  $("#tiSoil", el).value = TI.soil; $("#tiSoil", el).onchange = e => { TI.soil = e.target.value; draw(); };
+  draw();
+};
+
+/* =====================================================================
+   X. BUILDING & ESTIMATING
+   Quantities for a straight block wall. Crushed stone at 1.4 tons per
+   cubic yard; 5% extra units, 15% extra fabric, 10% extra grid.
+   ===================================================================== */
+const UNITS = {
+  garden: { name: "Garden block, 4 × 12 × 7 in.", h: 4, w: 12, d: 7, lb: 28, core: 0, cap: true },
+  std6: { name: "Wall block, 6 × 18 × 12 in.", h: 6, w: 18, d: 12, lb: 75, core: 0.2, cap: true },
+  std8: { name: "Wall block, 8 × 18 × 12 in.", h: 8, w: 18, d: 12, lb: 85, core: 0.2, cap: true },
+  big: { name: "Large-format block, 18 × 46 × 41 in.", h: 18, w: 46, d: 41, lb: 2300, core: 0, cap: false }
+};
+const ES = { L: 40, Hex: 3, unit: "std6", grid: false };
+const TPY = 1.4;
+function estimate(o) {
+  const u = UNITS[o.unit], ch = u.h / 12, Dc = Math.ceil(Math.max(0.5, o.Hex / 8) / ch - 1e-9), n = Math.ceil(o.Hex / ch - 1e-9) + Dc, H = n * ch;
+  const per = Math.ceil(o.L * 12 / u.w - 1e-9), units = Math.ceil(n * per * 1.05), caps = u.cap ? Math.ceil(per * 1.05) : 0;
+  const face = o.L * H, d = u.d / 12;
+  const padCY = o.L * (d + 1) * 0.5 / 27, drainCY = (o.L * 1 * Math.max(0, H - 0.75) + face * u.core) / 27;
+  const outlets = Math.max(1, Math.ceil(o.L / 50 - 1e-9)), pipe = Math.ceil(o.L + outlets * 10);
+  const fabric = Math.ceil((H + 1) * o.L * 1.15);
+  const gp = o.grid ? gridPlan({ Hex: o.Hex, ch: u.h <= 6 ? 6 : 8, load: "none", soil: "gravel" }) : null;
+  const grid = gp ? Math.ceil(gp.area * o.L * 1.1) : 0;
+  const trenchCY = o.L * (d + 2) * (Dc * ch + 0.5) / 27;
+  const rows = [
+    ["Wall units", fmt(units), "ea", `${n} courses (${Dc} buried) × ${per} per course, +5%; about ${fmt(units * u.lb / 2000, 1)} tons`],
+    u.cap ? ["Cap units", fmt(caps), "ea", `+5%; ${Math.ceil(o.L / 15)} tubes of concrete adhesive`] : ["Top units", "—", "", "Large-format systems use a finished top block instead of caps"],
+    ["Leveling pad, 3/4 in. dense-graded stone", fmt(padCY, 1), "cu yd", `${fmt(padCY * TPY, 1)} tons; 6 in. thick, ${ftin(d + 1)} wide`],
+    ["Drainage stone, 3/4 in. clean", fmt(drainCY, 1), "cu yd", `${fmt(drainCY * TPY, 1)} tons; 12 in. behind the units${u.core ? " and in the cores" : ""}`],
+    ["Perforated drain pipe, 4 in.", fmt(pipe), "ft", `${outlets} outlet${outlets > 1 ? "s" : ""} to daylight, about 10 ft each`],
+    ["Non-woven filter fabric", fmt(fabric), "sq ft", `${fmt(fabric / 9)} sq yd with 15% for laps`],
+    ["Base trench excavation", fmt(trenchCY, 1), "cu yd", `${ftin(d + 2)} wide × ${ftin(Dc * ch + 0.5)} deep, before any cut behind the wall`]
+  ];
+  if (gp) rows.push(["Geogrid", fmt(grid), "sq ft", `${gp.layers.length} layers × ${ftin(gp.L)} × ${o.L} ft, +10%; ${fmt(grid / 9)} sq yd`]);
+  return { n, Dc, H, face, units, caps, padCY, drainCY, pipe, fabric, grid, gp, rows };
+}
+const SEQ = [
+  ["Plan and permit", "Survey the property line and stake it. Find out whether the town needs a permit, an engineer and conservation approval (section XI). Decide where the water goes."],
+  ["Call 811", "Dig Safe (MA, ME, NH, RI, VT), Call Before You Dig (CT) or Dig Safely New York, two to three business days ahead (72 hours, not counting weekends and holidays, in Massachusetts). Mark the area in white paint. Private lines (septic, irrigation, low-voltage, propane) aren't marked: locate them yourself."],
+  ["Erosion control", "Silt fence or straw wattles downhill, stockpiles covered, a stabilized entrance for trucks. Disturbing an acre or more needs a stormwater permit."],
+  ["Excavate safely", "Trenches 5 ft or deeper need sloping, benching or shoring (OSHA 1926 Subpart P); keep spoil 2 ft back from the edge; a ladder in any trench 4 ft or deeper. Never work in front of an unsupported cut."],
+  ["Prepare the foundation", "Strip loam and organics to firm natural soil. Proof-roll or probe; dig out soft or wet spots and replace with crushed stone. On ledge, clean it and step it."],
+  ["Base and first course", "Compact the pad in lifts; level it to 1/8 in. along a string line. Set and level the base course; this sets the whole wall."],
+  ["Drain, fabric, stone, fill", "Pipe at the heel to outlets, fabric against fine soil, 12 in. of clean stone and filled cores. Backfill in 6–8 in. lifts compacted to 95% Standard Proctor, hand compactors within 3 ft of the units."],
+  ["Grid where shown", "Strong direction perpendicular to the face, pulled taut, at least 6 in. of fill over it before anything drives on it."],
+  ["Top it off", "Caps glued, a compacted impermeable cap and a swale, loam and seed or mulch. Run water through the outlets and mark them."],
+  ["Look again in spring", "After the first thaw, check the line, the outlets and the ground behind the top. Fix settlement before it grows."]
+];
+const INSPECT = ["Property line staked; wall and grid entirely on your side", "Loam and organics stripped; base on firm soil or ledge", "Pad at least 6 in. thick, 6 in. wider than units, compacted and level", "Base course buried and level, string-lined", "Drain pipe at the heel with outlets every 50 ft or less", "Filter fabric between stone and fine soil", "12 in. of clean stone behind units; cores filled", "Backfill in 6–8 in. lifts, compacted; only hand compactors within 3 ft", "Geogrid type, length and elevations as designed; taut", "Batter even; no shims; joints staggered", "Caps glued; top sealed and swaled", "Downspouts and driveway water directed away from the wall"];
+RENDER.build = el => {
+  el.innerHTML = modHead("build", "Building &amp; estimating", "The order of work, what to check before you backfill it, and how much material a straight block wall takes.") +
+  `<div class="split"><div class="figure" style="padding:14px"><h3 style="margin-bottom:6px">Material estimate</h3><div id="esOut"></div></div>
+   <div class="side"><h3>The wall</h3><div class="form"><span>Length</span><span>${sl("esL", "", 8, 200, 2)}</span><span>Exposed height</span><span>${sl("esH", "", 1, 10, 0.5)}</span>
+    <span>Units</span><select class="sel" id="esU">${Object.keys(UNITS).map(k => `<option value="${k}">${esc(UNITS[k].name)}</option>`).join("")}</select></div>
+    <label class="chk"><input type="checkbox" id="esG"> Geogrid</label><div id="esN"></div></div></div>
+   <div class="grid2"><div class="card"><h3>Order of work</h3><ol class="how">${SEQ.map(s => `<li><b>${s[0]}.</b> ${s[1]}</li>`).join("")}</ol></div>
+    <div class="card"><h3>Before it gets buried</h3><p>What an inspector, an engineer or a careful owner looks at while it can still be seen.</p><div class="checks" id="inC">${INSPECT.map((t, i) => `<label><input type="checkbox" data-i="${i}"> ${t}</label>`).join("")}</div><div class="status" id="inS"></div></div></div>
+   <div class="grid3">
+    <div class="card"><h3>Compaction</h3><p>Fill gets its strength from compaction. Lifts no more than 6–8 in. loose, at a moisture near optimum, to 95% of the maximum dry density by Standard Proctor (ASTM D698). Clean crushed stone is consolidated by a vibratory plate, not tested this way. Heavy rollers stay 3 ft back from the units; a plate compactor works up to them.</p></div>
+    <div class="card"><h3>Stone names in the yard</h3><ul><li><b>3/4 in. clean, crushed</b> (also "3/4 in. stone", "#57"): drainage zone, cores.</li><li><b>Dense-graded crushed stone</b> ("DGA", "processed gravel", "crusher run", "item 4" in New York): pad and base; compacts hard.</li><li><b>Bank-run gravel</b>: good backfill if it's not silty.</li><li><b>Stone dust</b>: not a base under walls; it holds water.</li></ul></div>
+    <div class="card"><h3>Who builds it</h3><p>A short garden wall is a reasonable owner project. Walls over 4 ft, or near a house, a drive or a neighbour, belong with a contractor who builds them regularly, with the engineer's design on site and the supplier's installation guide followed. Many unit makers certify installers.</p></div>
+   </div>`;
+  const draw = () => {
+    const r = estimate(ES);
+    $("#esOut", el).innerHTML = `<div class="tiles">${tile("Face area", `${fmt(r.face)} <small>sq ft</small>`, `${ftin(r.H)} including the buried course`)}${tile("Units", fmt(r.units), `${r.n} courses`, "var(--terra)")}${tile("Stone", `${fmt((r.padCY + r.drainCY) * TPY, 1)} <small>tons</small>`, "pad and drainage")}${tile("Grid", r.grid ? `${fmt(r.grid)} <small>sq ft</small>` : "none", r.gp ? `${r.gp.layers.length} layers` : "")}</div>
+     <table class="est"><tr><th>Item</th><th class="n">Qty</th><th>Unit</th></tr>${r.rows.map(x => `<tr><td>${esc(x[0])}<small>${esc(x[3])}</small></td><td class="n">${x[1]}</td><td>${x[2]}</td></tr>`).join("")}</table>
+     <p class="note">A straight wall on level ground, for ordering and budgeting. Add for curves, corners, steps in the base, returns at the ends, and the cut behind the wall.</p>`;
+    $("#esN", el).innerHTML = ES.Hex > 4 ? `<div class="callout warn">Over 4 ft: permit and engineered design. Use the design's grid layout, not this one.</div>` : ES.unit === "garden" && ES.Hex > 2 ? `<div class="callout warn">Garden blocks are for walls up to about 2 ft.</div>` : "";
+  };
+  bindRange(el, "esL", ES, "L", v => v + " ft", draw); bindRange(el, "esH", ES, "Hex", v => ftin(v), draw);
+  $("#esU", el).value = ES.unit; $("#esU", el).onchange = e => { ES.unit = e.target.value; draw(); };
+  const g = $("#esG", el); g.checked = ES.grid; g.onchange = () => { ES.grid = g.checked; draw(); };
+  const inS = () => { const n = $$("#inC input:checked", el).length; $("#inS", el).innerHTML = `<span class="badge ${n === INSPECT.length ? "ok" : "warn"}">${n} / ${INSPECT.length}</span><small>${n === INSPECT.length ? "Ready to bury." : "Keep looking."}</small>`; };
+  $("#inC", el).addEventListener("change", e => { const c = e.target; c.parentElement.classList.toggle("on", c.checked); inS(); });
+  draw(); inS();
+};
+
+/* =====================================================================
+   XI. CODES & PERMITS
+   ===================================================================== */
+const PC = { Hex: 3.5, base: 0.5, surch: false, tier: false, walk: false, line: false, wet: false, near: false, comm: false };
+function permitCheck(o) {
+  const total = o.Hex + o.base, out = [];
+  const permit = total > 4 || o.surch || (o.tier && o.Hex > 0);
+  out.push([permit ? "warn" : "ok", "Building permit", permit ? `Required: ${total > 4 ? `${ftin(total)} from the bottom of the base to the top is over 4 ft` : o.surch ? "it supports a surcharge" : "terraced walls are often added together"}.` : `Usually exempt: ${ftin(total)} from the bottom of the base to the top, no surcharge (IRC R105.2, IBC 105.2). Zoning and conservation rules still apply.`, "IRC R105.2 · IBC 105.2"]);
+  const eng = o.Hex > 4 || (permit && (o.surch || o.near || o.comm || o.tier));
+  out.push([eng ? "warn" : "ok", "Engineered design", eng ? "Expect a stamped design by a licensed professional engineer: stability against overturning, sliding, bearing and water uplift, with safety factors of at least 1.5." : "Not usually required. Build to the unit maker's guide for gravity walls.", "IRC R404.4 · IBC 1807.2"]);
+  if (o.walk) { const drop = o.Hex * 12 > 30; out.push([drop ? "bad" : "ok", "Guard at the top", drop ? `A walking surface at the top with a drop of ${ftin(o.Hex)} (over 30 in.) within 36 in. of the edge needs a guard: 36 in. high at a house (IRC), 42 in. elsewhere (IBC), openings that won't pass a 4 in. sphere. Design its posts with the wall.` : "Drop of 30 in. or less: no guard required, though a hedge or rail can still be wise.", "IRC R312 · IBC 1015"]); }
+  if (o.line) out.push(["warn", "Property line", "Stake the line by survey. Keep the footing, base and geogrid on your side, or get a recorded easement. Check zoning setbacks: many towns exempt walls under 4–6 ft but count a fence on top. Don't concentrate water onto the neighbour's land.", "Local zoning bylaw"]);
+  if (o.wet) out.push(["bad", "Wetlands and waterways", "Work in or near wetlands, streams, ponds, floodplains or the coast needs approval before the building permit: in Massachusetts a filing with the conservation commission within 100 ft of a wetland or 200 ft of a river; in Connecticut the inland wetlands agency's upland review area; in New York DEC's 100 ft adjacent area; in New Jersey a transition area of 50–150 ft.", "MA WPA · CT IWWA · NY ECL 24 · NJ FWPA"]);
+  if (o.near) out.push(["warn", "Near a building, septic or utilities", "A wall within reach of a house footing, a septic tank or leach field, a well or buried utilities needs both an engineer and the relevant setbacks (septic and well setbacks are set by state health codes).", ""]);
+  if (o.comm) out.push(["warn", "Commercial site", "IBC applies: engineered design, special inspection of the soil and the reinforced fill for larger walls, and the site plan's approval.", "IBC 1705"]);
+  out.push(["", "Before you dig", "Call 811 two to three business days ahead, depending on the state. Excavations 5 ft or deeper need protective systems for anyone working in them.", "OSHA 1926.651–.652"]);
+  return { total, permit, eng, out };
+}
+const CODES = [
+  ["IRC R105.2 / IBC 105.2", "No permit needed for retaining walls up to 4 ft measured from the bottom of the footing to the top of the wall, unless supporting a surcharge (or, under the IBC, impounding flammable liquids)."],
+  ["IRC R404.4", "Walls not supported at the top and retaining more than 48 in. of unbalanced fill must be designed for overturning, sliding, excessive foundation pressure and water uplift, with a safety factor of 1.5 against sliding and overturning."],
+  ["IBC 1807.2", "Retaining walls designed for stability against overturning, sliding, excessive foundation pressure and water uplift; safety factor of 1.5 against sliding and overturning (1.1 when earthquake loads are included)."],
+  ["IBC 1610.1", "Lateral soil loads: active pressure for walls free to deflect and rotate at the top, at-rest for restrained walls, from a geotechnical investigation or the Table 1610.1 values."],
+  ["IBC 1806.2", "Presumptive load-bearing values when there is no soil report: 12,000 psf on crystalline bedrock, 3,000 psf on gravel, 2,000 on sands and silty sands, 1,500 on clays and silts."],
+  ["IRC R312 / IBC 1015", "Guards where a walking surface is more than 30 in. above grade within 36 in. horizontally."],
+  ["IRC R403.1.4 / IBC 1809.5", "Footings below the frost line, except where on rock or protected from frost."],
+  ["ACI 318", "Concrete: exposure classes F1–F3 for freeze-thaw, cover to the reinforcing, minimum strength."],
+  ["ASTM C1372", "Dry-cast segmental retaining wall units: strength, absorption and, in cold climates, freeze-thaw durability (tested by ASTM C1262)."],
+  ["NCMA Design Manual", "The design method for segmental retaining walls, gravity and geogrid-reinforced, used by most unit makers."],
+  ["OSHA 1926 Subpart P", "Excavations: protective systems at 5 ft or deeper, competent-person inspections, spoil set back 2 ft, access every 25 ft in trenches 4 ft deep."]
+];
+RENDER.codes = el => {
+  el.innerHTML = modHead("codes", "Codes &amp; permits", "Whether a wall needs a permit is mostly a question of height and what's on top of it. Whether it needs a conservation filing is a question of where it is. Most Northeast states adopt the IRC and IBC with amendments; towns add zoning.") +
+  `<div class="split"><div class="figure" style="padding:14px"><h3 style="margin-bottom:6px">What this wall needs</h3><div id="pcOut"></div></div>
+   <div class="side"><h3>The wall</h3><div class="form"><span>Exposed height</span><span>${sl("pcH", "", 1, 12, 0.5)}</span>
+    <span>Base below grade</span>${chipRow("pcB", [[0.5, '6"', "A block wall's buried course"], [1, '12"'], [3.5, '42"', "A footing at frost depth"], [4, '48"']], PC.base)}</div>
+    <div class="checks" id="pcC">${[["surch", "A driveway, slope, building or other load on top"], ["tier", "Part of terraced walls"], ["walk", "A patio, path or drive along the top"], ["line", "Near a property line"], ["wet", "Within 100–200 ft of a wetland, stream, pond or the coast"], ["near", "Near a house footing, septic system, well or utilities"], ["comm", "On a commercial or multifamily site"]].map(([k, t]) => `<label class="${PC[k] ? "on" : ""}"><input type="checkbox" data-k="${k}"${PC[k] ? " checked" : ""}> ${t}</label>`).join("")}</div></div></div>
+   <div class="card wide" style="margin-bottom:20px"><h3>The rules behind it</h3><table class="compare">${CODES.map(c => `<tr><td>${c[0]}</td><td>${c[1]}</td></tr>`).join("")}</table><p class="note">Summaries of the 2021 model codes as commonly adopted. Massachusetts (780 CMR), Connecticut, New York, New Jersey, Rhode Island, New Hampshire, Maine and Pennsylvania each adopt a version with amendments, and Vermont leaves most one- and two-family work to towns. The building official decides.</p></div>`;
+  const draw = () => {
+    const r = permitCheck(PC);
+    $("#pcOut", el).innerHTML = `<div class="tiles">${tile("Measured height", ftin(r.total), "bottom of base to top of wall")}${tile("Permit", r.permit ? "Yes" : "Usually no", "", r.permit ? "var(--amber)" : "var(--olive)")}${tile("Engineer", r.eng ? "Yes" : "Usually no", "", r.eng ? "var(--amber)" : "var(--olive)")}</div>
+      ${r.out.map(x => `<div class="callout ${x[0]}"><b>${esc(x[1])}.</b> ${esc(x[2])}${x[3] ? ` <span class="pill">${esc(x[3])}</span>` : ""}</div>`).join("")}`;
+  };
+  bindRange(el, "pcH", PC, "Hex", v => ftin(v), draw);
+  bindChips(el, "pcB", v => { PC.base = +v; draw(); });
+  $("#pcC", el).addEventListener("change", e => { const c = e.target.closest("[data-k]"); if (!c) return; PC[c.dataset.k] = c.checked; c.parentElement.classList.toggle("on", c.checked); draw(); });
+  draw();
+};
+
+/* =====================================================================
+   XII. TROUBLESHOOTING
+   ===================================================================== */
+const REPAIRS = [
+  ["lean", "The top leans forward", "Overturning or rotation: water pressure, a surcharge added after it was built, too little batter or base, frost pushing on wet backfill.", "Hang a plumb line or use a level and mark the lean and date; check after storms and each spring. Look for water stains, blocked outlets, new loads on top.", "Relieve water first (clear or add outlets, core weeps, redirect downspouts). Remove new surcharges. A wall still moving needs an engineer: rebuild with geogrid, or helical tiebacks through the face.", "high"],
+  ["bulge", "A bulge at mid-height", "Internal failure of a block wall: grid too short, too few layers, not tensioned, poorly compacted or saturated fill. In fieldstone, lost hearting.", "Stretch a string along the face. Measure the bulge and whether it grows.", "Take the section down past the bulge and rebuild with the right grid and compacted granular fill. Fieldstone: relay with through-stones and batter.", "high"],
+  ["slide", "The base has kicked out", "Sliding: no embedment, the toe dug or eroded away, base on topsoil or frozen ground, water.", "Is the bottom course exposed? Is the face still plumb above it (sliding) or tipped (overturning)?", "Rebuild the base on a proper pad with embedment. Restore and protect the toe; add a bench in front.", "high"],
+  ["settle", "A section sank; the top is wavy", "Bearing: soft or organic soil, an uncompacted base, an old utility trench or stump hole underneath.", "Probe beside the wall; look for a trench line or a wet area.", "Take down the section, dig out to firm soil, replace with compacted crushed stone, rebuild.", "medium"],
+  ["sink", "Holes or sinkholes behind the top", "Soil washing into the drainage stone and out through the joints or the pipe: no filter fabric, a broken pipe, open joints at a corner.", "Silt or sand at the outlets or at the face joints after rain.", "Excavate behind, install fabric, repair or replace the pipe, refill with stone. Fix fast: it grows.", "medium"],
+  ["wet", "Water or ice coming out of the face", "Water moving through the wall. At the base outlets, it means the drain works. Mid-face, the stone is clogged or the pipe is blocked.", "Where does it come out, and is it clear or muddy?", "Clear the outlets and flush the pipe from the cleanout. Mid-face seepage that persists needs the drain dug out and rebuilt.", "medium"],
+  ["crack", "Cracks in a concrete wall", "Vertical hairlines between joints: shrinkage, normal. A horizontal crack near the base with lean: the stem is bending past its strength.", "Gauge the crack width over a season; check for lean.", "Shrinkage cracks: seal if you like. Structural cracks: engineer: tiebacks, a buttress, or replacement.", "high"],
+  ["spall", "Block faces spalling; caps loose", "Freeze-thaw damage, worst with salt: units not rated for it, plow piles against the wall, caps set without adhesive.", "Which units, and where: near the drive? at the bottom where slush collects?", "Replace damaged units and reglue caps with concrete adhesive. Move snow storage; specify C1262-tested units.", "low"],
+  ["heave", "It moves out every winter, a bit back in spring", "Frost heave: wet, frost-susceptible soil behind or under the wall.", "Does the backfill look like silt or silty till? Is there drainage stone?", "Rebuild with drainage stone, dry granular backfill and working outlets; rigid walls need footings below frost.", "medium"],
+  ["timber", "A timber wall bowing or soft", "Decay at the deadmen and the bottom courses after 20–30 years.", "Probe with an awl at the base and at the deadmen.", "Replace it: timber walls aren't economic to repair. Most become block or boulder walls.", "medium"],
+  ["stone", "An old fieldstone wall bellying", "It was built free-standing and is now holding soil, or frost and roots have worked it loose.", "Is soil behind it higher than in front? How fast is it moving?", "Relay it with a batter, through-stones and stone backfill, or build a proper wall behind and keep the old one as a face.", "low"],
+  ["tree", "Roots lifting the wall", "A tree in or near the reinforced zone: roots heave units and break the drain.", "Where is the trunk relative to the wall?", "Remove the tree before rebuilding, or rebuild the section and add a root barrier.", "low"]
+];
+const RP = { id: "lean" };
+RENDER.repair = el => {
+  el.innerHTML = modHead("repair", "Troubleshooting", "What it looks like, what's behind it, and what to do. A wall that is actively moving, or one that holds up a house, a road or a neighbour, needs an engineer to look at it.") +
+  `<div class="diag"><div class="rlist" id="rpL">${REPAIRS.map(r => `<button data-rp="${r[0]}">${esc(r[1])}<small>${r[5] === "high" ? "act soon" : r[5] === "medium" ? "fix this season" : "maintenance"}</small></button>`).join("")}</div><div class="card" id="rpD"></div></div>`;
+  const draw = () => {
+    const r = REPAIRS.find(x => x[0] === RP.id);
+    $$("#rpL button", el).forEach(b => b.classList.toggle("on", b.dataset.rp === RP.id));
+    $("#rpD", el).innerHTML = `<div class="cap">${r[5] === "high" ? pill("bad", "act soon") : r[5] === "medium" ? pill("warn", "fix this season") : pill("ok", "maintenance")}</div><h3>${esc(r[1])}</h3><h4>Likely cause</h4><p>${esc(r[2])}</p><h4>Check</h4><p>${esc(r[3])}</p><h4>Fix</h4><p>${esc(r[4])}</p>`;
+  };
+  $("#rpL", el).addEventListener("click", e => { const b = e.target.closest("[data-rp]"); if (b) { RP.id = b.dataset.rp; draw(); } });
+  draw();
+};
+
+/* =====================================================================
+   XIII. GLOSSARY
+   ===================================================================== */
+const GLOSS = [
+  ["Retaining wall", "A wall that holds ground at a higher level on one side than the other.", "wall"],
+  ["Exposed height", "The visible height, from finished grade in front to the top of the wall.", "wall"],
+  ["Total height", "From the bottom of the footing or base to the top of the wall: what permits are measured by.", "wall"],
+  ["Unbalanced fill", "The difference in ground level from one side of the wall to the other.", "wall"],
+  ["Retained soil", "The soil the wall holds back.", "wall"],
+  ["Backfill", "Soil or stone placed behind a wall after it is built.", "wall"],
+  ["Foundation soil", "The natural soil or rock under the wall's base.", "wall"],
+  ["Toe", "The front edge of the base; the wall tips about it.", "wall"],
+  ["Heel", "The back of the base; on a cantilever wall, the part under the retained soil.", "conc"],
+  ["Batter", "The backward lean of a wall's face, in degrees or inches per foot.", "wall"],
+  ["Setback", "How far each course sits back from the one below.", "srw"],
+  ["Embedment", "The depth the bottom of the wall is buried below the ground in front.", "wall"],
+  ["Leveling pad", "The compacted crushed stone (or lean concrete) layer a block wall is built on.", "wall"],
+  ["Cap", "The finished top units, glued down.", "wall"],
+  ["Surcharge", "Any load on the retained soil: a driveway, slope, structure or another wall.", "tiers"],
+  ["Gravity wall", "A wall that holds soil by its own weight.", "types"],
+  ["Cantilever wall", "A reinforced concrete stem fixed to a footing, held down by the soil on its heel.", "conc"],
+  ["Mechanically stabilized earth", "Soil reinforced with layers of geogrid or straps so it acts as a wall; MSE.", "srw"],
+  ["SRW", "Segmental retaining wall: dry-stacked concrete units, with or without geogrid.", "srw"],
+  ["Geogrid", "A polymer grid laid in layers in the backfill to reinforce it.", "srw"],
+  ["Reinforced zone", "The compacted fill the geogrid runs through.", "srw"],
+  ["Strong direction", "The direction of a geogrid with the design strength: perpendicular to the face.", "srw"],
+  ["Rockery", "A wall of large stones set dry by machine; a boulder wall.", "types"],
+  ["Two-man boulder", "Northeast trade size: about 18–24 in., a few hundred pounds. Three- and four-man are bigger.", "types"],
+  ["Gabion", "A wire basket filled with stone.", "types"],
+  ["Deadman", "A timber or anchor running back into the soil to tie a timber wall in.", "types"],
+  ["Soil nail", "A steel bar grouted into a drilled hole to reinforce a cut.", "types"],
+  ["Tieback", "An anchor drilled behind the wall and tensioned against its face.", "types"],
+  ["Hearting", "Small stones packed between the faces of a dry-stone wall.", "types"],
+  ["Through-stone", "A long stone running from face to back of a dry-stone wall.", "types"],
+  ["Active pressure", "The push of soil on a wall that can move away slightly; Kₐ ≈ 0.3.", "soil"],
+  ["At-rest pressure", "The push on a wall that can't move; K₀ ≈ 0.5.", "soil"],
+  ["Passive pressure", "The resistance of soil pushed by the wall, as in front of the toe; Kₚ ≈ 3.", "soil"],
+  ["Equivalent fluid pressure", "Soil pressure expressed as psf per foot of depth, as if the soil were a heavy liquid.", "soil"],
+  ["Friction angle", "φ: the soil's strength from friction between grains.", "soil"],
+  ["Rankine", "The earth pressure theory for a smooth vertical plane.", "soil"],
+  ["Coulomb", "The earth pressure theory that includes wall friction and batter.", "stab"],
+  ["Hydrostatic pressure", "The push of water: 62.4 psf per foot of depth.", "soil"],
+  ["Glacial till", "A dense, bouldery mix of sand, silt and stones left by the ice sheet; the common New England soil.", "soil"],
+  ["Hardpan", "Local name for very dense, undisturbed till.", "soil"],
+  ["Ledge", "New England word for bedrock at or near the surface.", "soil"],
+  ["Loam", "New England word for topsoil. Never under or behind a wall.", "soil"],
+  ["Outwash", "Sand and gravel laid down by glacial meltwater; good backfill.", "soil"],
+  ["Varved clay", "Layered lake-bottom clay of the Connecticut and Hudson valleys.", "soil"],
+  ["Overturning", "Failure by rotating forward about the toe.", "fail"],
+  ["Sliding", "Failure by moving out along the base.", "fail"],
+  ["Bearing failure", "The soil under the base gives way.", "fail"],
+  ["Global stability", "Resistance to a deep slip surface passing under and behind the whole wall.", "fail"],
+  ["Internal stability", "Of a geogrid wall: grid strength, pullout and connection to the face.", "fail"],
+  ["Safety factor", "Resistance divided by load; 1.5 is the code minimum for sliding and overturning.", "stab"],
+  ["Eccentricity", "How far the resultant lands from the centre of the base.", "stab"],
+  ["Middle third", "The central third of the base; a resultant inside it keeps the whole base in compression.", "stab"],
+  ["Resultant", "The single force equivalent to all the loads on the wall.", "stab"],
+  ["Shear key", "A concrete projection under a footing that engages passive soil against sliding.", "conc"],
+  ["Stem", "The vertical part of a cantilever wall.", "conc"],
+  ["Weep hole", "A small drain through the face of a solid wall.", "conc"],
+  ["Control joint", "A planned weak line where a concrete wall is allowed to crack.", "conc"],
+  ["Air entrainment", "Tiny air bubbles added to concrete so it survives freezing.", "conc"],
+  ["Drainage aggregate", "Clean crushed stone directly behind the wall and in its cores.", "water"],
+  ["Filter fabric", "Non-woven geotextile that lets water through but holds back soil.", "water"],
+  ["Daylight", "Where a drain pipe comes out to open air at a lower grade.", "water"],
+  ["Swale", "A shallow channel that carries surface water away.", "water"],
+  ["Frost depth", "How deep the ground freezes; rigid footings go below it.", "water"],
+  ["Frost heave", "Ground lifted or pushed by ice lenses growing in wet, fine soil.", "water"],
+  ["Ice lens", "A layer of ice that grows at the freezing front, drawing water from below.", "water"],
+  ["Frost-susceptible soil", "Soil, mainly silt, that wicks water and grows ice lenses.", "water"],
+  ["Tiered walls", "Terraced walls one above another.", "tiers"],
+  ["Toe slope", "Ground sloping down in front of a wall.", "tiers"],
+  ["Proctor", "The lab test that sets a soil's maximum dry density; compaction is a percentage of it.", "build"],
+  ["Lift", "One layer of fill, placed and compacted.", "build"],
+  ["Proof-roll", "Driving a loaded machine over the subgrade to find soft spots.", "build"],
+  ["Dense-graded stone", "Crushed stone with fines that compacts hard; pad and base.", "build"],
+  ["811", "The call-before-you-dig number: Dig Safe in most of New England.", "build"],
+  ["Guard", "A barrier at the edge of a drop of more than 30 in.", "codes"],
+  ["Conservation commission", "The town board that rules on work near wetlands in Massachusetts and elsewhere.", "codes"],
+  ["Buffer zone", "Land within a set distance of a wetland where work needs review.", "codes"],
+  ["Efflorescence", "White salt deposit left by water moving through masonry.", "repair"],
+  ["Spalling", "Flaking of a concrete or stone surface, usually from freeze-thaw.", "repair"]
+];
+const gid = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+function glossaryFind(term) {
+  const q = $("#glQ"); if (!q) return;
+  q.value = term.replace(/-/g, " "); q.dispatchEvent(new Event("input"));
+}
+RENDER.glossary = el => {
+  el.innerHTML = modHead("glossary", "Glossary", `${GLOSS.length} terms. Each one links to the section that explains it.`) + `<div class="gl-tools"><input id="glQ" type="search" placeholder="Filter terms…" aria-label="Filter terms"><span class="cap" id="glN"></span></div><div class="gl-list" id="glL"></div>`;
+  const mods = Object.fromEntries(MODS.map(m => [m[0], m[2]]));
+  const list = [...GLOSS].sort((a, b) => a[0].localeCompare(b[0]));
+  const draw = () => {
+    const q = $("#glQ", el).value.trim().toLowerCase();
+    const hits = list.filter(g => !q || g[0].toLowerCase().includes(q) || g[1].toLowerCase().includes(q));
+    $("#glN", el).textContent = `${hits.length} shown`;
+    $("#glL", el).innerHTML = hits.map(g => `<div class="gl-item" id="g-${gid(g[0])}"><h4>${esc(g[0])}<small><button class="linkbtn" data-go="${g[2]}">${esc(mods[g[2]])}</button></small></h4><p>${esc(g[1])}</p></div>`).join("");
+  };
+  $("#glQ", el).addEventListener("input", draw); draw();
+};
+
+/* =====================================================================
+   XIV. CHECK YOURSELF
+   ===================================================================== */
+const QUIZ = [
+  ["Codes measure a retaining wall's height for permits from…", ["Grade in front to the top", "The bottom of the footing to the top", "Grade behind to grade in front", "The top of the cap"], 1, "IRC R105.2 and IBC 105.2: from the bottom of the footing to the top of the wall."],
+  ["Under the IRC, a wall must be engineered when it retains more than…", ["24 in.", "36 in.", "48 in. of unbalanced fill", "6 ft"], 2, "IRC R404.4, with a safety factor of 1.5 against sliding and overturning."],
+  ["Where does the resultant of a triangular soil pressure act?", ["At the top", "At mid-height", "At H/3 above the base", "At the base"], 2, "The centroid of a triangle is a third of the way up from its wide end."],
+  ["Roughly how hard does sandy backfill push compared with water?", ["The same", "About a third as hard", "Twice as hard", "Ten times as hard"], 1, "Kₐ ≈ 0.3 times about 120 pcf is roughly 35–40 psf per foot, against water's 62.4."],
+  ["Fully saturated backfill behind a wall roughly…", ["Doesn't matter if the soil is strong", "Adds 10%", "Doubles the force or more", "Reduces the force"], 2, "Buoyancy cuts the soil's push a little, but the water adds its full 62.4 psf per foot."],
+  ["What goes directly behind a block wall?", ["Native silty soil", "Stone dust", "12 in. of clean crushed stone", "Topsoil"], 2, "Drainage aggregate: it carries water down to the pipe and doesn't hold water to freeze."],
+  ["A perforated drain pipe behind a wall must…", ["Be capped at both ends", "Outlet to daylight, every 50 ft or so", "Run uphill", "Be above the base"], 1, "A pipe with no outlet just stores water against the wall."],
+  ["Why does a block wall lean back (batter)?", ["Looks", "It moves the wall's weight back and reduces the soil thrust", "To shed rain", "It's easier to build"], 1, "Both effects raise the safety factors; never shim a block wall to vertical."],
+  ["How deep is the bottom course of a block wall typically buried?", ["Not at all", "About 1 in. per 8 in. of height, 6 in. minimum", "Below frost", "Half the height"], 1, "Flexible walls don't go below frost; they ride on a stone pad with drainage."],
+  ["Which wall's footing must go below the frost depth?", ["Dry-stacked block", "Boulder", "Poured concrete cantilever", "Gabion"], 2, "Rigid walls crack if frost moves them."],
+  ["Which soil is most frost-susceptible?", ["Clean gravel", "Crushed stone", "Silt", "Ledge"], 2, "Silt wicks water to the freezing front and grows ice lenses."],
+  ["Geogrid length is typically at least…", ["1 ft", "0.3 × H", "0.6 × H", "2 × H"], 2, "0.6–0.7 H on level ground; longer under slopes and surcharges."],
+  ["Which way does geogrid's strong direction run?", ["Parallel to the face", "Perpendicular to the face", "Either way", "Vertical"], 1, "It has to resist the soil pulling the face outward."],
+  ["The main reinforcing bars in a cantilever wall's stem go…", ["On the exposed face", "In the middle", "On the soil side", "Anywhere"], 2, "The soil bends the stem toward the front, so the back face is in tension."],
+  ["A shear key under a concrete footing helps against…", ["Overturning", "Sliding", "Frost", "Cracking"], 1, "It pushes into passive soil below the footing."],
+  ["Two terraced walls act independently when they are spaced at least…", ["2 ft apart", "Twice the lower wall's height apart", "The upper wall's height apart", "Any distance"], 1, "Closer, the upper wall loads the lower one and they must be designed together."],
+  ["The usual design surcharge for a driveway near a wall is…", ["25 psf", "100 psf", "250 psf", "1,000 psf"], 2, "250 psf for cars; more for trucks."],
+  ["A patio on top of a 3 ft wall within 36 in. of the edge needs…", ["Nothing", "A guard", "A permit only", "A swale"], 1, "A drop over 30 in. within 36 in. of a walking surface needs a guard."],
+  ["In Massachusetts, a wall within 100 ft of a wetland first needs…", ["Nothing", "A filing with the conservation commission", "A plumbing permit", "A survey only"], 1, "The Wetlands Protection Act buffer zone."],
+  ["Silt coming out of the drain outlets after rain means…", ["The drain works well", "Soil is washing through: fabric is missing or failed", "Normal frost", "Too much stone"], 1, "Left alone it clogs the stone and opens holes behind the wall."],
+  ["Vertical hairline cracks every few feet in a long concrete wall with no lean are…", ["Structural failure", "Shrinkage cracks", "Frost heave", "Sliding"], 1, "Control joints at 20–30 ft put them where you want them."],
+  ["Before digging for a wall in New England you must…", ["Call 811 (Dig Safe or Call Before You Dig)", "Call the fire department", "Nothing on private land", "Test the soil"], 0, "Two to three business days ahead; private lines aren't marked."]
+];
+function quizOrder(i, n) { let s = (409 + i * 13) >>> 0; const r = () => { s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; const o = Array.from({ length: n }, (_, k) => k); for (let k = n - 1; k > 0; k--) { const j = Math.floor(r() * (k + 1)); [o[k], o[j]] = [o[j], o[k]]; } return o; }
+RENDER.quiz = el => {
+  el.innerHTML = modHead("quiz", "Check yourself", `${QUIZ.length} questions. Pick an answer to see why.`) + `<div id="qz"></div><div class="status" id="qzS"></div>`;
+  let right = 0, done = 0;
+  $("#qz", el).innerHTML = QUIZ.map((q, i) => `<div class="q" data-q="${i}"><h4>${i + 1}. ${esc(q[0])}</h4><div class="opts">${quizOrder(i, q[1].length).map(j => `<button class="opt" data-o="${j}">${esc(q[1][j])}</button>`).join("")}</div><div class="why">${esc(q[3])}</div></div>`).join("");
+  $("#qz", el).addEventListener("click", e => {
+    const b = e.target.closest(".opt"); if (!b) return;
+    const box = b.closest(".q"); if (box.classList.contains("done")) return;
+    const q = QUIZ[+box.dataset.q], j = +b.dataset.o;
+    box.classList.add("done"); done++;
+    $$(".opt", box).forEach(o => { const k = +o.dataset.o; if (k === q[2]) o.classList.add("right"); else if (k === j) o.classList.add("wrong"); });
+    if (j === q[2]) right++;
+    $("#qzS", el).innerHTML = `<span class="badge ${right === done ? "ok" : "warn"}">${right} / ${done}</span><small>${done === QUIZ.length ? "All answered." : `${QUIZ.length - done} to go`}</small>`;
+  });
+};
+
+/* =====================================================================
+   SELF-TEST & BOOT
+   ===================================================================== */
+function selfTest() {
+  const fails = [];
+  const ok = (c, m) => { if (!c) fails.push(m); };
+  const near = (a, b, tol, m) => ok(Math.abs(a - b) <= tol, `${m}: ${a} vs ${b}`);
+  near(rankineKa(30, 0), 1 / 3, 1e-9, "Rankine Ka, 30°");
+  near(coulombKa(30, 20, 0, 0), 0.297, 0.001, "Coulomb Ka, 30° with δ = 20°");
+  ok(coulombKa(30, 20, 12, 0) < coulombKa(30, 20, 0, 0), "batter lowers Coulomb Ka");
+  near(restK(30, 0), 0.5, 1e-9, "K0 = 1 − sin φ");
+  near(passiveKp(30), 3, 1e-9, "Kp, 30°");
+  const r2 = rankineKa(32, 26.57) / rankineKa(32, 0), r3 = rankineKa(30, 18.43) / rankineKa(30, 0);
+  ok(r2 > 1.4 && r2 < 1.6 && r3 > 1.15 && r3 < 1.25, "slope effects quoted in the text");
+  const p = pressure({ soil: "till", H: 10, K: 1 / 3 });
+  near(p.Ps, 0.5 / 3 * 125 * 100, 0.5, "soil force ½KγH²"); near(p.y, 10 / 3, 0.01, "acts at H/3");
+  const pq = pressure({ soil: "till", H: 10, K: 1 / 3, q: 250 }); near(pq.Pq, 250 / 3 * 10, 0.5, "surcharge K·q·H"); near(pq.yq, 5, 0.01, "surcharge at H/2");
+  const pw = pressure({ soil: "till", H: 10, K: 1 / 3, hw: 10 }); near(pw.Pw, 0.5 * GW * 100, 0.5, "water ½γw·h²"); ok(pw.Ph / p.Ph > 2, "saturation doubles the force");
+  const sb = o => stability(Object.assign({}, ST, { type: "srw", Hex: 3, soil: "gravel", fnd: "till", beta: 0, q: 0, hwp: 0, rest: false, passive: false, d: 1, batter: 6, key: 1, frost: 4 }, o));
+  ok(sb({ type: "grid", Hex: 8, gridK: 0.7 }).pass, "8 ft geogrid wall passes");
+  ok(sb({ Hex: 8 }).pass === false, "8 ft gravity block fails");
+  ok(sb({ hwp: 100 }).FSo < sb({}).FSo, "water lowers the safety factor");
+  ok(sb({ type: "cant", Hex: 6, key: 1 }).pass && !sb({ type: "cant", Hex: 6, key: 0 }).ok.s, "shear key fixes cantilever sliding");
+  ok(sb({ type: "stone", Hex: 4 }).pass, "4 ft boulder wall passes");
+  const m6 = maxGravity({ ...ST, soil: "gravel", fnd: "till", batter: 6, d: 1, beta: 0, q: 0, hwp: 0, rest: false }), m12 = maxGravity({ ...ST, soil: "gravel", fnd: "till", batter: 12, d: 1, beta: 0, q: 0, hwp: 0, rest: false }), mb = maxGravity({ ...ST, soil: "gravel", fnd: "till", batter: 6, d: 3.4, beta: 0, q: 0, hwp: 0, rest: false });
+  ok(m6 >= 2.5 && m6 <= 4.5 && m12 > m6 && mb >= 6, "gravity height limits: " + [m6, m12, mb].join(", "));
+  const e = sb({ type: "grid", Hex: 8 }); near(e.N / e.g.B * (1 + 6 * e.e / e.g.B), e.qmax, 1e-6, "middle-third bearing formula");
+  ["srw", "grid", "stone", "cant"].forEach(t => { const r = sb({ type: t, Hex: 5 }); ok(isFinite(r.FSo) && isFinite(r.FSs) && stFig(Object.assign({}, ST, { type: t, Hex: 5 }), r).length > 2000, "stability figure " + t); });
+  const g6 = gridPlan({ Hex: 6, ch: 8, load: "none", soil: "gravel" });
+  ok(g6.n === 11 && g6.layers.join() === "1,4,7,10" && g6.L === 5.5, "geogrid layout, 6 ft wall: " + g6.layers.join() + " " + g6.L);
+  ok(gridPlan({ Hex: 6, ch: 8, load: "both", soil: "gravel" }).L > g6.L, "longer grid under loads");
+  const c = cantProps({ Hex: 6, frost: 4, load: "none" }); ok(c.B >= 5 && c.B <= 6 && c.heel > c.toe, "cantilever proportions");
+  const ch = chooseWall({ h: 8, room: "little", machine: true, look: "any", budget: "mid" });
+  ok(ch.find(x => x.w.id === "anchored").fit && !ch.find(x => x.w.id === "grid").fit && !ch.find(x => x.w.id === "srw").fit, "wall chooser filters");
+  ok(chooseWall({ h: 2.5, room: "some", machine: false, look: "any", budget: "low" })[0].fit, "chooser finds a short wall");
+  WALLS.forEach(w => ok(wtIcon(w.id).length > 300, "icon " + w.id));
+  const es = estimate({ L: 40, Hex: 3, unit: "std6", grid: false });
+  ok(es.n === 7 && es.units === 199 && es.caps === 29, "estimate, 40 ft × 3 ft: " + [es.n, es.units, es.caps].join(", "));
+  ok(estimate({ L: 40, Hex: 4, unit: "std8", grid: true }).grid > 0, "estimate with grid");
+  ok(!permitCheck({ ...PC, Hex: 3.5, base: 0.5, surch: false, tier: false }).permit && permitCheck({ ...PC, Hex: 3.5, base: 1, surch: false, tier: false }).permit, "4 ft permit line");
+  ok(permitCheck({ ...PC, Hex: 2, base: 0.5, surch: true }).permit && permitCheck({ ...PC, Hex: 5, base: 0.5 }).eng, "surcharge and engineer triggers");
+  ok(permitCheck({ ...PC, Hex: 3, walk: true }).out.some(x => x[1] === "Guard at the top" && x[0] === "bad") && !permitCheck({ ...PC, Hex: 2.5, walk: true }).out.some(x => x[0] === "bad"), "guard at 30 in.");
+  ok(tierCheck({ H1: 4, H2: 4, S: 8, soil: "gravel" }).indep && tierCheck({ H1: 4, H2: 4, S: 3, soil: "gravel" }).share === 1, "terraced walls");
+  const dAll = drainState({ stone: true, pipe: true, outlet: true, fabric: true, cap: true, roof: false, soil: "till" }), dNo = drainState({ stone: true, pipe: true, outlet: false, fabric: true, cap: true, roof: false, soil: "till" });
+  ok(dAll.hw === 0 && dAll.frost === "low" && dNo.hw > 50 && dNo.mult > 1.5 && dNo.frost === "high", "drainage model");
+  for (let i = 0; i < AN_STAGES.length; i++) ok(srwFig({ stage: i, parts: false }).length > 800, "build stage " + i);
+  ok(Object.keys(AN_PARTS).every(k => srwFig({ sel: k }).includes(`data-part="${k}"`)), "every anatomy part is drawn");
+  Object.keys(FAILS).forEach(k => ok(fmFig(k, 1).length > 1000, "failure figure " + k));
+  ok(new Set(REPAIRS.map(r => r[0])).size === REPAIRS.length, "repair ids unique");
+  GLOSS.forEach(g => ok(MODS.some(m => m[0] === g[2]), "glossary link " + g[0]));
+  QUIZ.forEach((q, i) => ok(q[2] < q[1].length, "quiz " + i));
+  ok(MODS.every(m => typeof RENDER[m[0]] === "function"), "every section renders");
+  if (fails.length) console.warn("Batter & Drain self-test: " + fails.length + " problem(s)", fails);
+  else console.info("Batter & Drain self-test: all checks passed.");
+  return fails;
+}
+function init() {
+  $("#modnav").innerHTML = MODS.map(([k, n, l]) => `<button data-mod="${k}"><b>${n}</b>${esc(l)}</button>`).join("");
+  $("#modnav").addEventListener("click", e => { const b = e.target.closest("[data-mod]"); if (b) go(b.dataset.mod); });
+  $("#main").innerHTML = MODS.map(([k]) => `<section class="mod" id="m-${k}"></section>`).join("");
+  $$("[data-theme-btn]").forEach(b => b.onclick = () => { state.theme = b.dataset.themeBtn; save(); applyTheme(); });
+  $("#printBtn").onclick = () => window.print();
+  applyTheme();
+  const h = location.hash.replace("#", "");
+  go(MODS.some(m => m[0] === h) ? h : state.mod, { keepScroll: true });
+  window.addEventListener("hashchange", () => { const k = location.hash.replace("#", ""); if (MODS.some(m => m[0] === k) && k !== state.mod) go(k); });
+  try { window.__selfTest = selfTest(); } catch (e) { console.error("self-test crashed", e); }
+  requestAnimationFrame(frame);
+}
+init();
+</script>
+</body>
+</html>
